@@ -289,11 +289,15 @@
        position: relative;
      }
      
-     /* Divider after active account */
+     /* Divider after active account with 8px spacing above and below */
+     .account-panel .account-item.nav-item.active {
+       margin-bottom: 9px; /* Add 9px to existing 8px gap = 17px total (8px + 1px line + 8px) */
+     }
+     
      .account-panel .account-item.nav-item.active::after {
        content: '';
        position: absolute;
-       bottom: -4px; /* Half of the 8px gap */
+       bottom: -8px; /* Position line 8px below the active account */
        left: 0;
        right: 0;
        height: 1px;
