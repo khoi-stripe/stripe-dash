@@ -308,15 +308,23 @@
        background: transparent;
      }
      
-     /* White hover state for non-active account items */
-     .account-panel .account-item.nav-item:not(.active):hover {
-       background: black;
+     /* Disable default nav-item hover for account panel */
+     .account-panel .nav-item:hover::before {
+       background-color: transparent !important;
      }
      
      .account-panel .add-account-button.nav-item:hover {
        background: black;
-     }     
-     /* Account Avatar */     .account-avatar {
+     }
+     
+     /* Account panel specific hover backgrounds */
+     .account-panel .account-item.nav-item:not(.active):hover::before {
+       background-color: black !important;
+     }
+     
+     .account-panel .add-account-button.nav-item:hover::before {
+       background-color: black !important;
+     }     /* Account Avatar */     .account-avatar {
        width: 24px;
        height: 24px;
        border-radius: 4px;
