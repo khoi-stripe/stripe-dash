@@ -540,12 +540,16 @@
         
         let isCollapsed = false;
         let isAccountPanelOpen = false;
+        let wasNavCollapsedBeforeAccountPanel = false; // Track previous nav state
         
         // Toggle account panel on hamburger click
         hamburgerButton.addEventListener('click', function() {
           isAccountPanelOpen = !isAccountPanelOpen;
           
           if (isAccountPanelOpen) {
+            // Store current nav panel state before opening account panel
+            wasNavCollapsedBeforeAccountPanel = isCollapsed;
+            
             // Open account panel and collapse nav panel
             accountPanel.classList.add('open');
             navPanel.classList.add('collapsed');
@@ -554,22 +558,58 @@
             tooltip.textContent = 'Expand';
             isCollapsed = true;
           } else {
-            // Close account panel
+            // Close account panel and restore previous nav state
             accountPanel.classList.remove('open');
             collapseHandle.classList.remove('account-panel-open');
-            // Don't auto-expand nav panel - let user control it
+            
+            // Restore nav panel to previous state
+            if (!wasNavCollapsedBeforeAccountPanel) {
+              navPanel.classList.remove('collapsed');
+              collapseHandle.classList.remove('collapsed');
+              tooltip.textContent = 'Collapse';
+              isCollapsed = false;
+            }
+          }
+        });
+        
+        // Close account panel when clicking on it
+        accountPanel.addEventListener('click', function() {
+          if (isAccountPanelOpen) {
+            // Close account panel and restore previous nav state
+            accountPanel.classList.remove('open');
+            collapseHandle.classList.remove('account-panel-open');
+            
+            // Restore nav panel to previous state
+            if (!wasNavCollapsedBeforeAccountPanel) {
+              navPanel.classList.remove('collapsed');
+              collapseHandle.classList.remove('collapsed');
+              tooltip.textContent = 'Collapse';
+              isCollapsed = false;
+            }
+            
+            isAccountPanelOpen = false;
           }
         });
         
         // Toggle navigation panel on handle click
         collapseHandle.addEventListener('click', function() {
-          // If account panel is open, close it first
+          // If account panel is open, close it first and restore previous state
           if (isAccountPanelOpen) {
             accountPanel.classList.remove('open');
             collapseHandle.classList.remove('account-panel-open');
             isAccountPanelOpen = false;
+            
+            // Restore to the state before account panel opened
+            if (!wasNavCollapsedBeforeAccountPanel) {
+              navPanel.classList.remove('collapsed');
+              collapseHandle.classList.remove('collapsed');
+              tooltip.textContent = 'Collapse';
+              isCollapsed = false;
+              return; // Exit early since we restored the state
+            }
           }
           
+          // Normal nav panel toggle behavior
           // Dismiss tooltip immediately and prevent hover
           collapseHandle.classList.add('no-hover');
           
