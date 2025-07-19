@@ -338,7 +338,7 @@
        background-color: transparent !important;
      }
      
-     /* Completely remove any brand backgrounds from account panel */
+     /* Remove all brand backgrounds from account panel active items */
      .account-panel .nav-item.active::before,
      .account-panel .nav-item.active:hover::before,
      .account-panel .account-item.active::before,
@@ -349,7 +349,7 @@
        background: transparent !important;
      }
      
-     /* Nuclear option: remove all purple/brand colors from account panel nav items */
+     /* Remove all backgrounds from account panel nav items */
      .account-panel .nav-item::before,
      .account-panel .nav-item:hover::before,
      .account-panel .account-item::before,
@@ -362,6 +362,28 @@
      .account-panel .account-item.nav-item:not(.active):hover::before {
        background-color: white !important;
        background: white !important;
+     }
+     
+     /* Remove backgrounds from active nav items */
+     .account-panel .nav-item.active {
+       background-color: transparent !important;
+       background: transparent !important;
+     }
+     
+     .account-panel .nav-item.active:hover {
+       background-color: transparent !important;
+       background: transparent !important;
+     }
+     
+     /* MAXIMUM SPECIFICITY: This should override EVERYTHING */
+     .account-panel .account-panel-content .account-group .account-item.nav-item.active,
+     .account-panel .account-panel-content .account-group .account-item.nav-item.active:hover,
+     .account-panel .account-panel-content .account-group .account-item.nav-item.active::before,
+     .account-panel .account-panel-content .account-group .account-item.nav-item.active:hover::before,
+     .account-panel .workload-item.active:hover::before {
+       background-color: transparent !important;
+       background: transparent !important;
+       background-image: none !important;
      }
      
      /* Disable default nav-item hover for account panel */
