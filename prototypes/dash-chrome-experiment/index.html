@@ -333,6 +333,11 @@
        background: transparent;
      }
      
+     /* Remove light purple active state background from account panel */
+     .account-panel .account-item.nav-item.active:hover::before {
+       background-color: transparent !important;
+     }
+     
      /* Disable default nav-item hover for account panel */
      .account-panel .nav-item:hover::before {
        background-color: transparent !important;
