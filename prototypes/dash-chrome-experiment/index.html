@@ -528,6 +528,27 @@
      .popover-option:hover .nav-item-icon svg {
        stroke: var(--neutral-700);
      }
+     
+     /* Global behavior: Persist button hover state when popover is open */
+     .nav-item.popover-open,
+     .nav-item.popover-open:hover {
+       background: white !important;
+     }
+     
+     .nav-item.popover-open::before,
+     .nav-item.popover-open:hover::before {
+       background-color: white !important;
+     }
+     
+     .nav-item.popover-open .nav-item-label,
+     .nav-item.popover-open:hover .nav-item-label {
+       color: var(--neutral-900) !important;
+     }
+     
+     .nav-item.popover-open .nav-item-icon svg,
+     .nav-item.popover-open:hover .nav-item-icon svg {
+       stroke: var(--neutral-700) !important;
+     }
 
      /* Content Panel */
      .content-panel {
@@ -1020,6 +1041,7 @@
           clearTimeout(popoverTimeout);
           positionPopover(); // Position before showing
           addAccountPopover.classList.add('show');
+          addAccountButton.classList.add('popover-open'); // Persist button hover state
           isPopoverOpen = true;
         });
         
@@ -1027,6 +1049,7 @@
           popoverTimeout = setTimeout(() => {
             if (!addAccountPopover.matches(':hover')) {
               addAccountPopover.classList.remove('show');
+              addAccountButton.classList.remove('popover-open'); // Remove persistent hover state
               isPopoverOpen = false;
             }
           }, 100);
@@ -1039,6 +1062,7 @@
         
         addAccountPopover.addEventListener('mouseleave', function() {
           addAccountPopover.classList.remove('show');
+          addAccountButton.classList.remove('popover-open'); // Remove persistent hover state
           isPopoverOpen = false;
         });        
         
@@ -1048,6 +1072,7 @@
             const label = this.querySelector('.nav-item-label').textContent;
             // Close popover
             addAccountPopover.classList.remove('show');
+            addAccountButton.classList.remove('popover-open'); // Remove persistent hover state
             isPopoverOpen = false;
           });
         });
