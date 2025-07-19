@@ -299,6 +299,31 @@
        position: relative;
      }
      
+     /* Fix alignment for account panel nav items */
+     .account-panel .nav-item {
+       height: 32px; /* Increase height to accommodate 24px avatars + padding */
+       padding: 4px 0; /* Add vertical padding for better alignment */
+       display: flex;
+       align-items: center;
+     }
+     
+     .account-panel .nav-item-icon {
+       width: 24px;
+       height: 24px;
+       flex-shrink: 0;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     }
+     
+     .account-panel .nav-item-label {
+       margin-left: 8px;
+       flex: 1;
+       display: flex;
+       align-items: center;
+       line-height: 1; /* Override default line-height for better alignment */
+     }
+     
      /* Only active account is non-interactive */
      .account-panel .account-item.nav-item.active {
        cursor: default;
