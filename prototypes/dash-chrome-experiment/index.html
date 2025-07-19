@@ -317,14 +317,14 @@
      
      /* Account Avatar */
      .account-avatar {
-       width: 20px;
-       height: 20px;
-       border-radius: 50%;
+       width: 24px;
+       height: 24px;
+       border-radius: 4px;
        display: flex;
        align-items: center;
        justify-content: center;
        font-family: var(--font-family-ui);
-       font-size: var(--font-size-10);
+       font-size: var(--font-size-12);
        font-weight: var(--font-weight-medium);
        color: white;
        position: relative;
@@ -334,9 +334,10 @@
        content: attr(data-initials);
      }
      
-     .account-avatar[data-color="#e91e63"] { background-color: #e91e63; }
-     .account-avatar[data-color="#4caf50"] { background-color: #4caf50; }
-     .account-avatar[data-color="#ff9800"] { background-color: #ff9800; }
+     /* Use account switcher component color palette */
+     .account-avatar[data-color="#3B82F6"] { background-color: #3B82F6; } /* blue-500 */
+     .account-avatar[data-color="#10B981"] { background-color: #10B981; } /* emerald-500 */
+     .account-avatar[data-color="#F59E0B"] { background-color: #F59E0B; } /* amber-500 */
      
      /* Active Account Avatar Stroke */
      .account-item.active .account-avatar:after {
@@ -347,13 +348,13 @@
        right: -2.5px;
        bottom: -2.5px;
        border: 1.5px solid;
-       border-radius: 50%;
+       border-radius: 4px;
        pointer-events: none;
      }
      
-     .account-item.active .account-avatar[data-color="#e91e63"]:after { border-color: #e91e63; }
-     .account-item.active .account-avatar[data-color="#4caf50"]:after { border-color: #4caf50; }
-     .account-item.active .account-avatar[data-color="#ff9800"]:after { border-color: #ff9800; }
+     .account-item.active .account-avatar[data-color="#3B82F6"]:after { border-color: #3B82F6; }
+     .account-item.active .account-avatar[data-color="#10B981"]:after { border-color: #10B981; }
+     .account-item.active .account-avatar[data-color="#F59E0B"]:after { border-color: #F59E0B; }
      
      /* Account Badge */
      .account-badge {
@@ -785,21 +786,21 @@
             name: 'Acme, Inc.',
             isOrganization: true,
             subAccounts: 8,
-            color: '#e91e63',
+            color: '#3B82F6',
             initials: 'AI'
           },
           'cactus-practice': {
             name: 'Cactus Practice',
             isOrganization: false,
             subAccounts: 0,
-            color: '#4caf50',
+            color: '#10B981',
             initials: 'CP'
           },
           'lil-fatsos': {
             name: 'Lil\'Fatsos',
             isOrganization: true,
             subAccounts: 3,
-            color: '#ff9800',
+            color: '#F59E0B',
             initials: 'LF'
           }
         };
@@ -924,7 +925,7 @@
           <!-- Account Items -->
           <div class="account-item nav-item active" data-account="acme-inc">
             <div class="nav-item-icon">
-              <div class="account-avatar" data-initials="AI" data-color="#e91e63"></div>
+              <div class="account-avatar" data-initials="AI" data-color="#3B82F6"></div>
             </div>
             <span class="nav-item-label">Acme, Inc.</span>
             <span class="account-badge">8</span>
@@ -938,14 +939,14 @@
           
           <div class="account-item nav-item" data-account="cactus-practice">
             <div class="nav-item-icon">
-              <div class="account-avatar" data-initials="CP" data-color="#4caf50"></div>
+              <div class="account-avatar" data-initials="CP" data-color="#10B981"></div>
             </div>
             <span class="nav-item-label">Cactus Practice</span>
           </div>
           
           <div class="account-item nav-item" data-account="lil-fatsos">
             <div class="nav-item-icon">
-              <div class="account-avatar" data-initials="LF" data-color="#ff9800"></div>
+              <div class="account-avatar" data-initials="LF" data-color="#F59E0B"></div>
             </div>
             <span class="nav-item-label">Lil'Fatsos</span>
             <span class="account-badge">3</span>
