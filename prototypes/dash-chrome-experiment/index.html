@@ -259,32 +259,26 @@
 
      /* Account Panel */
      .account-panel {
-       width: 240px; /* Fixed width - always full size */
+       width: 0; /* Hidden by default */
        height: 100vh;
        background: var(--neutral-50);
        border-right: 1px solid rgba(0, 39, 77, 0.08);
        display: flex;
        flex-direction: column;
-       transform: translateX(-240px); /* Hidden by default - slide left */
-       transition: transform 0.3s ease;
+       transition: width 0.3s ease;
        overflow: hidden;
        flex-shrink: 0;
      }
      
      .account-panel.open {
-       transform: translateX(0); /* Slide into view */
+       width: 240px; /* Expand to full width */
      }
      
      .account-panel-content {
        flex: 1;
        padding: 20px;
-       overflow: hidden; /* Clip content during slide animation */
+       overflow: visible; /* Allow popover to show outside bounds */
        position: relative;
-     }
-     
-     /* Allow popover to show when panel is fully open */
-     .account-panel.open .account-panel-content {
-       overflow: visible;
      }
      
      /* Account Group */
@@ -327,6 +321,9 @@
        padding: 4px 0; /* Add vertical padding for better alignment */
        display: flex;
        align-items: center;
+       width: 200px; /* Fixed width - prevents resizing during panel transition */
+       min-width: 200px; /* Ensure minimum width is maintained */
+       flex-shrink: 0; /* Prevent shrinking */
      }
      
      .account-panel .nav-item-icon {
@@ -344,6 +341,9 @@
        display: flex;
        align-items: center;
        line-height: 1; /* Override default line-height for better alignment */
+       white-space: nowrap; /* Prevent text wrapping */
+       overflow: hidden; /* Hide overflow text */
+       text-overflow: ellipsis; /* Show ellipsis for long text */
      }
      
      /* Only active account is non-interactive */
