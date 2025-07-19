@@ -21,10 +21,17 @@
       overflow: hidden;
     }
 
-    .layout-container {
+    /* App Container - Main flexbox layout */
+    .app-container {
       display: flex;
       height: 100vh;
-      width: 100vw;
+      width: 100%;
+    }
+
+    .layout-container {
+      display: flex;
+      flex: 1;
+      min-width: 0;
     }
 
          /* Navigation Panel */
@@ -252,27 +259,26 @@
 
      /* Account Panel */
      .account-panel {
-       position: fixed;
-       top: 0;
-       left: -240px; /* Hidden by default */
-       width: 240px;
+       width: 0; /* Hidden by default */
        height: 100vh;
        background: var(--color-bg-nav);
        border-right: 1px solid var(--neutral-200);
        display: flex;
        flex-direction: column;
-       transition: left 0.3s ease;
-       z-index: 1000; /* Above nav panel */
+       transition: width 0.3s ease;
+       overflow: hidden;
+       flex-shrink: 0;
      }
      
      .account-panel.open {
-       left: 0; /* Slide in */
+       width: 240px; /* Expand to full width */
      }
      
      .account-panel-header {
        padding: 20px;
        border-bottom: 1px solid var(--neutral-200);
        background: var(--color-bg-nav);
+       flex-shrink: 0;
      }
      
      .account-panel-content {
@@ -581,17 +587,18 @@
     </script>
 </head>
 <body>
-  <!-- Account Panel -->
-  <div class="account-panel" id="accountPanel">
-    <div class="account-panel-header">
-      <!-- Empty for now -->
+  <div class="app-container">
+    <!-- Account Panel -->
+    <div class="account-panel" id="accountPanel">
+      <div class="account-panel-header">
+        <!-- Empty for now -->
+      </div>
+      <div class="account-panel-content">
+        <!-- Empty for now -->
+      </div>
     </div>
-    <div class="account-panel-content">
-      <!-- Empty for now -->
-    </div>
-  </div>
 
-  <div class="layout-container">
+    <div class="layout-container">
          <!-- Navigation Panel -->
      <div class="nav-panel" id="navPanel">
        <div style="padding: 12px 20px; flex: 1;">
@@ -850,5 +857,6 @@
     // Initialize
     console.log('🚀 Dash Chrome ready!');
   </script>
+  </div> <!-- Close app-container -->
 </body>
 </html> 
