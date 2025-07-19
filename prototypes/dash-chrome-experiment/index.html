@@ -507,10 +507,26 @@
      
      .popover-option {
        margin-bottom: 4px;
+       border-radius: var(--radius-sm);
+       cursor: pointer;
+       transition: background-color 0.15s ease;
      }
      
      .popover-option:last-child {
        margin-bottom: 0;
+     }
+     
+     /* Popover option hover states */
+     .popover-option:hover {
+       background-color: var(--neutral-50);
+     }
+     
+     .popover-option:hover .nav-item-label {
+       color: var(--neutral-900);
+     }
+     
+     .popover-option:hover .nav-item-icon svg {
+       stroke: var(--neutral-700);
      }
 
      /* Content Panel */
