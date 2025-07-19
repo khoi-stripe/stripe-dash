@@ -28,6 +28,42 @@ document.getElementById('nav-container').appendChild(nav);
 **Features**: Icons, badges, sections, dividers, hover states, responsive design
 **See**: `navigation-README.md` for full documentation
 
+### Popover Component (`popover.js`) - **NEW**
+
+**Purpose**: Reusable popover component for buttons and interactive elements
+
+**Usage**:
+```javascript
+// Include the component
+<script src="/shared/components/popover.js"></script>
+
+// Initialize with array content
+const popover = new Popover(triggerElement, {
+  position: 'right', // right, left, top, bottom
+  offset: 8,
+  trigger: 'hover', // hover, click
+  hideDelay: 100,
+  content: [
+    {
+      icon: '<svg>...</svg>',
+      label: 'Option 1',
+      onClick: () => console.log('Option 1 clicked')
+    },
+    {
+      icon: '<svg>...</svg>',
+      label: 'Option 2',
+      onClick: () => console.log('Option 2 clicked')
+    }
+  ]
+});
+
+// Or auto-initialize with data attributes
+<button data-popover='{"position":"right","content":"HTML content"}'>Trigger</button>
+```
+
+**Features**: Hover/click triggers, positioning, persistent button hover state, viewport collision detection, custom events
+**Styling**: Global `.popover`, `.popover-option`, and `.popover-open` classes in `components.css`
+
 ### Account Switcher Component (`account-switcher.js`) - **NEW**
 
 **Purpose**: Account/organization switching dropdown component with account management actions

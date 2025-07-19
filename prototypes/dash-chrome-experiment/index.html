@@ -318,31 +318,12 @@
      /* Fix alignment for account panel nav items */
      .account-panel .nav-item {
        height: 32px; /* Increase height to accommodate 24px avatars + padding */
-       max-height: 32px; /* Maximum height constraint including hover states */
        padding: 4px 0; /* Add vertical padding for better alignment */
        display: flex;
        align-items: center;
        width: 200px; /* Fixed width - prevents resizing during panel transition */
        min-width: 200px; /* Ensure minimum width is maintained */
        flex-shrink: 0; /* Prevent shrinking */
-       box-sizing: border-box; /* Include padding and borders in height calculation */
-       overflow: hidden; /* Prevent content from expanding beyond max height */
-     }
-     
-     /* Ensure hover states also respect 32px max height */
-     .account-panel .nav-item:hover,
-     .account-panel .nav-item.active,
-     .account-panel .nav-item.popover-open {
-       max-height: 32px;
-       overflow: hidden;
-     }
-     
-     /* Ensure pseudo-elements for hover effects stay within bounds */
-     .account-panel .nav-item::before,
-     .account-panel .nav-item:hover::before {
-       max-height: 32px;
-       overflow: hidden;
-       box-sizing: border-box;
      }
      
      .account-panel .nav-item-icon {
@@ -501,78 +482,7 @@
        text-align: center;
      }
      
-     /* Add Account Popover */
-     .add-account-popover {
-       position: fixed; /* Changed from absolute to fixed to escape clipping */
-       top: 0;
-       left: 0;
-       border-radius: 8px;
-       background: #FFF;
-       box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
-       padding: 16px;
-       min-width: 200px;
-       z-index: 1001;
-       opacity: 0;
-       visibility: hidden;
-       transform: translateX(-8px);
-       transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-     }
-     
-     .add-account-popover.show {
-       opacity: 1;
-       visibility: visible;
-       transform: translateX(0);
-     }
-     
-     .popover-option {
-       margin-bottom: 4px;
-       border-radius: var(--radius-sm);
-       cursor: pointer;
-       transition: background-color 0.15s ease;
-       max-height: 32px; /* Match account panel nav items max height */
-       overflow: hidden;
-       box-sizing: border-box;
-     }
-     
-     .popover-option:last-child {
-       margin-bottom: 0;
-     }
-     
-     /* Popover option hover states */
-     .popover-option:hover {
-       background-color: var(--neutral-50);
-       max-height: 32px; /* Ensure hover doesn't exceed height limit */
-       overflow: hidden;
-     }
-     
-     .popover-option:hover .nav-item-label {
-       color: var(--neutral-900);
-     }
-     
-     .popover-option:hover .nav-item-icon svg {
-       stroke: var(--neutral-700);
-     }
-     
-     /* Global behavior: Persist button hover state when popover is open */
-     .nav-item.popover-open,
-     .nav-item.popover-open:hover {
-       background: white !important;
-     }
-     
-     .nav-item.popover-open::before,
-     .nav-item.popover-open:hover::before {
-       background-color: white !important;
-     }
-     
-     .nav-item.popover-open .nav-item-label,
-     .nav-item.popover-open:hover .nav-item-label {
-       color: var(--neutral-900) !important;
-     }
-     
-     .nav-item.popover-open .nav-item-icon svg,
-     .nav-item.popover-open:hover .nav-item-icon svg {
-       stroke: var(--neutral-700) !important;
-     }
+
 
      /* Content Panel */
      .content-panel {
@@ -926,9 +836,7 @@
         
         // Account Panel Functionality
         const addAccountButton = document.getElementById('addAccountButton');
-        const addAccountPopover = document.getElementById('addAccountPopover');
         const accountItems = document.querySelectorAll('.account-item');
-        let isPopoverOpen = false;
         
         // Account data
         const accounts = {
@@ -1049,74 +957,41 @@
           }
         }
         
-        // Add account popover functionality - hover-based
-        let popoverTimeout;
-        
-        function positionPopover() {
-          const buttonRect = addAccountButton.getBoundingClientRect();
-          const popover = addAccountPopover;
-          
-          // Position popover to the right of the button with 8px margin
-          popover.style.top = `${buttonRect.top}px`;
-          popover.style.left = `${buttonRect.right + 8}px`;
-        }
-        
-        addAccountButton.addEventListener('mouseenter', function() {
-          clearTimeout(popoverTimeout);
-          positionPopover(); // Position before showing
-          addAccountPopover.classList.add('show');
-          addAccountButton.classList.add('popover-open'); // Persist button hover state
-          isPopoverOpen = true;
-        });
-        
-        addAccountButton.addEventListener('mouseleave', function() {
-          popoverTimeout = setTimeout(() => {
-            if (!addAccountPopover.matches(':hover')) {
-              addAccountPopover.classList.remove('show');
-              addAccountButton.classList.remove('popover-open'); // Remove persistent hover state
-              isPopoverOpen = false;
+        // Initialize Create popover using global component
+        const createPopover = new Popover(addAccountButton, {
+          position: 'right',
+          offset: 8,
+          trigger: 'hover',
+          hideDelay: 100,
+          content: [
+            {
+              icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                       <line x1="12" y1="5" x2="12" y2="19"/>
+                       <line x1="5" y1="12" x2="19" y2="12"/>
+                     </svg>`,
+              label: 'Create account',
+              onClick: () => {
+                console.log('Create account clicked');
+                // Add your create account logic here
+              }
+            },
+            {
+              icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                       <path d="M3 21h18"/>
+                       <path d="M5 21V7l8-4v18"/>
+                       <path d="M19 21V11l-6-4"/>
+                     </svg>`,
+              label: 'Create organization',
+              onClick: () => {
+                console.log('Create organization clicked');
+                // Add your create organization logic here
+              }
             }
-          }, 100);
+          ]
         });
         
-        // Keep popover open when hovering over it
-        addAccountPopover.addEventListener('mouseenter', function() {
-          clearTimeout(popoverTimeout);
-        });
-        
-        addAccountPopover.addEventListener('mouseleave', function() {
-          addAccountPopover.classList.remove('show');
-          addAccountButton.classList.remove('popover-open'); // Remove persistent hover state
-          isPopoverOpen = false;
-        });        
-        
-        // Popover option clicks
-        document.querySelectorAll('.popover-option').forEach(option => {
-          option.addEventListener('click', function() {
-            const label = this.querySelector('.nav-item-label').textContent;
-            // Close popover
-            addAccountPopover.classList.remove('show');
-            addAccountButton.classList.remove('popover-open'); // Remove persistent hover state
-            isPopoverOpen = false;
-          });
-        });
-        
-        // Initialize account list order and active state
-        updateActiveAccount(currentAccount);
+        // Initialize account list order
         reorderAccountList(currentAccount);
-        
-        // Reposition popover on window resize/scroll
-        window.addEventListener('resize', () => {
-          if (isPopoverOpen) {
-            positionPopover();
-          }
-        });
-        
-        window.addEventListener('scroll', () => {
-          if (isPopoverOpen) {
-            positionPopover();
-          }
-        });
         
       });
     </script>
@@ -1163,30 +1038,7 @@
             <span class="nav-item-label">Create</span>
           </div>
         </div>
-        
-        <!-- Add Account Popover -->
-        <div class="add-account-popover" id="addAccountPopover">
-          <div class="popover-option nav-item">
-            <div class="nav-item-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-            </div>
-            <span class="nav-item-label">Create account</span>
-          </div>
-          
-          <div class="popover-option nav-item">
-            <div class="nav-item-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M3 21h18"/>
-                <path d="M5 21V7l8-4v18"/>
-                <path d="M19 21V11l-6-4"/>
-              </svg>
-            </div>
-            <span class="nav-item-label">Create organization</span>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -1423,8 +1275,9 @@
      </div>
   </div>
 
-  <!-- Include account switcher component -->
+  <!-- Include shared components -->
   <script src="../../shared/components/account-switcher.js"></script>
+  <script src="../../shared/components/popover.js"></script>
 
   <script type="module">
     // Initialize account switcher

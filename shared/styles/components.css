@@ -538,3 +538,76 @@
 .workload-item.active:hover .workload-caret-icon svg {
   stroke: var(--brand-600);
 } 
+
+/* ========================================
+   POPOVER COMPONENT
+   ======================================== */
+
+/* Base popover styles */
+.popover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 8px;
+  background: #FFF;
+  box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
+  padding: 16px;
+  min-width: 200px;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-8px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.popover.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Popover content item */
+.popover-option {
+  margin-bottom: 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.popover-option:last-child {
+  margin-bottom: 0;
+}
+
+/* Popover option hover states */
+.popover-option:hover {
+  background-color: var(--neutral-50);
+}
+
+.popover-option:hover .nav-item-label {
+  color: var(--neutral-900);
+}
+
+.popover-option:hover .nav-item-icon svg {
+  stroke: var(--neutral-700);
+}
+
+/* Global behavior: Persist button hover state when popover is open */
+.nav-item.popover-open,
+.nav-item.popover-open:hover {
+  background: white !important;
+}
+
+.nav-item.popover-open::before,
+.nav-item.popover-open:hover::before {
+  background-color: white !important;
+}
+
+.nav-item.popover-open .nav-item-label,
+.nav-item.popover-open:hover .nav-item-label {
+  color: var(--neutral-900) !important;
+}
+
+.nav-item.popover-open .nav-item-icon svg,
+.nav-item.popover-open:hover .nav-item-icon svg {
+  stroke: var(--neutral-700) !important;
+}
