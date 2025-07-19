@@ -1101,7 +1101,8 @@
           });
         });
         
-        // Initialize account list order
+        // Initialize account list order and active state
+        updateActiveAccount(currentAccount);
         reorderAccountList(currentAccount);
         
         // Reposition popover on window resize/scroll
