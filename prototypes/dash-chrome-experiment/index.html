@@ -277,7 +277,150 @@
      .account-panel-content {
        flex: 1;
        padding: 20px;
-       overflow-y: auto;
+       overflow: visible; /* Allow popover to show outside bounds */
+       position: relative;
+     }
+     
+     /* Account Panel Header */
+     .account-panel-header {
+       padding-bottom: 16px;
+       border-bottom: 1px solid var(--neutral-200);
+       margin-bottom: 16px;
+     }
+     
+     .account-panel-title {
+       font-family: var(--font-family-ui);
+       font-size: var(--font-size-16);
+       font-weight: var(--font-weight-semibold);
+       line-height: var(--line-height-24);
+       color: var(--color-text);
+       margin: 0;
+     }
+     
+     /* Account Group */
+     .account-group {
+       display: flex;
+       flex-direction: column;
+       gap: 4px;
+       position: relative;
+     }
+     
+     /* Account Item Extensions */
+     .account-item {
+       position: relative;
+     }
+     
+     /* Add Account Button */
+     .add-account-button {
+       position: relative;
+     }
+     
+     /* Account Avatar */
+     .account-avatar {
+       width: 20px;
+       height: 20px;
+       border-radius: 50%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-family: var(--font-family-ui);
+       font-size: var(--font-size-10);
+       font-weight: var(--font-weight-medium);
+       color: white;
+       position: relative;
+     }
+     
+     .account-avatar[data-initials]:before {
+       content: attr(data-initials);
+     }
+     
+     .account-avatar[data-color="#e91e63"] { background-color: #e91e63; }
+     .account-avatar[data-color="#4caf50"] { background-color: #4caf50; }
+     .account-avatar[data-color="#ff9800"] { background-color: #ff9800; }
+     
+     /* Active Account Avatar Stroke */
+     .account-item.active .account-avatar:after {
+       content: '';
+       position: absolute;
+       top: -2.5px;
+       left: -2.5px;
+       right: -2.5px;
+       bottom: -2.5px;
+       border: 1.5px solid;
+       border-radius: 50%;
+       pointer-events: none;
+     }
+     
+     .account-item.active .account-avatar[data-color="#e91e63"]:after { border-color: #e91e63; }
+     .account-item.active .account-avatar[data-color="#4caf50"]:after { border-color: #4caf50; }
+     .account-item.active .account-avatar[data-color="#ff9800"]:after { border-color: #ff9800; }
+     
+     /* Account Badge */
+     .account-badge {
+       position: absolute;
+       right: 32px;
+       top: 50%;
+       transform: translateY(-50%);
+       background: var(--neutral-100);
+       color: var(--neutral-800);
+       font-family: var(--font-family-ui);
+       font-size: var(--font-size-12);
+       font-weight: var(--font-weight-medium);
+       padding: 2px 6px;
+       border-radius: 12px;
+       line-height: 1.2;
+       min-width: 16px;
+       text-align: center;
+     }
+     
+     /* Account Checkmark */
+     .account-checkmark {
+       position: absolute;
+       right: 8px;
+       top: 50%;
+       transform: translateY(-50%);
+       width: 24px;
+       height: 24px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       color: var(--icon-default);
+     }
+     
+     .account-item:not(.active) .account-checkmark {
+       display: none;
+     }
+     
+     /* Add Account Popover */
+     .add-account-popover {
+       position: absolute;
+       top: 0;
+       left: 100%;
+       margin-left: 8px;
+       border-radius: 8px;
+       background: #FFF;
+       box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
+       padding: 16px;
+       min-width: 200px;
+       z-index: 1001;
+       opacity: 0;
+       visibility: hidden;
+       transform: translateX(-8px);
+       transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+     }
+     
+     .add-account-popover.show {
+       opacity: 1;
+       visibility: visible;
+       transform: translateX(0);
+     }
+     
+     .popover-option {
+       margin-bottom: 4px;
+     }
+     
+     .popover-option:last-child {
+       margin-bottom: 0;
      }
 
      /* Content Panel */
@@ -629,6 +772,140 @@
             collapseHandle.classList.remove('no-hover');
           }
         });
+        
+        // Account Panel Functionality
+        const addAccountButton = document.getElementById('addAccountButton');
+        const addAccountPopover = document.getElementById('addAccountPopover');
+        const accountItems = document.querySelectorAll('.account-item');
+        let isPopoverOpen = false;
+        
+        // Account data
+        const accounts = {
+          'acme-inc': {
+            name: 'Acme, Inc.',
+            isOrganization: true,
+            subAccounts: 8,
+            color: '#e91e63',
+            initials: 'AI'
+          },
+          'cactus-practice': {
+            name: 'Cactus Practice',
+            isOrganization: false,
+            subAccounts: 0,
+            color: '#4caf50',
+            initials: 'CP'
+          },
+          'lil-fatsos': {
+            name: 'Lil\'Fatsos',
+            isOrganization: true,
+            subAccounts: 3,
+            color: '#ff9800',
+            initials: 'LF'
+          }
+        };
+        
+        let currentAccount = 'acme-inc';
+        
+        // Account switching functionality
+        accountItems.forEach(item => {
+          if (!item.classList.contains('add-account-button')) {
+            item.addEventListener('click', function() {
+              const accountId = this.dataset.account;
+              if (accountId && accountId !== currentAccount) {
+                switchAccount(accountId);
+              }
+            });
+          }
+        });
+        
+        function switchAccount(accountId) {
+          const account = accounts[accountId];
+          if (!account) return;
+          
+          // Update UI
+          updateActiveAccount(accountId);
+          updateNavAccountSwitcher(account);
+          
+          // Close account panel
+          if (isAccountPanelOpen) {
+            accountPanel.classList.remove('open');
+            collapseHandle.classList.remove('account-panel-open');
+            
+            // Restore nav panel to previous state
+            if (!wasNavCollapsedBeforeAccountPanel) {
+              navPanel.classList.remove('collapsed');
+              collapseHandle.classList.remove('collapsed');
+              tooltip.textContent = 'Collapse';
+              isCollapsed = false;
+            }
+            
+            isAccountPanelOpen = false;
+          }
+          
+          currentAccount = accountId;
+          console.log('Switched to account:', account.name);
+        }
+        
+        function updateActiveAccount(accountId) {
+          // Remove active class from all account items
+          accountItems.forEach(item => {
+            item.classList.remove('active');
+          });
+          
+          // Add active class to selected account
+          const activeItem = document.querySelector(`[data-account="${accountId}"]`);
+          if (activeItem) {
+            activeItem.classList.add('active');
+          }
+        }
+        
+        function updateNavAccountSwitcher(account) {
+          // This would update the nav panel account switcher
+          // For now, we'll just log the behavior
+          if (account.isOrganization && account.subAccounts > 0) {
+            console.log(`Nav account switcher: Show dropdown for ${account.name} (${account.subAccounts} sub-accounts)`);
+            // TODO: Make account switcher clickable and show down arrow
+          } else {
+            console.log(`Nav account switcher: Show ${account.name} without dropdown (no sub-accounts)`);
+            // TODO: Make account switcher non-clickable and hide down arrow
+          }
+        }
+        
+        // Add account popover functionality
+        addAccountButton.addEventListener('click', function(e) {
+          e.stopPropagation();
+          togglePopover();
+        });
+        
+        function togglePopover() {
+          isPopoverOpen = !isPopoverOpen;
+          
+          if (isPopoverOpen) {
+            addAccountPopover.classList.add('show');
+          } else {
+            addAccountPopover.classList.remove('show');
+          }
+        }
+        
+        // Close popover when clicking outside
+        document.addEventListener('click', function(e) {
+          if (isPopoverOpen && !addAccountPopover.contains(e.target) && !addAccountButton.contains(e.target)) {
+            addAccountPopover.classList.remove('show');
+            isPopoverOpen = false;
+          }
+        });
+        
+        // Popover option clicks
+        document.querySelectorAll('.popover-option').forEach(option => {
+          option.addEventListener('click', function() {
+            const label = this.querySelector('.nav-item-label').textContent;
+            console.log('Clicked:', label);
+            // Close popover
+            addAccountPopover.classList.remove('show');
+            isPopoverOpen = false;
+          });
+        });
+        
       });
     </script>
 </head>
@@ -637,7 +914,78 @@
     <!-- Account Panel -->
     <div class="account-panel" id="accountPanel">
       <div class="account-panel-content">
-        <!-- Empty for now -->
+        <!-- Header -->
+        <div class="account-panel-header">
+          <h3 class="account-panel-title">Switch accounts</h3>
+        </div>
+        
+        <!-- Account Group -->
+        <div class="account-group">
+          <!-- Account Items -->
+          <div class="account-item nav-item active" data-account="acme-inc">
+            <div class="nav-item-icon">
+              <div class="account-avatar" data-initials="AI" data-color="#e91e63"></div>
+            </div>
+            <span class="nav-item-label">Acme, Inc.</span>
+            <span class="account-badge">8</span>
+            <div class="account-checkmark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+          </div>
+          
+          <div class="account-item nav-item" data-account="cactus-practice">
+            <div class="nav-item-icon">
+              <div class="account-avatar" data-initials="CP" data-color="#4caf50"></div>
+            </div>
+            <span class="nav-item-label">Cactus Practice</span>
+          </div>
+          
+          <div class="account-item nav-item" data-account="lil-fatsos">
+            <div class="nav-item-icon">
+              <div class="account-avatar" data-initials="LF" data-color="#ff9800"></div>
+            </div>
+            <span class="nav-item-label">Lil'Fatsos</span>
+            <span class="account-badge">3</span>
+          </div>
+          
+          <!-- Add Account Button -->
+          <div class="add-account-button nav-item" id="addAccountButton">
+            <div class="nav-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </div>
+            <span class="nav-item-label">Add account</span>
+          </div>
+        </div>
+        
+        <!-- Add Account Popover -->
+        <div class="add-account-popover" id="addAccountPopover">
+          <div class="popover-option nav-item">
+            <div class="nav-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </div>
+            <span class="nav-item-label">Create account</span>
+          </div>
+          
+          <div class="popover-option nav-item">
+            <div class="nav-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 21h18"/>
+                <path d="M5 21V7l8-4v18"/>
+                <path d="M19 21V11l-6-4"/>
+              </svg>
+            </div>
+            <span class="nav-item-label">Create organization</span>
+          </div>
+        </div>
       </div>
     </div>
 
