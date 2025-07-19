@@ -318,12 +318,31 @@
      /* Fix alignment for account panel nav items */
      .account-panel .nav-item {
        height: 32px; /* Increase height to accommodate 24px avatars + padding */
+       max-height: 32px; /* Maximum height constraint including hover states */
        padding: 4px 0; /* Add vertical padding for better alignment */
        display: flex;
        align-items: center;
        width: 200px; /* Fixed width - prevents resizing during panel transition */
        min-width: 200px; /* Ensure minimum width is maintained */
        flex-shrink: 0; /* Prevent shrinking */
+       box-sizing: border-box; /* Include padding and borders in height calculation */
+       overflow: hidden; /* Prevent content from expanding beyond max height */
+     }
+     
+     /* Ensure hover states also respect 32px max height */
+     .account-panel .nav-item:hover,
+     .account-panel .nav-item.active,
+     .account-panel .nav-item.popover-open {
+       max-height: 32px;
+       overflow: hidden;
+     }
+     
+     /* Ensure pseudo-elements for hover effects stay within bounds */
+     .account-panel .nav-item::before,
+     .account-panel .nav-item:hover::before {
+       max-height: 32px;
+       overflow: hidden;
+       box-sizing: border-box;
      }
      
      .account-panel .nav-item-icon {
@@ -510,6 +529,9 @@
        border-radius: var(--radius-sm);
        cursor: pointer;
        transition: background-color 0.15s ease;
+       max-height: 32px; /* Match account panel nav items max height */
+       overflow: hidden;
+       box-sizing: border-box;
      }
      
      .popover-option:last-child {
@@ -519,6 +541,8 @@
      /* Popover option hover states */
      .popover-option:hover {
        background-color: var(--neutral-50);
+       max-height: 32px; /* Ensure hover doesn't exceed height limit */
+       overflow: hidden;
      }
      
      .popover-option:hover .nav-item-label {
