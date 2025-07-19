@@ -753,21 +753,24 @@
             isOrganization: true,
             subAccounts: 8,
             color: '#3B82F6',
-            initials: 'AI'
+            initials: 'AI',
+            lastUsed: Date.now() // Currently active
           },
           'cactus-practice': {
             name: 'Cactus Practice',
             isOrganization: false,
             subAccounts: 0,
             color: '#10B981',
-            initials: 'CP'
+            initials: 'CP',
+            lastUsed: Date.now() - (24 * 60 * 60 * 1000) // 1 day ago
           },
           'lil-fatsos': {
             name: 'Lil\'Fatsos',
             isOrganization: true,
             subAccounts: 3,
             color: '#F59E0B',
-            initials: 'LF'
+            initials: 'LF',
+            lastUsed: Date.now() - (7 * 24 * 60 * 60 * 1000) // 7 days ago
           }
         };
         
@@ -789,8 +792,12 @@
           const account = accounts[accountId];
           if (!account) return;
           
+          // Update lastUsed timestamp
+          account.lastUsed = Date.now();
+          
           // Update UI
           updateActiveAccount(accountId);
+          reorderAccountList(accountId);
           updateNavAccountSwitcher(account);
           
           // Close account panel
@@ -811,6 +818,29 @@
           
           currentAccount = accountId;
           console.log('Switched to account:', account.name);
+        }
+        
+        function reorderAccountList(activeAccountId) {
+          const accountGroup = document.querySelector('.account-group');
+          const addAccountButton = document.getElementById('addAccountButton');
+          
+          // Get all account items except the add button
+          const accountItems = Array.from(accountGroup.querySelectorAll('.account-item:not(.add-account-button)'));
+          
+          // Sort accounts: active first, then by recency
+          const sortedAccountIds = Object.keys(accounts).sort((a, b) => {
+            if (a === activeAccountId) return -1;
+            if (b === activeAccountId) return 1;
+            return accounts[b].lastUsed - accounts[a].lastUsed;
+          });
+          
+          // Reorder DOM elements
+          sortedAccountIds.forEach(accountId => {
+            const accountElement = accountGroup.querySelector(`[data-account="${accountId}"]`);
+            if (accountElement) {
+              accountGroup.insertBefore(accountElement, addAccountButton);
+            }
+          });
         }
         
         function updateActiveAccount(accountId) {
@@ -872,6 +902,9 @@
             isPopoverOpen = false;
           });
         });
+        
+        // Initialize account list order
+        reorderAccountList(currentAccount);
         
       });
     </script>
