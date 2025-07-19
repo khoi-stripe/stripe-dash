@@ -940,7 +940,6 @@
           }
           
           currentAccount = accountId;
-          console.log('Switched to account:', account.name);
         }
         
         function reorderAccountList(activeAccountId) {
@@ -983,10 +982,8 @@
           // This would update the nav panel account switcher
           // For now, we'll just log the behavior
           if (account.isOrganization && account.subAccounts > 0) {
-            console.log(`Nav account switcher: Show dropdown for ${account.name} (${account.subAccounts} sub-accounts)`);
             // TODO: Make account switcher clickable and show down arrow
           } else {
-            console.log(`Nav account switcher: Show ${account.name} without dropdown (no sub-accounts)`);
             // TODO: Make account switcher non-clickable and hide down arrow
           }
         }
@@ -1033,7 +1030,6 @@
         document.querySelectorAll('.popover-option').forEach(option => {
           option.addEventListener('click', function() {
             const label = this.querySelector('.nav-item-label').textContent;
-            console.log('Clicked:', label);
             // Close popover
             addAccountPopover.classList.remove('show');
             isPopoverOpen = false;
@@ -1378,7 +1374,6 @@
         ],
         variant: '2-line',
         onAccountChange: (account) => {
-          console.log('Account switched to:', account.name);
           // Handle account switching logic here
         }
       }
