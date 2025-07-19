@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe Design System Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neutral-900: #0F172A;
+      --neutral-800: #1E293B;
+      --neutral-700: #334155;
+      --neutral-600: #475569;
+      --neutral-500: #64748B;
+      --neutral-400: #94A3B8;
+      --neutral-300: #CBD5E1;
+      --neutral-200: #E2E8F0;
+      --neutral-100: #F1F5F9;
+      --neutral-50: #F8FAFC;
+      --neutral-25: #FCFCFD;
+      
+      --brand-600: #635BFF;
+      --brand-500: #7C7CFF;
+      --brand-400: #9B9BFF;
+      
+      --green-600: #059669;
+      --green-500: #10B981;
+      
+      --font-family-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-size-12: 0.75rem;
+      --font-size-14: 0.875rem;
+      --font-size-16: 1rem;
+      --font-size-18: 1.125rem;
+      --font-size-20: 1.25rem;
+      --font-size-24: 1.5rem;
+      --font-size-32: 2rem;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--neutral-25);
+      color: var(--neutral-900);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid var(--neutral-200);
+      padding: 24px 0;
+      margin-bottom: 48px;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--brand-600);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-16);
+    }
+
+    .logo-text {
+      font-size: var(--font-size-20);
+      font-weight: var(--font-weight-semibold);
+      color: var(--neutral-900);
+    }
+
+    .badge {
+      background: var(--green-500);
+      color: white;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-12);
+      font-weight: var(--font-weight-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .hero h1 {
+      font-size: var(--font-size-32);
+      font-weight: var(--font-weight-semibold);
+      color: var(--neutral-900);
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: var(--font-size-18);
+      color: var(--neutral-600);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .sections {
+      display: grid;
+      gap: 48px;
+      margin-bottom: 64px;
+    }
+
+    .section {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--neutral-200);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-header {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--neutral-200);
+      background: var(--neutral-50);
+    }
+
+    .section-title {
+      font-size: var(--font-size-20);
+      font-weight: var(--font-weight-semibold);
+      color: var(--neutral-900);
+      margin-bottom: 4px;
+    }
+
+    .section-description {
+      font-size: var(--font-size-14);
+      color: var(--neutral-600);
+    }
+
+    .section-content {
+      padding: 32px;
+    }
+
+    .prototype-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .prototype-card {
+      display: block;
+      text-decoration: none;
+      background: var(--neutral-25);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prototype-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--brand-400);
+    }
+
+    .prototype-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--brand-600), var(--brand-400));
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .prototype-card:hover::before {
+      opacity: 1;
+    }
+
+    .prototype-title {
+      font-size: var(--font-size-18);
+      font-weight: var(--font-weight-semibold);
+      color: var(--neutral-900);
+      margin-bottom: 8px;
+    }
+
+    .prototype-description {
+      font-size: var(--font-size-14);
+      color: var(--neutral-600);
+      margin-bottom: 16px;
+    }
+
+    .prototype-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-12);
+      color: var(--neutral-500);
+    }
+
+    .prototype-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green-500);
+    }
+
+    .prototype-arrow {
+      transition: transform 0.2s ease;
+    }
+
+    .prototype-card:hover .prototype-arrow {
+      transform: translateX(4px);
+    }
+
+    .component-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .component-item {
+      display: block;
+      text-decoration: none;
+      background: var(--neutral-50);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .component-item:hover {
+      background: white;
+      border-color: var(--brand-300);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .component-name {
+      font-size: var(--font-size-14);
+      font-weight: var(--font-weight-medium);
+      color: var(--neutral-900);
+      margin-bottom: 4px;
+    }
+
+    .component-type {
+      font-size: var(--font-size-12);
+      color: var(--neutral-500);
+    }
+
+    footer {
+      text-align: center;
+      padding: 48px 0;
+      border-top: 1px solid var(--neutral-200);
+      color: var(--neutral-500);
+      font-size: var(--font-size-14);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .footer-links a {
+      color: var(--neutral-600);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--brand-600);
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: var(--font-size-24);
+      }
+
+      .prototype-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .component-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">S</div>
+          <span class="logo-text">Design System</span>
+        </div>
+        <div class="badge">Live Prototypes</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Stripe Design System Prototypes</h1>
+      <p>Explore interactive prototypes and components built for modern web applications. Each prototype demonstrates key design patterns and interaction models.</p>
+    </section>
+
+    <div class="sections">
+      <!-- Main Prototypes -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Interactive Prototypes</h2>
+          <p class="section-description">Full-featured prototypes showcasing complete user experiences</p>
+        </div>
+        <div class="section-content">
+          <div class="prototype-grid">
+            <a href="prototypes/dash-chrome/" class="prototype-card">
+              <h3 class="prototype-title">Dash Chrome</h3>
+              <p class="prototype-description">Complete dashboard interface with collapsible navigation, account switching, and responsive design.</p>
+              <div class="prototype-meta">
+                <div class="prototype-status">
+                  <span class="status-dot"></span>
+                  <span>Production Ready</span>
+                </div>
+                <span class="prototype-arrow">→</span>
+              </div>
+            </a>
+
+            <a href="prototypes/typography-showcase/" class="prototype-card">
+              <h3 class="prototype-title">Typography Showcase</h3>
+              <p class="prototype-description">Comprehensive demonstration of typography scales, weights, and text styling across the design system.</p>
+              <div class="prototype-meta">
+                <div class="prototype-status">
+                  <span class="status-dot"></span>
+                  <span>Reference</span>
+                </div>
+                <span class="prototype-arrow">→</span>
+              </div>
+            </a>
+
+            <a href="prototypes/color-showcase/" class="prototype-card">
+              <h3 class="prototype-title">Color Showcase</h3>
+              <p class="prototype-description">Visual exploration of color palettes, semantic tokens, and accessibility considerations.</p>
+              <div class="prototype-meta">
+                <div class="prototype-status">
+                  <span class="status-dot"></span>
+                  <span>Reference</span>
+                </div>
+                <span class="prototype-arrow">→</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Component Library -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Component Library</h2>
+          <p class="section-description">Reusable components and utilities for building consistent interfaces</p>
+        </div>
+        <div class="section-content">
+          <div class="component-list">
+            <div class="component-item">
+              <div class="component-name">Account Switcher</div>
+              <div class="component-type">Interactive Component</div>
+            </div>
+            <div class="component-item">
+              <div class="component-name">Navigation Items</div>
+              <div class="component-type">UI Component</div>
+            </div>
+            <div class="component-item">
+              <div class="component-name">Dashboard Grid</div>
+              <div class="component-type">Layout Component</div>
+            </div>
+            <div class="component-item">
+              <div class="component-name">Header</div>
+              <div class="component-type">Layout Component</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Other Resources -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Additional Resources</h2>
+          <p class="section-description">Documentation, examples, and development tools</p>
+        </div>
+        <div class="section-content">
+          <div class="prototype-grid">
+            <a href="dashboard/" class="prototype-card">
+              <h3 class="prototype-title">Dashboard Demo</h3>
+              <p class="prototype-description">Example dashboard implementation using the component library and design tokens.</p>
+              <div class="prototype-meta">
+                <div class="prototype-status">
+                  <span class="status-dot"></span>
+                  <span>Example</span>
+                </div>
+                <span class="prototype-arrow">→</span>
+              </div>
+            </a>
+
+            <a href="docs/" class="prototype-card">
+              <h3 class="prototype-title">Documentation</h3>
+              <p class="prototype-description">Design guidelines, usage patterns, and implementation details for the design system.</p>
+              <div class="prototype-meta">
+                <div class="prototype-status">
+                  <span class="status-dot"></span>
+                  <span>Documentation</span>
+                </div>
+                <span class="prototype-arrow">→</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/khoi-stripe/stripe-dash">GitHub Repository</a>
+        <a href="shared/components/">Component Source</a>
+        <a href="prototypes/">All Prototypes</a>
+      </div>
+      <p>Built with modern web standards and design system principles</p>
+    </div>
+  </footer>
+</body>
+</html> 
