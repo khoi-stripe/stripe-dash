@@ -228,6 +228,19 @@
        max-width: none;
      }
      
+     /* Hide hamburger when nav panel is collapsed */
+     .nav-panel.collapsed .hamburger-button {
+       display: none;
+     }
+     
+     .nav-panel.collapsed .account-switcher-container {
+       gap: 0 !important;
+     }
+     
+     .nav-panel.collapsed #nav-account-switcher {
+       width: 100% !important;
+     }
+     
      /* Account switcher takes full width by default */
      #nav-account-switcher {
        margin-bottom: 0;
@@ -236,6 +249,37 @@
      }
      
      /* Remove the original margin from account switcher */
+
+     /* Account Panel */
+     .account-panel {
+       position: fixed;
+       top: 0;
+       left: -240px; /* Hidden by default */
+       width: 240px;
+       height: 100vh;
+       background: var(--color-bg-nav);
+       border-right: 1px solid var(--neutral-200);
+       display: flex;
+       flex-direction: column;
+       transition: left 0.3s ease;
+       z-index: 1000; /* Above nav panel */
+     }
+     
+     .account-panel.open {
+       left: 0; /* Slide in */
+     }
+     
+     .account-panel-header {
+       padding: 20px;
+       border-bottom: 1px solid var(--neutral-200);
+       background: var(--color-bg-nav);
+     }
+     
+     .account-panel-content {
+       flex: 1;
+       padding: 20px;
+       overflow-y: auto;
+     }
 
      /* Content Panel */
      .content-panel {
@@ -480,13 +524,40 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const navPanel = document.getElementById('navPanel');
+        const accountPanel = document.getElementById('accountPanel');
         const collapseHandle = document.querySelector('.collapse-handle');
+        const hamburgerButton = document.querySelector('.hamburger-button');
         const tooltip = document.querySelector('.collapse-tooltip');
         
         let isCollapsed = false;
+        let isAccountPanelOpen = false;
+        
+        // Toggle account panel on hamburger click
+        hamburgerButton.addEventListener('click', function() {
+          isAccountPanelOpen = !isAccountPanelOpen;
+          
+          if (isAccountPanelOpen) {
+            // Open account panel and collapse nav panel
+            accountPanel.classList.add('open');
+            navPanel.classList.add('collapsed');
+            collapseHandle.classList.add('collapsed');
+            tooltip.textContent = 'Expand';
+            isCollapsed = true;
+          } else {
+            // Close account panel
+            accountPanel.classList.remove('open');
+            // Don't auto-expand nav panel - let user control it
+          }
+        });
         
         // Toggle navigation panel on handle click
         collapseHandle.addEventListener('click', function() {
+          // If account panel is open, close it first
+          if (isAccountPanelOpen) {
+            accountPanel.classList.remove('open');
+            isAccountPanelOpen = false;
+          }
+          
           // Dismiss tooltip immediately and prevent hover
           collapseHandle.classList.add('no-hover');
           
@@ -510,6 +581,16 @@
     </script>
 </head>
 <body>
+  <!-- Account Panel -->
+  <div class="account-panel" id="accountPanel">
+    <div class="account-panel-header">
+      <!-- Empty for now -->
+    </div>
+    <div class="account-panel-content">
+      <!-- Empty for now -->
+    </div>
+  </div>
+
   <div class="layout-container">
          <!-- Navigation Panel -->
      <div class="nav-panel" id="navPanel">
