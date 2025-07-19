@@ -304,12 +304,19 @@
        cursor: default;
        pointer-events: none;
      }
-     
      .account-panel .account-item.nav-item.active:hover {
        background: transparent;
+     }
+     
+     /* White hover state for non-active account items */
+     .account-panel .account-item.nav-item:not(.active):hover {
+       background: white;
+     }
+     
+     .account-panel .add-account-button.nav-item:hover {
+       background: white;
      }     
-     /* Account Avatar */
-     .account-avatar {
+     /* Account Avatar */     .account-avatar {
        width: 24px;
        height: 24px;
        border-radius: 4px;
