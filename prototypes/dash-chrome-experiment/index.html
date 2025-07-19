@@ -74,6 +74,21 @@
        justify-content: center;
      }
      
+     /* Collapsed state: hide hamburger and reset account switcher */
+     .nav-panel.collapsed .account-switcher-container {
+       margin: 0 -20px 16px -20px;
+       display: flex;
+       justify-content: center;
+     }
+     
+     .nav-panel.collapsed .hamburger-button {
+       display: none;
+     }
+     
+     .nav-panel.collapsed #nav-account-switcher {
+       width: auto;
+     }
+     
      /* Disable animations for account switcher during nav collapse */
      #nav-account-switcher,
      #nav-account-switcher *,
@@ -161,8 +176,57 @@
      #nav-account-switcher .account-switcher-trigger:hover {
        background: var(--neutral-50);
      }
+     
+     /* Account Switcher Container with Hamburger */
+     .account-switcher-container {
+       position: relative;
+       display: flex;
+       align-items: center;
+       gap: 8px;
+       margin-bottom: 16px;
+     }
+     
+     .hamburger-button {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 24px;
+       height: 24px;
+       border: none;
+       background: transparent;
+       border-radius: var(--radius-sm);
+       cursor: pointer;
+       opacity: 0;
+       transform: translateX(-8px);
+       transition: all 0.2s ease;
+       color: var(--icon-default);
+       flex-shrink: 0;
+     }
+     
+     .hamburger-button:hover {
+       background: var(--neutral-50);
+       color: var(--neutral-700);
+     }
+     
+     .account-switcher-container:hover .hamburger-button {
+       opacity: 1;
+       transform: translateX(0);
+     }
+     
+     .account-switcher-container:hover #nav-account-switcher {
+       width: calc(100% - 32px); /* Account for hamburger (24px) + gap (8px) */
+     }
+     
+     .account-switcher-container:hover #nav-account-switcher .account-switcher-trigger {
+       max-width: none;
+     }
+     
+     /* Remove the original margin from account switcher */
+     #nav-account-switcher {
+       margin-bottom: 0;
+     }
 
-         /* Content Panel */
+     /* Content Panel */
      .content-panel {
        flex: 1;
        background: white;
@@ -444,7 +508,16 @@
      <div class="nav-panel" id="navPanel">
        <div style="padding: 12px 20px; flex: 1;">
          <!-- Account Switcher -->
-         <div id="nav-account-switcher"></div>
+         <div class="account-switcher-container">
+           <button class="hamburger-button" type="button">
+             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+               <line x1="3" y1="6" x2="21" y2="6"/>
+               <line x1="3" y1="12" x2="21" y2="12"/>
+               <line x1="3" y1="18" x2="21" y2="18"/>
+             </svg>
+           </button>
+           <div id="nav-account-switcher"></div>
+         </div>
          <div class="main-nav">
            <a href="#" class="nav-item active">
              <div class="nav-item-icon">
