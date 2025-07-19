@@ -261,8 +261,9 @@
      .account-panel {
        width: 0; /* Hidden by default */
        height: 100vh;
-       background: var(--color-bg-nav);
+       background: var(--neutral-50);
        border-right: 1px solid var(--neutral-200);
+       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
        display: flex;
        flex-direction: column;
        transition: width 0.3s ease;
@@ -272,13 +273,6 @@
      
      .account-panel.open {
        width: 240px; /* Expand to full width */
-     }
-     
-     .account-panel-header {
-       padding: 20px;
-       border-bottom: 1px solid var(--neutral-200);
-       background: var(--color-bg-nav);
-       flex-shrink: 0;
      }
      
      .account-panel-content {
@@ -590,9 +584,6 @@
   <div class="app-container">
     <!-- Account Panel -->
     <div class="account-panel" id="accountPanel">
-      <div class="account-panel-header">
-        <!-- Empty for now -->
-      </div>
       <div class="account-panel-content">
         <!-- Empty for now -->
       </div>
