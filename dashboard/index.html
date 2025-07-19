@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype Dashboard</title>
+  
+  <!-- Import shared styles -->
+  <link rel="stylesheet" href="../shared/styles/variables.css">
+  <link rel="stylesheet" href="../shared/styles/base.css">
+  <link rel="stylesheet" href="../shared/styles/typography.css">
+  <link rel="stylesheet" href="../shared/styles/components.css">
+  <link rel="stylesheet" href="../shared/styles/color-utilities.css">
+  
+  <style>
+    .hero {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      color: white;
+      padding: var(--space-2xl) 0;
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+    
+    .hero h1 {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-48);
+      font-weight: var(--font-weight-bold);
+      line-height: var(--line-height-56);
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-md);
+    }
+    
+    .hero p {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-18);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--line-height-28);
+      letter-spacing: -0.005em;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto var(--space-lg);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    
+    .stat-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-32);
+      font-weight: var(--font-weight-bold);
+      line-height: var(--line-height-40);
+      letter-spacing: -0.01em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-xs);
+    }
+    
+    .stat-label {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-14);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.005em;
+      color: var(--color-text-secondary);
+    }
+    
+    .prototype-grid {
+      margin-bottom: var(--space-xl);
+    }
+    
+    .quick-actions {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: var(--space-xl);
+    }
+    
+    @media (max-width: 768px) {
+      .hero {
+        padding: var(--space-xl) var(--space-md);
+      }
+      
+      .quick-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with navigation -->
+  <div data-header data-config='{"title": "Prototype Dashboard", "navigation": [{"label": "Dashboard", "href": "/dashboard", "active": true}, {"label": "Prototypes", "href": "/prototypes"}, {"label": "Components", "href": "/shared/components"}]}'></div>
+
+  <!-- Hero section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Welcome to Your Prototype Lab</h1>
+      <p>Experiment, iterate, and build amazing things. Your shared components and styles make it easy to prototype quickly while maintaining consistency.</p>
+      <div class="quick-actions">
+        <button class="btn btn-lg btn-secondary" onclick="createNewPrototype()">
+          🚀 New Prototype
+        </button>
+        <button class="btn btn-lg btn-ghost" onclick="openComponentLibrary()">
+          🧩 Component Library
+        </button>
+        <button class="btn btn-lg btn-ghost" onclick="viewDocumentation()">
+          📖 Documentation
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Stats overview -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="prototype-count">6</div>
+        <div class="stat-label">Active Prototypes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="component-count">12</div>
+        <div class="stat-label">Shared Components</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="experiment-count">7</div>
+        <div class="stat-label">Experiments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="last-update">2d</div>
+        <div class="stat-label">Last Update</div>
+      </div>
+    </section>
+
+    <!-- Recent prototypes -->
+    <section>
+      <h2>Recent Prototypes</h2>
+      <div id="prototype-grid" class="prototype-grid"></div>
+    </section>
+
+    <!-- Shared components showcase -->
+    <section>
+      <h2>Component Examples</h2>
+      <div id="component-examples" class="grid-3 gap-lg"></div>
+    </section>
+  </main>
+
+  <!-- Import shared components -->
+  <script type="module" src="../shared/components/header.js"></script>
+  <script type="module" src="../shared/components/dashboard-grid.js"></script>
+  <script type="module" src="../shared/utils/helpers.js"></script>
+  
+  <script type="module">
+    import { createDashboardGrid } from '../shared/components/dashboard-grid.js';
+    import { formatRelativeTime, storage } from '../shared/utils/helpers.js';
+
+    // Current prototype data
+    const prototypes = [
+      {
+        title: 'Dash Chrome',
+        subtitle: 'Two-panel layout with navigation',
+        content: 'Clean two-panel interface with collapsible nav sidebar, search header, and shared navigation component. Demonstrates the new reusable nav system.',
+        badge: 'New',
+        href: '../prototypes/dash-chrome/',
+        meta: formatRelativeTime(new Date(Date.now() - 5 * 60 * 1000)),
+        actions: [
+          { label: 'View', variant: 'btn-primary', onClick: 'window.open("../prototypes/dash-chrome/")' },
+          { label: 'Clone', onClick: 'clonePrototype("dash-chrome")' }
+        ]
+      },
+      {
+        title: 'E-commerce Checkout',
+        subtitle: 'Payment flow optimization',
+        content: 'Modern checkout experience with shared components and the new brand colors. Demonstrates form handling and interactive states.',
+        badge: 'Active',
+        href: '../prototypes/ecommerce-checkout/',
+        meta: formatRelativeTime(new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)),
+        actions: [
+          { label: 'View', variant: 'btn-primary', onClick: 'window.open("../prototypes/ecommerce-checkout/")' },
+          { label: 'Clone', onClick: 'clonePrototype("ecommerce-checkout")' }
+        ]
+      },
+      {
+        title: 'Typography Showcase',
+        subtitle: 'Complete type system',
+        content: 'Interactive showcase of all typography classes, font families, sizes, and weights. Includes utility classes and copy functionality.',
+        badge: 'Active',
+        href: '../prototypes/typography-showcase/',
+        meta: formatRelativeTime(new Date(Date.now() - 2 * 60 * 60 * 1000)),
+        actions: [
+          { label: 'View', variant: 'btn-primary', onClick: 'window.open("../prototypes/typography-showcase/")' },
+          { label: 'Clone', onClick: 'clonePrototype("typography-showcase")' }
+        ]
+      },
+      {
+        title: 'Color System Preview',
+        subtitle: 'Design token exploration',
+        content: 'Comprehensive color palette with semantic assignments, utility classes, and dark mode support. Perfect for validating design decisions.',
+        badge: 'Active',
+        href: '../prototypes/color-showcase/',
+        meta: formatRelativeTime(new Date(Date.now() - 4 * 60 * 60 * 1000)),
+        actions: [
+          { label: 'View', variant: 'btn-primary', onClick: 'window.open("../prototypes/color-showcase/")' },
+          { label: 'Clone', onClick: 'clonePrototype("color-showcase")' }
+        ]
+      },
+      {
+        title: 'Brand Color Tester',
+        subtitle: 'Purple scale exploration',
+        content: 'Interactive tool for testing different purple brand color scales. Used to validate the current brand color selection.',
+        badge: 'Reference',
+        href: '../prototypes/brand-color-tester/',
+        meta: formatRelativeTime(new Date(Date.now() - 6 * 60 * 60 * 1000)),
+        actions: [
+          { label: 'View', variant: 'btn-primary', onClick: 'window.open("../prototypes/brand-color-tester/")' },
+          { label: 'Archive', onClick: 'archivePrototype("brand-color-tester")' }
+        ]
+      },
+      {
+        title: 'Corrected Brand Preview',
+        subtitle: 'Final color validation',
+        content: 'Preview of the corrected purple brand color scale with exact anchor values. Shows final implementation across UI components.',
+        badge: 'Completed',
+        href: '../prototypes/corrected-brand-preview/',
+        meta: formatRelativeTime(new Date(Date.now() - 30 * 60 * 1000)),
+        actions: [
+          { label: 'View', variant: 'btn-primary', onClick: 'window.open("../prototypes/corrected-brand-preview/")' },
+          { label: 'Archive', onClick: 'archivePrototype("corrected-brand-preview")' }
+        ]
+      }
+    ];
+
+    // Component examples
+    const componentExamples = [
+      {
+        title: 'Button Variants',
+        content: `
+          <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <button class="btn btn-primary">Primary</button>
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-ghost">Ghost</button>
+          </div>
+        `
+      },
+      {
+        title: 'Form Elements',
+        content: `
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" placeholder="Enter your email">
+          </div>
+        `
+      },
+      {
+        title: 'Status Badges',
+        content: `
+          <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="badge badge-brand">Brand</span>
+            <span class="badge badge-success">Success</span>
+            <span class="badge badge-warning">Warning</span>
+            <span class="badge badge-error">Error</span>
+            <span class="badge badge-info">Info</span>
+          </div>
+        `
+      }
+    ];
+
+    // Initialize dashboard
+    function initDashboard() {
+      // Render prototype grid
+      const prototypeGrid = createDashboardGrid(prototypes, { columns: 'auto' });
+      document.getElementById('prototype-grid').appendChild(prototypeGrid);
+
+      // Render component examples
+      const componentGrid = document.getElementById('component-examples');
+      componentExamples.forEach(example => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3 class="card-title">${example.title}</h3>
+          <div class="card-content">${example.content}</div>
+        `;
+        componentGrid.appendChild(card);
+      });
+
+      // Update stats from localStorage or defaults
+      updateStats();
+    }
+
+    function updateStats() {
+      const stats = storage('dashboard-stats') || {
+        prototypes: prototypes.length,
+        components: 12,
+        experiments: 7,
+        lastUpdate: new Date().toISOString()
+      };
+
+      document.getElementById('prototype-count').textContent = stats.prototypes;
+      document.getElementById('component-count').textContent = stats.components;
+      document.getElementById('experiment-count').textContent = stats.experiments;
+      document.getElementById('last-update').textContent = formatRelativeTime(stats.lastUpdate);
+    }
+
+    // Global functions for button actions
+    window.createNewPrototype = function() {
+      const name = prompt('Enter prototype name:');
+      if (name) {
+        const slug = name.toLowerCase().replace(/\s+/g, '-');
+        window.open(`../prototypes/${slug}/`, '_blank');
+      }
+    };
+
+    window.openComponentLibrary = function() {
+      window.open('../shared/components/', '_blank');
+    };
+
+    window.viewDocumentation = function() {
+      window.open('../docs/', '_blank');
+    };
+
+    window.clonePrototype = function(prototypeId) {
+      const newName = prompt(`Enter name for cloned prototype (original: ${prototypeId}):`);
+      if (newName) {
+        alert(`Prototype "${prototypeId}" would be cloned as "${newName}"`);
+        // Here you would implement the actual cloning logic
+      }
+    };
+
+    window.archivePrototype = function(prototypeId) {
+      if (confirm(`Archive prototype "${prototypeId}"?`)) {
+        alert(`Prototype "${prototypeId}" has been archived`);
+        // Here you would implement the actual archiving logic
+      }
+    };
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDashboard);
+    } else {
+      initDashboard();
+    }
+  </script>
+</body>
+</html> 

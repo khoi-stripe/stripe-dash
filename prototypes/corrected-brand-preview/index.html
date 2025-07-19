@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corrected Brand Colors</title>
+  
+  <link rel="stylesheet" href="../../shared/styles/variables.css">
+  <link rel="stylesheet" href="../../shared/styles/base.css">
+  <link rel="stylesheet" href="../../shared/styles/typography.css">
+  <link rel="stylesheet" href="../../shared/styles/components.css">
+  <link rel="stylesheet" href="../../shared/styles/colors-preview.css">
+  
+  <style>
+    .preview-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--space-xl);
+    }
+    
+    .color-section {
+      margin-bottom: var(--space-2xl);
+      padding: var(--space-xl);
+      background-color: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+    }
+    
+    .brand-scale {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 2px;
+      margin: var(--space-lg) 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .color-swatch {
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-12);
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+      position: relative;
+    }
+    
+    .color-swatch:hover {
+      transform: scale(1.05);
+      z-index: 10;
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .swatch-number {
+      font-weight: var(--font-weight-bold);
+      margin-bottom: 2px;
+    }
+    
+    .swatch-hex {
+      font-size: var(--font-size-10);
+      opacity: 0.9;
+    }
+    
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+    }
+    
+    .example-card {
+      padding: var(--space-lg);
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--color-border-brand);
+      background-color: var(--color-bg-brand);
+    }
+    
+    .component-showcase {
+      display: grid;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+    
+    .showcase-row {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .color-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-12);
+    }
+    
+    .color-var {
+      padding: var(--space-sm);
+      background-color: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+    
+    .color-var:hover {
+      background-color: var(--color-border);
+    }
+    
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      background-color: var(--success-100);
+      color: var(--success-700);
+      border: 1px solid var(--success-200);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-12);
+      font-weight: var(--font-weight-semibold);
+    }
+  </style>
+</head>
+<body>
+  <div data-header data-config='{"title": "Corrected Brand Colors", "navigation": [{"label": "Dashboard", "href": "../../dashboard"}]}'></div>
+
+  <div class="preview-container">
+    <div class="text-center" style="margin-bottom: var(--space-xl);">
+      <h1 class="text-display-large">✅ Corrected Brand Colors</h1>
+      <p class="text-body-large text-subdued">Purple scale using your exact anchor values</p>
+      <div class="success-badge" style="margin-top: var(--space-md);">
+        ✓ Brand 50: #F7F5FD • Brand 900: #2F0E63
+      </div>
+    </div>
+
+    <!-- Corrected Brand Scale -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Corrected Brand Scale</h2>
+      <p class="text-body-medium text-subdued">Purple scale interpolated between your anchor colors</p>
+      
+      <div class="brand-scale">
+        <div class="color-swatch" style="background: var(--brand-50); color: var(--brand-900);" data-hex="#F7F5FD">
+          <span class="swatch-number">50</span>
+          <span class="swatch-hex">#F7F5FD</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-100); color: var(--brand-900);" data-hex="#EDE8FC">
+          <span class="swatch-number">100</span>
+          <span class="swatch-hex">#EDE8FC</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-200); color: var(--brand-900);" data-hex="#DDD2F9">
+          <span class="swatch-number">200</span>
+          <span class="swatch-hex">#DDD2F9</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-300); color: var(--brand-900);" data-hex="#C8B5F5">
+          <span class="swatch-number">300</span>
+          <span class="swatch-hex">#C8B5F5</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-400); color: white;" data-hex="#A788EE">
+          <span class="swatch-number">400</span>
+          <span class="swatch-hex">#A788EE</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-500); color: white;" data-hex="#8B5CF6">
+          <span class="swatch-number">500</span>
+          <span class="swatch-hex">#8B5CF6</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-600); color: white;" data-hex="#7C3AED">
+          <span class="swatch-number">600</span>
+          <span class="swatch-hex">#7C3AED</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-700); color: white;" data-hex="#6B21D6">
+          <span class="swatch-number">700</span>
+          <span class="swatch-hex">#6B21D6</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-800); color: white;" data-hex="#4C1D95">
+          <span class="swatch-number">800</span>
+          <span class="swatch-hex">#4C1D95</span>
+        </div>
+        <div class="color-swatch" style="background: var(--brand-900); color: white;" data-hex="#2F0E63">
+          <span class="swatch-number">900</span>
+          <span class="swatch-hex">#2F0E63</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Component Examples -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Component Examples</h2>
+      <p class="text-body-medium text-subdued">How the corrected brand colors look in real components</p>
+      
+      <div class="component-showcase">
+        <div class="showcase-row">
+          <h3 class="text-heading-small">Buttons:</h3>
+          <button class="btn" style="background: var(--brand-600); color: white; border: none;">Primary Button</button>
+          <button class="btn" style="background: var(--brand-500); color: white; border: none;">Secondary</button>
+          <button class="btn" style="background: transparent; color: var(--brand-600); border: 1px solid var(--brand-600);">Outline</button>
+        </div>
+        
+        <div class="showcase-row">
+          <h3 class="text-heading-small">Badges:</h3>
+          <span class="badge" style="background: var(--brand-100); color: var(--brand-700); border-color: var(--brand-200);">Primary</span>
+          <span class="badge" style="background: var(--brand-200); color: var(--brand-800); border-color: var(--brand-300);">Featured</span>
+          <span class="badge" style="background: var(--brand-600); color: white; border-color: var(--brand-600);">Premium</span>
+        </div>
+        
+        <div class="showcase-row">
+          <h3 class="text-heading-small">Text:</h3>
+          <span style="color: var(--brand-600);">Brand text color</span>
+          <span style="color: var(--brand-700);">Darker brand text</span>
+          <span style="color: var(--brand-500);">Lighter brand text</span>
+        </div>
+        
+        <div class="showcase-row">
+          <h3 class="text-heading-small">Links:</h3>
+          <a href="#" style="color: var(--brand-600);">Primary link</a>
+          <a href="#" style="color: var(--brand-700);">Darker link</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Examples -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Usage Examples</h2>
+      <p class="text-body-medium text-subdued">Different ways to use the brand colors effectively</p>
+      
+      <div class="examples-grid">
+        <div class="example-card">
+          <h3 class="text-heading-medium" style="color: var(--brand-700);">Brand Highlight Card</h3>
+          <p class="text-body-medium">This card uses brand-50 background with brand-200 border for a subtle branded look.</p>
+          <button class="btn" style="background: var(--brand-600); color: white; border: none; margin-top: var(--space-md);">Take Action</button>
+        </div>
+        
+        <div style="padding: var(--space-lg); background: var(--brand-600); color: white; border-radius: var(--radius-lg);">
+          <h3 class="text-heading-medium">Strong Brand Presence</h3>
+          <p class="text-body-medium" style="opacity: 0.9;">This uses brand-600 background for maximum impact and strong brand presence.</p>
+          <button class="btn" style="background: white; color: var(--brand-600); border: none; margin-top: var(--space-md);">Learn More</button>
+        </div>
+        
+        <div style="padding: var(--space-lg); background: var(--brand-100); border: 1px solid var(--brand-300); border-radius: var(--radius-lg);">
+          <h3 class="text-heading-medium" style="color: var(--brand-800);">Subtle Brand Touch</h3>
+          <p class="text-body-medium" style="color: var(--brand-700);">Using brand-100 background with brand-300 border for a gentle brand presence.</p>
+          <span class="badge" style="background: var(--brand-600); color: white; border: none; margin-top: var(--space-md);">Featured</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CSS Variables Reference -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">CSS Variables (Click to Copy)</h2>
+      <p class="text-body-medium text-subdued">All available brand color variables</p>
+      
+      <div class="color-info">
+        <div class="color-var" data-var="--brand-50">--brand-50: #F7F5FD</div>
+        <div class="color-var" data-var="--brand-100">--brand-100: #EDE8FC</div>
+        <div class="color-var" data-var="--brand-200">--brand-200: #DDD2F9</div>
+        <div class="color-var" data-var="--brand-300">--brand-300: #C8B5F5</div>
+        <div class="color-var" data-var="--brand-400">--brand-400: #A788EE</div>
+        <div class="color-var" data-var="--brand-500">--brand-500: #8B5CF6</div>
+        <div class="color-var" data-var="--brand-600">--brand-600: #7C3AED</div>
+        <div class="color-var" data-var="--brand-700">--brand-700: #6B21D6</div>
+        <div class="color-var" data-var="--brand-800">--brand-800: #4C1D95</div>
+        <div class="color-var" data-var="--brand-900">--brand-900: #2F0E63</div>
+        <div class="color-var" data-var="--color-primary">--color-primary (brand-600)</div>
+        <div class="color-var" data-var="--color-text-brand">--color-text-brand</div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="../../shared/components/header.js"></script>
+  <script>
+    // Copy functionality
+    document.querySelectorAll('.color-swatch, .color-var').forEach(element => {
+      element.addEventListener('click', () => {
+        const hex = element.dataset.hex || element.dataset.var || element.textContent.split(':')[0];
+        navigator.clipboard.writeText(hex).then(() => {
+          const original = element.innerHTML;
+          const isVar = element.classList.contains('color-var');
+          element.innerHTML = isVar ? 'Copied!' : '<span style="color: inherit;">Copied!</span>';
+          setTimeout(() => {
+            element.innerHTML = original;
+          }, 1000);
+        });
+      });
+    });
+  </script>
+</body>
+</html> 

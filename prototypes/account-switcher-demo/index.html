@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Switcher Demo</title>
+  
+  <!-- Import shared styles -->
+  <link rel="stylesheet" href="/shared/styles/variables.css">
+  <link rel="stylesheet" href="/shared/styles/base.css">
+  <link rel="stylesheet" href="/shared/styles/typography.css">
+  <link rel="stylesheet" href="/shared/styles/components.css">
+  
+  <style>
+    body {
+      padding: 40px;
+      font-family: var(--font-family-ui);
+      background: var(--neutral-25);
+    }
+    
+    .demo-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .demo-section {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      margin-bottom: 32px;
+      border: 1px solid var(--neutral-100);
+    }
+    
+    .demo-title {
+      font-size: var(--font-size-24);
+      font-weight: var(--font-weight-semibold);
+      color: var(--neutral-900);
+      margin-bottom: 8px;
+    }
+    
+    .demo-description {
+      font-size: var(--font-size-16);
+      color: var(--neutral-600);
+      margin-bottom: 24px;
+    }
+    
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    
+    .demo-label {
+      font-weight: var(--font-weight-medium);
+      color: var(--neutral-700);
+      min-width: 120px;
+    }
+    
+    .event-log {
+      background: var(--neutral-50);
+      padding: 16px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 14px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--neutral-200);
+    }
+    
+    .event-item {
+      margin-bottom: 4px;
+      color: var(--neutral-700);
+    }
+    
+    .event-time {
+      color: var(--neutral-500);
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <div class="demo-section">
+      <h1 class="demo-title">Account Switcher Component</h1>
+      <p class="demo-description">
+        A reusable component for switching between accounts/organizations with dropdown management actions. 
+        Supports 1-line and 2-line variants with different typography treatments.
+      </p>
+      
+      <div class="demo-row">
+        <span class="demo-label">1-Line Variant:</span>
+        <div id="account-switcher-1"></div>
+      </div>
+      
+      <div class="demo-row">
+        <span class="demo-label">2-Line Variant:</span>
+        <div id="account-switcher-2"></div>
+      </div>
+      
+      <div class="demo-row">
+        <span class="demo-label">Custom Accounts:</span>
+        <div id="account-switcher-3"></div>
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2 class="demo-title">Event Log</h2>
+      <p class="demo-description">
+        Account switching events will appear here:
+      </p>
+      <div id="event-log" class="event-log">
+        <div class="event-item">
+          <span class="event-time">--:--:--</span>
+          Component initialized
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2 class="demo-title">Usage</h2>
+      <pre style="background: var(--neutral-50); padding: 16px; border-radius: 8px; overflow-x: auto;"><code>// Include the component
+&lt;script src="/shared/components/account-switcher.js"&gt;&lt;/script&gt;
+
+// Initialize with 1-line variant
+const container = document.getElementById('account-switcher-container');
+const accountSwitcher = new AccountSwitcher(container, {
+  variant: '1-line', // or '2-line'
+  currentAccount: { id: 1, name: 'Acme, Inc.', type: 'organization' },
+  accounts: [
+    { id: 1, name: 'Acme, Inc.', type: 'organization' },
+    { id: 2, name: 'Beta Corp', type: 'organization' },
+    { id: 3, name: 'Personal', type: 'personal' }
+  ],
+  onAccountChange: (account) => {
+    console.log('Account changed to:', account);
+  }
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- Include the account switcher component -->
+  <script src="/shared/components/account-switcher.js"></script>
+
+  <script>
+    function logEvent(message) {
+      const eventLog = document.getElementById('event-log');
+      const time = new Date().toLocaleTimeString();
+      const eventItem = document.createElement('div');
+      eventItem.className = 'event-item';
+      eventItem.innerHTML = `<span class="event-time">${time}</span>${message}`;
+      eventLog.appendChild(eventItem);
+      eventLog.scrollTop = eventLog.scrollHeight;
+    }
+    
+    // 1-Line variant
+    const accountSwitcher1 = new AccountSwitcher(
+      document.getElementById('account-switcher-1'),
+      {
+        variant: '1-line',
+        onAccountChange: (account) => {
+          logEvent(`1-Line switcher: Account changed to "${account.name}"`);
+        }
+      }
+    );
+    
+    // 2-Line variant (default)
+    const accountSwitcher2 = new AccountSwitcher(
+      document.getElementById('account-switcher-2'),
+      {
+        variant: '2-line',
+        onAccountChange: (account) => {
+          logEvent(`2-Line switcher: Account changed to "${account.name}" (${account.type})`);
+        }
+      }
+    );
+    
+    // Custom accounts with 2-line variant
+    const accountSwitcher3 = new AccountSwitcher(
+      document.getElementById('account-switcher-3'),
+      {
+        variant: '2-line',
+        currentAccount: { id: 5, name: 'Tech Startup', type: 'organization' },
+        accounts: [
+          { id: 5, name: 'Tech Startup', type: 'organization' },
+          { id: 6, name: 'Design Agency', type: 'organization' },
+          { id: 7, name: 'Consulting LLC', type: 'organization' },
+          { id: 8, name: 'John Doe', type: 'personal' },
+          { id: 9, name: 'Freelance Work', type: 'personal' }
+        ],
+        onAccountChange: (account) => {
+          logEvent(`Custom switcher: Account changed to "${account.name}" (${account.type})`);
+        }
+      }
+    );
+    
+    logEvent('All account switchers initialized');
+  </script>
+</body>
+</html> 
