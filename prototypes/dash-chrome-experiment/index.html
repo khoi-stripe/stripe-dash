@@ -338,6 +338,32 @@
        background-color: transparent !important;
      }
      
+     /* Completely remove any brand backgrounds from account panel */
+     .account-panel .nav-item.active::before,
+     .account-panel .nav-item.active:hover::before,
+     .account-panel .account-item.active::before,
+     .account-panel .account-item.active:hover::before,
+     .account-panel .account-item.nav-item.active::before,
+     .account-panel .account-item.nav-item.active:hover::before {
+       background-color: transparent !important;
+       background: transparent !important;
+     }
+     
+     /* Nuclear option: remove all purple/brand colors from account panel nav items */
+     .account-panel .nav-item::before,
+     .account-panel .nav-item:hover::before,
+     .account-panel .account-item::before,
+     .account-panel .account-item:hover::before {
+       background-color: transparent !important;
+       background: transparent !important;
+     }
+     
+     /* Re-enable white hovers for non-active items */
+     .account-panel .account-item.nav-item:not(.active):hover::before {
+       background-color: white !important;
+       background: white !important;
+     }
+     
      /* Disable default nav-item hover for account panel */
      .account-panel .nav-item:hover::before {
        background-color: transparent !important;
