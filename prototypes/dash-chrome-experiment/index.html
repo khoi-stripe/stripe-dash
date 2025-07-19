@@ -400,10 +400,20 @@
        padding: 8px;
        z-index: 10;
        cursor: pointer;
+       transition: left 0.3s ease;
      }
      
      .collapse-handle.collapsed {
        left: 64px; /* Adjust position when collapsed */
+     }
+     
+     /* When account panel is open, move collapse handle to stay with nav panel */
+     .collapse-handle.account-panel-open {
+       left: 480px; /* 240px (account panel) + 240px (nav panel) */
+     }
+     
+     .collapse-handle.account-panel-open.collapsed {
+       left: 304px; /* 240px (account panel) + 64px (collapsed nav panel) */
      }
      
      .collapse-line {
@@ -540,11 +550,13 @@
             accountPanel.classList.add('open');
             navPanel.classList.add('collapsed');
             collapseHandle.classList.add('collapsed');
+            collapseHandle.classList.add('account-panel-open');
             tooltip.textContent = 'Expand';
             isCollapsed = true;
           } else {
             // Close account panel
             accountPanel.classList.remove('open');
+            collapseHandle.classList.remove('account-panel-open');
             // Don't auto-expand nav panel - let user control it
           }
         });
@@ -554,6 +566,7 @@
           // If account panel is open, close it first
           if (isAccountPanelOpen) {
             accountPanel.classList.remove('open');
+            collapseHandle.classList.remove('account-panel-open');
             isAccountPanelOpen = false;
           }
           
