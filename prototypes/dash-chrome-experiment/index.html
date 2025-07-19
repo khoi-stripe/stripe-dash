@@ -359,7 +359,7 @@
      /* Account Badge */
      .account-badge {
        position: absolute;
-       right: 32px;
+       right: 8px;
        top: 50%;
        transform: translateY(-50%);
        background: var(--neutral-100);
@@ -372,24 +372,6 @@
        line-height: 1.2;
        min-width: 16px;
        text-align: center;
-     }
-     
-     /* Account Checkmark */
-     .account-checkmark {
-       position: absolute;
-       right: 8px;
-       top: 50%;
-       transform: translateY(-50%);
-       width: 24px;
-       height: 24px;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       color: var(--icon-default);
-     }
-     
-     .account-item:not(.active) .account-checkmark {
-       display: none;
      }
      
      /* Add Account Popover */
@@ -929,12 +911,6 @@
             </div>
             <span class="nav-item-label">Acme, Inc.</span>
             <span class="account-badge">8</span>
-            <div class="account-checkmark">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="m9 12 2 2 4-4"/>
-              </svg>
-            </div>
           </div>
           
           <div class="account-item nav-item" data-account="cactus-practice">
