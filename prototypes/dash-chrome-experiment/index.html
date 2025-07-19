@@ -285,7 +285,7 @@
      .account-group {
        display: flex;
        flex-direction: column;
-       gap: 4px;
+       gap: 8px;
        position: relative;
      }
      
@@ -299,6 +299,15 @@
        position: relative;
      }
      
+     /* Only active account is non-interactive */
+     .account-panel .account-item.nav-item.active {
+       cursor: default;
+       pointer-events: none;
+     }
+     
+     .account-panel .account-item.nav-item.active:hover {
+       background: transparent;
+     }     
      /* Account Avatar */
      .account-avatar {
        width: 24px;
@@ -481,14 +490,14 @@
      .main-nav {
        display: flex;
        flex-direction: column;
-       gap: 4px;
+       gap: 8px;
      }
      
      /* Workloads Navigation */
      .workloads-nav {
        display: flex;
        flex-direction: column;
-       gap: 4px;
+       gap: 8px;
        margin-top: 24px;
      }
      
@@ -496,7 +505,7 @@
      .bottom-nav {
        display: flex;
        flex-direction: column;
-       gap: 4px;
+       gap: 8px;
        padding: 12px 20px;
        margin-top: auto; /* This pushes it to the bottom */
      }
@@ -868,29 +877,33 @@
           }
         }
         
-        // Add account popover functionality
-        addAccountButton.addEventListener('click', function(e) {
-          e.stopPropagation();
-          togglePopover();
+        // Add account popover functionality - hover-based
+        let popoverTimeout;
+        
+        addAccountButton.addEventListener('mouseenter', function() {
+          clearTimeout(popoverTimeout);
+          addAccountPopover.classList.add('show');
+          isPopoverOpen = true;
         });
         
-        function togglePopover() {
-          isPopoverOpen = !isPopoverOpen;
-          
-          if (isPopoverOpen) {
-            addAccountPopover.classList.add('show');
-          } else {
-            addAccountPopover.classList.remove('show');
-          }
-        }
-        
-        // Close popover when clicking outside
-        document.addEventListener('click', function(e) {
-          if (isPopoverOpen && !addAccountPopover.contains(e.target) && !addAccountButton.contains(e.target)) {
-            addAccountPopover.classList.remove('show');
-            isPopoverOpen = false;
-          }
+        addAccountButton.addEventListener('mouseleave', function() {
+          popoverTimeout = setTimeout(() => {
+            if (!addAccountPopover.matches(':hover')) {
+              addAccountPopover.classList.remove('show');
+              isPopoverOpen = false;
+            }
+          }, 100);
         });
+        
+        // Keep popover open when hovering over it
+        addAccountPopover.addEventListener('mouseenter', function() {
+          clearTimeout(popoverTimeout);
+        });
+        
+        addAccountPopover.addEventListener('mouseleave', function() {
+          addAccountPopover.classList.remove('show');
+          isPopoverOpen = false;
+        });        
         
         // Popover option clicks
         document.querySelectorAll('.popover-option').forEach(option => {
