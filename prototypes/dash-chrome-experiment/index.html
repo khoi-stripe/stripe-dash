@@ -375,6 +375,13 @@
        background: transparent !important;
      }
      
+     /* Add divider between active account and other accounts */
+     .account-panel .account-item.nav-item.active {
+       border-bottom: 1px solid rgba(0, 39, 77, 0.08);
+       margin-bottom: 8px;
+       padding-bottom: 8px;
+     }
+     
      /* MAXIMUM SPECIFICITY: This should override EVERYTHING */
      .account-panel .account-panel-content .account-group .account-item.nav-item.active,
      .account-panel .account-panel-content .account-group .account-item.nav-item.active:hover,
