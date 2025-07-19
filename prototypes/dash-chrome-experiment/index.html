@@ -484,10 +484,9 @@
      
      /* Add Account Popover */
      .add-account-popover {
-       position: absolute;
+       position: fixed; /* Changed from absolute to fixed to escape clipping */
        top: 0;
-       left: 100%;
-       margin-left: 8px;
+       left: 0;
        border-radius: 8px;
        background: #FFF;
        box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
@@ -995,8 +994,18 @@
         // Add account popover functionality - hover-based
         let popoverTimeout;
         
+        function positionPopover() {
+          const buttonRect = addAccountButton.getBoundingClientRect();
+          const popover = addAccountPopover;
+          
+          // Position popover to the right of the button with 8px margin
+          popover.style.top = `${buttonRect.top}px`;
+          popover.style.left = `${buttonRect.right + 8}px`;
+        }
+        
         addAccountButton.addEventListener('mouseenter', function() {
           clearTimeout(popoverTimeout);
+          positionPopover(); // Position before showing
           addAccountPopover.classList.add('show');
           isPopoverOpen = true;
         });
@@ -1033,6 +1042,19 @@
         
         // Initialize account list order
         reorderAccountList(currentAccount);
+        
+        // Reposition popover on window resize/scroll
+        window.addEventListener('resize', () => {
+          if (isPopoverOpen) {
+            positionPopover();
+          }
+        });
+        
+        window.addEventListener('scroll', () => {
+          if (isPopoverOpen) {
+            positionPopover();
+          }
+        });
         
       });
     </script>
