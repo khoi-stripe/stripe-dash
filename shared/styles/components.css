@@ -292,7 +292,7 @@
 
 .status-dot.success { background-color: var(--color-success); }
 .status-dot.warning { background-color: var(--color-warning); }
-.status-dot.error { background-color: var(--color-error); }
+.status-dot.error { background-color: var(--color-error); } 
 
 /* ========================================
    ICON GUIDELINES (Global Standard)
@@ -548,6 +548,7 @@
   position: fixed;
   top: 0;
   left: 0;
+  border: none;
   border-radius: 8px;
   background: #FFF;
   box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);

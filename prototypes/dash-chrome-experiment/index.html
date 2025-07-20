@@ -104,11 +104,6 @@
        transition: none !important;
      }
      
-     /* Custom pinkish red avatar color */
-     #nav-account-switcher .account-avatar {
-       background-color: #E11D48 !important; /* Pinkish red */
-     }
-     
      /* Nav item tooltips for collapsed state */
      .workload-item {
        position: relative;
@@ -134,7 +129,7 @@
        transition: opacity 0.2s ease, visibility 0.2s ease;
        pointer-events: none;
        z-index: 99999;
-       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+       box-shadow: var(--shadow-md);
        border: 1px solid rgba(255, 255, 255, 0.1);
      }
      
@@ -198,6 +193,11 @@
        gap: 8px;
      }
      
+     /* Keep container gap when account switcher is open */
+     .account-switcher-container.account-switcher-open {
+       gap: 8px;
+     }
+     
      .hamburger-button {
        display: flex;
        align-items: center;
@@ -227,11 +227,28 @@
        width: 24px;
      }
      
+     /* Keep hamburger visible when account switcher is open */
+     .account-switcher-container.account-switcher-open .hamburger-button {
+       opacity: 1;
+       transform: translateX(0);
+       width: 24px;
+     }
+     
      .account-switcher-container:hover #nav-account-switcher {
        width: calc(100% - 32px); /* Account for hamburger (24px) + gap (8px) */
      }
      
+     /* Keep account switcher sized for hamburger when popover is open */
+     .account-switcher-container.account-switcher-open #nav-account-switcher {
+       width: calc(100% - 32px);
+     }
+     
      .account-switcher-container:hover #nav-account-switcher .account-switcher-trigger {
+       max-width: none;
+     }
+     
+     /* Keep account switcher trigger unsized when popover is open */
+     .account-switcher-container.account-switcher-open #nav-account-switcher .account-switcher-trigger {
        max-width: none;
      }
      
@@ -261,7 +278,7 @@
      .account-panel {
        width: 0; /* Hidden by default */
        height: 100vh;
-       background: var(--neutral-50);
+       background: var(--color-background);
        border-right: 1px solid rgba(0, 39, 77, 0.08);
        display: flex;
        flex-direction: column;
@@ -276,38 +293,67 @@
      
      .account-panel-content {
        flex: 1;
-       padding: 20px;
+       padding: 12px 20px;
        overflow: visible; /* Allow popover to show outside bounds */
        position: relative;
+       display: flex;
+       flex-direction: column;
      }
      
      /* Account Group */
      .account-group {
        display: flex;
        flex-direction: column;
-       gap: 8px;
+       gap: 6px;
        position: relative;
-     }
-     
-     /* Divider after active account with 12px spacing above and below */
-     .account-panel .account-item.nav-item.active {
-       margin-bottom: 17px; /* Add 17px to existing 8px gap = 25px total (12px + 1px line + 12px) */
-     }
-     
-     .account-panel .account-item.nav-item.active::after {
-       content: '';
-       position: absolute;
-       bottom: -12px; /* Position line 12px below the active account */
-       left: 0;
-       right: 0;
-       height: 1px;
-       background-color: rgba(0, 39, 77, 0.08); /* Same as panel border */
-       pointer-events: none;
      }
      
      /* Account Item Extensions */
-     .account-item {
+     .account-panel .nav-item {
        position: relative;
+       display: flex;
+       align-items: center;
+       gap: 8px;
+       padding: 0;
+       color: var(--icon-default);
+       text-decoration: none;
+       transition: all var(--transition-fast);
+       border-radius: var(--radius-sm);
+       cursor: pointer;
+       height: 24px;
+       width: 200px; /* Fixed width - prevents resizing during panel transition */
+       min-width: 200px; /* Ensure minimum width is maintained */
+       flex-shrink: 0; /* Prevent shrinking */
+       box-sizing: border-box;
+     }
+     
+     /* Account-specific items inherit from nav-item above */
+     .account-panel .account-item {
+       /* Account items inherit from .nav-item above */
+       height: 24px; /* Ensure account items are exactly 24px high */
+     }
+     
+     /* Account item specific floating hover (4px extension) */
+     .account-panel .account-item::before {
+       content: '';
+       position: absolute;
+       top: -4px;    /* Extends 4px above */
+       left: -4px;   /* Extends 4px left */
+       right: -4px;  /* Extends 4px right */
+       bottom: -4px; /* Extends 4px below */
+       background-color: transparent;
+       border-radius: 8px;
+       transition: background-color var(--transition-fast);
+       z-index: 0;
+       pointer-events: none;
+       display: block;
+     }
+     
+     /* Ensure account item content is above floating hover */
+     .account-panel .account-item .nav-item-icon,
+     .account-panel .account-item .nav-item-label {
+       position: relative;
+       z-index: 1;
      }
      
      /* Add Account Button */
@@ -315,15 +361,44 @@
        position: relative;
      }
      
-     /* Fix alignment for account panel nav items */
-     .account-panel .nav-item {
-       height: 32px; /* Increase height to accommodate 24px avatars + padding */
-       padding: 4px 0; /* Add vertical padding for better alignment */
+     /* Pin bottom Create button to bottom of panel */
+     .add-account-button.bottom-pinned {
+       margin-top: auto;
+     }
+     
+     /* Pin user section to bottom of panel */
+     .user-section.bottom-pinned {
+       margin-top: auto;
        display: flex;
-       align-items: center;
-       width: 200px; /* Fixed width - prevents resizing during panel transition */
-       min-width: 200px; /* Ensure minimum width is maintained */
-       flex-shrink: 0; /* Prevent shrinking */
+       flex-direction: column;
+       gap: 6px;
+     }
+     
+     /* Remove old individual button pinning */
+     
+
+     
+     /* Hover state pseudo-element (same as nav panel) */
+     .account-panel .nav-item::before {
+       content: '';
+       position: absolute;
+       top: -4px;
+       left: -4px;
+       right: -4px;
+       bottom: -4px;
+       background-color: transparent;
+       border-radius: 8px;
+       transition: background-color var(--transition-fast);
+       z-index: 0;
+       pointer-events: none;
+       display: block;
+     }
+     
+     /* Ensure content is above pseudo-element */
+     .account-panel .nav-item-icon,
+     .account-panel .nav-item-label {
+       position: relative;
+       z-index: 1;
      }
      
      .account-panel .nav-item-icon {
@@ -336,7 +411,6 @@
      }
      
      .account-panel .nav-item-label {
-       margin-left: 8px;
        flex: 1;
        display: flex;
        align-items: center;
@@ -344,87 +418,56 @@
        white-space: nowrap; /* Prevent text wrapping */
        overflow: hidden; /* Hide overflow text */
        text-overflow: ellipsis; /* Show ellipsis for long text */
+       margin-left: 0; /* Remove inherited left margin */
      }
      
      /* Only active account is non-interactive */
      .account-panel .account-item.nav-item.active {
-       cursor: default;
-       pointer-events: none;
+       /* Active state - white floating background */
      }
+     
+     .account-panel .account-item.nav-item.active::before {
+       background-color: white; /* Active account has white floating background */
+     }
+     
      .account-panel .account-item.nav-item.active:hover {
-       background: transparent;
+       /* Active state hover - handled by floating pseudo-element */
      }
      
-     /* Remove light purple active state background from account panel */
      .account-panel .account-item.nav-item.active:hover::before {
-       background-color: transparent !important;
+       background-color: white; /* Active items keep white floating background on hover */
      }
      
-     /* Remove all brand backgrounds from account panel active items */
-     .account-panel .nav-item.active::before,
-     .account-panel .nav-item.active:hover::before,
-     .account-panel .account-item.active::before,
-     .account-panel .account-item.active:hover::before,
-     .account-panel .account-item.nav-item.active::before,
-     .account-panel .account-item.nav-item.active:hover::before {
-       background-color: transparent !important;
-       background: transparent !important;
-     }
-     
-     /* Remove all backgrounds from account panel nav items */
-     .account-panel .nav-item::before,
-     .account-panel .nav-item:hover::before,
-     .account-panel .account-item::before,
-     .account-panel .account-item:hover::before {
-       background-color: transparent !important;
-       background: transparent !important;
-     }
+
      
      /* Re-enable white hovers for non-active items */
+     .account-panel .account-item.nav-item:not(.active):hover {
+       /* Hover handled by floating pseudo-element */
+     }
+     
      .account-panel .account-item.nav-item:not(.active):hover::before {
-       background-color: white !important;
-       background: white !important;
-     }
-     
-     /* Remove backgrounds from active nav items */
-     .account-panel .nav-item.active {
-       background-color: transparent !important;
-       background: transparent !important;
-     }
-     
-     .account-panel .nav-item.active:hover {
-       background-color: transparent !important;
-       background: transparent !important;
-     }
-     
-     /* MAXIMUM SPECIFICITY: This should override EVERYTHING */
-     .account-panel .account-panel-content .account-group .account-item.nav-item.active,
-     .account-panel .account-panel-content .account-group .account-item.nav-item.active:hover,
-     .account-panel .account-panel-content .account-group .account-item.nav-item.active::before,
-     .account-panel .account-panel-content .account-group .account-item.nav-item.active:hover::before,
-     .account-panel .workload-item.active:hover::before {
-       background-color: transparent !important;
-       background: transparent !important;
-       background-image: none !important;
-     }
-     
-     /* Disable default nav-item hover for account panel */
-     .account-panel .nav-item:hover::before {
-       background-color: transparent !important;
+       background-color: white; /* White floating hover background */
      }
      
      .account-panel .add-account-button.nav-item:hover {
-       background: white;
-     }
-     
-     /* Account panel specific hover backgrounds */
-     .account-panel .account-item.nav-item:not(.active):hover::before {
-       background-color: white !important;
+       /* Remove background change from button itself */
      }
      
      .account-panel .add-account-button.nav-item:hover::before {
-       background-color: white !important;
-     }     /* Account Avatar */     .account-avatar {
+       background-color: white;
+     }
+     
+     /* User section nav item hover styles */
+     .account-panel .user-section .nav-item:hover {
+       /* Remove background change from button itself */
+     }
+     
+     .account-panel .user-section .nav-item:hover::before {
+       background-color: white;
+     }
+     
+     /* Account Avatar */
+     .account-avatar {
        width: 24px;
        height: 24px;
        border-radius: 4px;
@@ -456,13 +499,13 @@
        right: -2.5px;
        bottom: -2.5px;
        border: 1.5px solid;
-       border-radius: 4px;
+       border-radius: 6px;
        pointer-events: none;
      }
      
-     .account-item.active .account-avatar[data-color="#3B82F6"]:after { border-color: #3B82F6; }
-     .account-item.active .account-avatar[data-color="#10B981"]:after { border-color: #10B981; }
-     .account-item.active .account-avatar[data-color="#F59E0B"]:after { border-color: #F59E0B; }
+     .account-item.active .account-avatar[data-color="#3B82F6"]:after { border-color: rgba(59, 130, 246, 0.5); }
+     .account-item.active .account-avatar[data-color="#10B981"]:after { border-color: rgba(16, 185, 129, 0.5); }
+     .account-item.active .account-avatar[data-color="#F59E0B"]:after { border-color: rgba(245, 158, 11, 0.5); }
      
      /* Account Badge */
      .account-badge {
@@ -470,14 +513,13 @@
        right: 8px;
        top: 50%;
        transform: translateY(-50%);
-       background: var(--neutral-100);
-       color: var(--neutral-800);
+       color: var(--neutral-400);
        font-family: var(--font-family-ui);
        font-size: var(--font-size-12);
-       font-weight: var(--font-weight-medium);
+       font-weight: var(--font-weight-semibold);
        padding: 2px 6px;
-       border-radius: 12px;
-       line-height: 1.2;
+       line-height: var(--line-height-16);
+       letter-spacing: 0;
        min-width: 16px;
        text-align: center;
      }
@@ -776,8 +818,8 @@
           }
         });
         
-        // Close account panel when clicking on it
-        accountPanel.addEventListener('click', function() {
+        // Helper function to close account panel
+        function closeAccountPanel() {
           if (isAccountPanelOpen) {
             // Close account panel and restore previous nav state
             accountPanel.classList.remove('open');
@@ -793,24 +835,55 @@
             
             isAccountPanelOpen = false;
           }
+        }
+        
+        // Close account panel when clicking on nav panel
+        navPanel.addEventListener('click', function(event) {
+          // Don't close if clicking on account switcher or other interactive elements
+          const clickedElement = event.target;
+          const isAccountSwitcherClick = clickedElement.closest('.account-switcher-container') ||
+                                       clickedElement.closest('.account-switcher-dropdown') ||
+                                       clickedElement.closest('.hamburger-button');
+          
+          if (!isAccountSwitcherClick && isAccountPanelOpen) {
+            closeAccountPanel();
+          }
+        });
+        
+        // Close account panel when clicking on content panel
+        const contentPanel = document.getElementById('contentPanel');
+        if (contentPanel) {
+          contentPanel.addEventListener('click', function(event) {
+            if (isAccountPanelOpen) {
+              closeAccountPanel();
+            }
+          });
+        }
+        
+        // Update existing account panel click handler to use helper function
+        // Close account panel when clicking on background only
+        accountPanel.addEventListener('click', function(event) {
+          if (isAccountPanelOpen) {
+            // Only close if clicking directly on specific background elements
+            const clickedElement = event.target;
+            
+            // List of elements that should close the panel when clicked
+            const shouldClosePanel = clickedElement === accountPanel || 
+                                   clickedElement.classList.contains('account-panel-content') ||
+                                   clickedElement.classList.contains('account-group');
+            
+            if (shouldClosePanel) {
+              closeAccountPanel();
+            }
+          }
         });
         
         // Toggle navigation panel on handle click
         collapseHandle.addEventListener('click', function() {
           // If account panel is open, close it first and restore previous state
           if (isAccountPanelOpen) {
-            accountPanel.classList.remove('open');
-            collapseHandle.classList.remove('account-panel-open');
-            isAccountPanelOpen = false;
-            
-            // Restore to the state before account panel opened
-            if (!wasNavCollapsedBeforeAccountPanel) {
-              navPanel.classList.remove('collapsed');
-              collapseHandle.classList.remove('collapsed');
-              tooltip.textContent = 'Collapse';
-              isCollapsed = false;
-              return; // Exit early since we restored the state
-            }
+            closeAccountPanel();
+            return; // Exit early since we closed the account panel
           }
           
           // Normal nav panel toggle behavior
@@ -834,46 +907,98 @@
           }
         });
         
+        // Handle Create button click
+        const createButton = accountPanel.querySelector('.add-account-button');
+        if (createButton) {
+          createButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent panel from closing
+            // Add create account functionality here if needed
+          });
+        }
+        
+        // Handle Username button click
+        const usernameButton = document.getElementById('usernameButton');
+        if (usernameButton) {
+          usernameButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent panel from closing
+            // Add user profile functionality here if needed
+          });
+        }
+        
+        // Handle Sign Out button click
+        const signOutButton = document.getElementById('signOutButton');
+        if (signOutButton) {
+          signOutButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent panel from closing
+            // Add sign out functionality here if needed
+            console.log('Sign out clicked');
+          });
+        }
+        
         // Account Panel Functionality
         const addAccountButton = document.getElementById('addAccountButton');
         const accountItems = document.querySelectorAll('.account-item');
         
-        // Account data
+        // Account data with realistic hierarchical structure
         const accounts = {
           'acme-inc': {
             name: 'Acme, Inc.',
             isOrganization: true,
-            subAccounts: 8,
             color: '#3B82F6',
             initials: 'AI',
-            lastUsed: Date.now() // Currently active
+            lastUsed: Date.now(), // Currently active
+            description: 'Multi-business conglomerate',
+            subAccounts: {
+              'acme-eats-us': { name: 'Acme Eats US', region: 'United States', type: 'Food Delivery' },
+              'acme-eats-ca': { name: 'Acme Eats CA', region: 'Canada', type: 'Food Delivery' },
+              'acme-eats-uk': { name: 'Acme Eats UK', region: 'United Kingdom', type: 'Food Delivery' },
+              'acme-rides-us': { name: 'Acme Rides US', region: 'United States', type: 'Transportation' },
+              'acme-rides-ca': { name: 'Acme Rides CA', region: 'Canada', type: 'Transportation' },
+              'acme-deliveries-us': { name: 'Acme Deliveries US', region: 'United States', type: 'Logistics' },
+              'acme-deliveries-uk': { name: 'Acme Deliveries UK', region: 'United Kingdom', type: 'Logistics' },
+              'acme-financial': { name: 'Acme Financial', region: 'Global', type: 'Financial Services' }
+            }
           },
           'cactus-practice': {
             name: 'Cactus Practice',
             isOrganization: false,
-            subAccounts: 0,
             color: '#10B981',
             initials: 'CP',
-            lastUsed: Date.now() - (24 * 60 * 60 * 1000) // 1 day ago
+            lastUsed: Date.now() - (24 * 60 * 60 * 1000), // 1 day ago
+            description: 'Purveyors of cacti online'
           },
           'lil-fatsos': {
             name: 'Lil\'Fatsos',
             isOrganization: true,
-            subAccounts: 3,
             color: '#F59E0B',
             initials: 'LF',
-            lastUsed: Date.now() - (7 * 24 * 60 * 60 * 1000) // 7 days ago
+            lastUsed: Date.now() - (7 * 24 * 60 * 60 * 1000), // 7 days ago
+            description: 'Amazing sandwiches and subs',
+            subAccounts: {
+              'lf-midtown': { name: 'Midtown East', region: 'Manhattan, NYC', address: '123 E 42nd St' },
+              'lf-village': { name: 'East Village', region: 'Manhattan, NYC', address: '456 E 9th St' },
+              'lf-brooklyn': { name: 'Park Slope', region: 'Brooklyn, NYC', address: '789 7th Ave' },
+              'lf-queens': { name: 'Astoria', region: 'Queens, NYC', address: '321 Ditmars Blvd' },
+              'lf-soho': { name: 'SoHo', region: 'Manhattan, NYC', address: '654 Spring St' }
+            }
           }
         };
         
         let currentAccount = 'acme-inc';
+        let currentSubAccount = 'all-accounts'; // Default to "All accounts" for organizations
+        
+        // Make variables globally accessible for callbacks
+        window.accounts = accounts;
+        window.currentAccount = currentAccount;
+        window.currentSubAccount = currentSubAccount;
         
         // Account switching functionality
         accountItems.forEach(item => {
           if (!item.classList.contains('add-account-button')) {
-            item.addEventListener('click', function() {
+            item.addEventListener('click', function(event) {
+              event.stopPropagation(); // Prevent event from bubbling up to account panel
               const accountId = this.dataset.account;
-              if (accountId && accountId !== currentAccount) {
+              if (accountId) {
                 switchAccount(accountId);
               }
             });
@@ -882,33 +1007,49 @@
         
         function switchAccount(accountId) {
           const account = accounts[accountId];
-          if (!account) return;
+          if (!account) {
+            console.error('❌ Account not found:', accountId);
+            return;
+          }
+          
+          // Check if switching to same account
+          if (accountId === currentAccount) {
+            // Allow switching to same account to refresh view
+          }
           
           // Update lastUsed timestamp
           account.lastUsed = Date.now();
+          
+          // Update current account
+          currentAccount = accountId;
+          
+          // Set default sub-account for organizations
+          if (account.isOrganization && account.subAccounts) {
+            currentSubAccount = 'all-accounts'; // Default to "All accounts" for organizations
+          } else {
+            currentSubAccount = null; // No sub-account for non-orgs
+          }
+          
+          // Update window references BEFORE calling updateContentPanel
+          window.currentAccount = currentAccount;
+          window.currentSubAccount = currentSubAccount;
           
           // Update UI
           updateActiveAccount(accountId);
           reorderAccountList(accountId);
           updateNavAccountSwitcher(account);
           
-          // Close account panel
-          if (isAccountPanelOpen) {
-            accountPanel.classList.remove('open');
-            collapseHandle.classList.remove('account-panel-open');
-            
-            // Restore nav panel to previous state
-            if (!wasNavCollapsedBeforeAccountPanel) {
-              navPanel.classList.remove('collapsed');
-              collapseHandle.classList.remove('collapsed');
-              tooltip.textContent = 'Collapse';
-              isCollapsed = false;
-            }
-            
-            isAccountPanelOpen = false;
+          // Update content panel - pass "All accounts" object if that's the current selection
+          if (account.isOrganization && currentSubAccount === 'all-accounts') {
+            updateContentPanel({
+              id: 'all-accounts',
+              name: 'All accounts',
+              type: account.name,
+              isAllAccounts: true
+            });
+          } else {
+            updateContentPanel(account);
           }
-          
-          currentAccount = accountId;
         }
         
         function reorderAccountList(activeAccountId) {
@@ -948,14 +1089,182 @@
         }
         
         function updateNavAccountSwitcher(account) {
-          // This would update the nav panel account switcher
-          // For now, we'll just log the behavior
-          if (account.isOrganization && account.subAccounts > 0) {
-            // TODO: Make account switcher clickable and show down arrow
+          if (!window.navAccountSwitcherInstance) {
+            return;
+          }
+          
+          if (account.isOrganization && account.subAccounts) {
+            // For organizations: show current sub-account and populate dropdown with all sub-accounts
+            
+            // Use 2-line variant for organizations to show sub-account and organization name
+            window.navAccountSwitcherInstance.options.variant = '2-line';
+            
+            // Check if we're showing "All accounts" or a specific sub-account
+            if (currentSubAccount === 'all-accounts') {
+              // Update current account to show "All accounts"
+              window.navAccountSwitcherInstance.options.currentAccount = {
+                id: 'all-accounts',
+                name: 'All accounts',
+                type: account.name,  // Organization name as type
+                isAllAccounts: true,
+                color: account.color // Include the organization color
+              };
+            } else {
+              // Show specific sub-account
+              const currentSubAccountData = account.subAccounts[currentSubAccount];
+              window.navAccountSwitcherInstance.options.currentAccount = {
+                id: currentSubAccount,
+                name: currentSubAccountData.name,
+                type: account.name,  // Organization name as type
+                color: account.color // Include the organization color
+              };
+            }
+            
+            // Update accounts list to show all sub-accounts
+            window.navAccountSwitcherInstance.options.accounts = Object.entries(account.subAccounts).map(([id, data]) => ({
+              id: id,
+              name: data.name,
+              type: data.region || data.type || 'Location'
+            }));
+            
+            // Force re-render the account switcher
+            window.navAccountSwitcherInstance.render();
+            window.navAccountSwitcherInstance.bindEvents();
+            
           } else {
-            // TODO: Make account switcher non-clickable and hide down arrow
+            // For non-organizations: show account name only, use 1-line variant to remove second line
+            window.navAccountSwitcherInstance.options.variant = '1-line';
+            
+            window.navAccountSwitcherInstance.options.currentAccount = {
+              id: currentAccount,
+              name: account.name,
+              type: '', // Empty type since we're using 1-line variant
+              color: account.color // Include the account color
+            };
+            
+            // Single account in the list (no dropdown options)
+            window.navAccountSwitcherInstance.options.accounts = [{
+              id: currentAccount,
+              name: account.name,
+              type: '',
+              color: account.color // Include the account color
+            }];
+            
+            // Force re-render the account switcher
+            window.navAccountSwitcherInstance.render();
+            window.navAccountSwitcherInstance.bindEvents();
           }
         }
+        
+        function updateContentPanel(account) {
+          // Update content placeholder to show current account and sub-account
+          const contentPlaceholder = document.querySelector('.content-placeholder');
+          
+          if (!contentPlaceholder) {
+            console.error('❌ Content placeholder not found!');
+            return;
+          }
+          
+          // Generate colors for accounts (same logic as account switcher)
+          function generateAccountColors() {
+            const colors = [
+              '#3B82F6', // blue-500
+              '#8B5CF6', // violet-500
+              '#10B981', // emerald-500
+              '#F59E0B', // amber-500
+              '#EF4444', // red-500
+              '#EC4899', // pink-500
+              '#06B6D4', // cyan-500
+              '#84CC16', // lime-500
+              '#F97316', // orange-500
+              '#6366F1', // indigo-500
+              '#14B8A6', // teal-500
+              '#F87171', // red-400
+              '#A78BFA', // violet-400
+              '#34D399', // emerald-400
+              '#FBBF24', // amber-400
+            ];
+            
+            const accountColors = {};
+            const navSwitcherAccounts = window.navAccountSwitcherInstance?.options?.accounts || [];
+            navSwitcherAccounts.forEach((acc, index) => {
+              accountColors[acc.id] = colors[index % colors.length];
+            });
+            
+            return accountColors;
+          }
+          
+          // Clear existing content and set up centered layout
+          contentPlaceholder.innerHTML = '';
+          contentPlaceholder.style.cssText = `
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-background);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          `;
+          
+          // Handle "All accounts" special case
+          if (account.id === 'all-accounts' || account.isAllAccounts) {
+            const currentOrgAccount = window.accounts[window.currentAccount];
+            const subAccountCount = Object.keys(currentOrgAccount.subAccounts).length;
+            
+            contentPlaceholder.innerHTML = `
+              <div style="font-family: var(--font-family-ui); font-size: var(--font-size-24); font-weight: var(--font-weight-semibold); color: var(--color-text); text-align: center; line-height: var(--line-height-32);">
+                ${currentOrgAccount.name}
+              </div>
+              <div style="font-family: var(--font-family-ui); font-size: var(--font-size-16); color: var(--color-text-subdued); text-align: center; line-height: var(--line-height-24);">
+                All accounts • ${subAccountCount} sub-accounts
+              </div>
+            `;
+            return;
+          }
+          
+          // Get account colors
+          const accountColors = generateAccountColors();
+          
+          // Build account display content for regular accounts
+          let displayHTML = `
+            <div style="font-family: var(--font-family-ui); font-size: var(--font-size-24); font-weight: var(--font-weight-semibold); color: var(--color-text); text-align: center; line-height: var(--line-height-32);">
+              ${account.name}
+            </div>
+          `;
+          
+          if (account.isOrganization && account.subAccounts && window.currentSubAccount) {
+            const subAccountData = account.subAccounts[window.currentSubAccount];
+            const subAccountColor = accountColors[window.currentSubAccount] || '#6D7C8C';
+            displayHTML += `
+              <div style="font-family: var(--font-family-ui); font-size: var(--font-size-16); color: ${subAccountColor}; text-align: center; line-height: var(--line-height-24);">
+                ${subAccountData.name}${subAccountData.region ? ` • ${subAccountData.region}` : ''}
+              </div>
+            `;
+          } else if (account.description) {
+            // For non-organization accounts, use the predefined account color
+            const accountColor = account.color || '#6D7C8C'; // Fallback to neutral if no color defined
+            displayHTML += `
+              <div style="font-family: var(--font-family-ui); font-size: var(--font-size-16); color: ${accountColor}; text-align: center; line-height: var(--line-height-24);">
+                ${account.description}
+              </div>
+            `;
+          } else if (account.isOrganization && account.subAccounts) {
+            // Fallback for organizations that didn't match the "All accounts" case
+            const subAccountCount = Object.keys(account.subAccounts).length;
+            displayHTML += `
+              <div style="font-family: var(--font-family-ui); font-size: var(--font-size-16); color: var(--color-text-subdued); text-align: center; line-height: var(--line-height-24);">
+                ${subAccountCount} sub-accounts
+              </div>
+            `;
+          }
+          
+          contentPlaceholder.innerHTML = displayHTML;
+        }
+        
+        // Make function globally accessible for callbacks
+        window.updateContentPanel = updateContentPanel;
         
         // Initialize Create popover using global component
         const createPopover = new Popover(addAccountButton, {
@@ -990,8 +1299,33 @@
           ]
         });
         
+
+        
         // Initialize account list order
         reorderAccountList(currentAccount);
+        
+        // Initialize the current account display
+        
+        // Update content panel - show "All accounts" if that's the current selection
+        const account = accounts[currentAccount];
+        if (account.isOrganization && currentSubAccount === 'all-accounts') {
+          updateContentPanel({
+            id: 'all-accounts',
+            name: 'All accounts',
+            type: account.name,
+            isAllAccounts: true
+          });
+        } else {
+          updateContentPanel(account);
+        }
+        
+        updateNavAccountSwitcher(account);
+        
+        // Force re-render to pick up correct colors
+        if (window.navAccountSwitcherInstance) {
+          window.navAccountSwitcherInstance.render();
+          window.navAccountSwitcherInstance.bindEvents();
+        }
         
       });
     </script>
@@ -1024,7 +1358,7 @@
               <div class="account-avatar" data-initials="LF" data-color="#F59E0B"></div>
             </div>
             <span class="nav-item-label">Lil'Fatsos</span>
-            <span class="account-badge">3</span>
+            <span class="account-badge">5</span>
           </div>
           
           <!-- Add Account Button -->
@@ -1036,6 +1370,34 @@
               </svg>
             </div>
             <span class="nav-item-label">Create</span>
+          </div>
+        </div>
+
+
+
+        <!-- Bottom User Section -->
+        <div class="user-section bottom-pinned">
+          <!-- Username Button -->
+          <div class="nav-item" id="usernameButton">
+            <div class="nav-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <span class="nav-item-label">John Doe</span>
+          </div>
+
+          <!-- Sign Out Button -->
+          <div class="nav-item" id="signOutButton">
+            <div class="nav-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </div>
+            <span class="nav-item-label">Sign Out</span>
           </div>
         </div>
 
@@ -1280,27 +1642,70 @@
   <script src="../../shared/components/popover.js"></script>
 
   <script type="module">
-    // Initialize account switcher
+    // Initialize account switcher with hierarchical structure
     const navAccountSwitcher = new AccountSwitcher(
       document.getElementById('nav-account-switcher'),
       {
-        currentAccount: { id: 1, name: 'Acme Eats US', type: 'Acme, Inc.' },
+        currentAccount: { id: 'all-accounts', name: 'All accounts', type: 'Acme, Inc.', isAllAccounts: true },
         accounts: [
-          { id: 1, name: 'Acme Eats US', type: 'Acme, Inc.' },
-          { id: 2, name: 'Beta Corp', type: 'organization' },
-          { id: 3, name: 'Charlie Ltd', type: 'organization' },
-          { id: 4, name: 'Personal', type: 'personal' }
+          { id: 'acme-eats-us', name: 'Acme Eats US', type: 'United States' },
+          { id: 'acme-eats-ca', name: 'Acme Eats CA', type: 'Canada' },
+          { id: 'acme-eats-uk', name: 'Acme Eats UK', type: 'United Kingdom' },
+          { id: 'acme-rides-us', name: 'Acme Rides US', type: 'United States' },
+          { id: 'acme-rides-ca', name: 'Acme Rides CA', type: 'Canada' },
+          { id: 'acme-deliveries-us', name: 'Acme Deliveries US', type: 'United States' },
+          { id: 'acme-deliveries-uk', name: 'Acme Deliveries UK', type: 'United Kingdom' },
+          { id: 'acme-financial', name: 'Acme Financial', type: 'Global' }
         ],
         variant: '2-line',
-        onAccountChange: (account) => {
-          // Handle account switching logic here
+        onAccountChange: (selectedAccount) => {
+          console.log('🔄 Sub-account selected from nav dropdown:', selectedAccount);
+          
+          if (selectedAccount.isAllAccounts) {
+            // Handle "All accounts" aggregate view
+            console.log('📊 Showing aggregate view for all accounts');
+            
+            // Update content panel using the centralized function
+            window.updateContentPanel(selectedAccount);
+            
+            return;
+          }
+          
+          // Handle regular sub-account switching within the current organization
+          currentSubAccount = selectedAccount.id;
+          window.currentSubAccount = currentSubAccount;
+          
+          // Update the content panel to show the new sub-account
+          window.updateContentPanel(window.accounts[window.currentAccount]);
+          
+          console.log('✅ Sub-account switch complete:', selectedAccount.name);
         }
       }
     );
     
+    // Store globally for access by updateNavAccountSwitcher function
+    window.navAccountSwitcherInstance = navAccountSwitcher;
+    
+    // Manage hamburger button visibility when account switcher opens/closes
+    const accountSwitcherContainer = document.querySelector('.account-switcher-container');
+    
+    // Override the open method to add container class
+    const originalOpen = navAccountSwitcher.open.bind(navAccountSwitcher);
+    navAccountSwitcher.open = function() {
+      originalOpen();
+      accountSwitcherContainer.classList.add('account-switcher-open');
+    };
+    
+    // Override the close method to remove container class
+    const originalClose = navAccountSwitcher.close.bind(navAccountSwitcher);
+    navAccountSwitcher.close = function() {
+      originalClose();
+      accountSwitcherContainer.classList.remove('account-switcher-open');
+    };
+    
     // Initialize
     console.log('🚀 Dash Chrome ready!');
   </script>
-  </div> <!-- Close app-container -->
-</body>
+    </div> <!-- Close app-container -->
+  </body>
 </html> 
