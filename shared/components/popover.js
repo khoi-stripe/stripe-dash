@@ -96,6 +96,9 @@ class Popover {
         left = triggerRect.right + this.options.offset;
     }
     
+    // Global adjustment: Move all popovers up by 12px
+    top -= 12;
+    
     // Ensure popover stays within viewport
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;

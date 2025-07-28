@@ -205,7 +205,7 @@
        border-radius: var(--radius-sm);
        cursor: pointer;
        opacity: 0;
-       transform: translateX(-32px); /* Match the full width including padding */
+       transform: translateX(-24px); /* Match the full width of 24px container */
        transition: all 0.2s ease;
        color: var(--icon-default);
        flex-shrink: 0;
@@ -221,27 +221,27 @@
      .account-switcher-container:hover .hamburger-button {
        opacity: 1;
        transform: translateX(0);
-       width: 32px; /* 24px icon + 4px padding on each side */
-       height: 32px;
-       padding: 4px;
+       width: 24px; /* Match nav-item-icon container width */
+       height: 24px; /* Match nav-item-icon container height */
+       padding: 0; /* Remove padding to keep 24px total like nav icons */
      }
      
      /* Keep hamburger visible when account switcher is open */
      .account-switcher-container.account-switcher-open .hamburger-button {
        opacity: 1;
        transform: translateX(0);
-       width: 32px; /* 24px icon + 4px padding on each side */
-       height: 32px;
-       padding: 4px;
+       width: 24px; /* Match nav-item-icon container width */
+       height: 24px; /* Match nav-item-icon container height */
+       padding: 0; /* Remove padding to keep 24px total like nav icons */
      }
      
      .account-switcher-container:hover #nav-account-switcher {
-       width: calc(100% - 40px); /* Account for hamburger (32px) + gap (8px) */
+       width: calc(100% - 32px); /* Account for hamburger (24px) + gap (8px) */
      }
      
      /* Keep account switcher sized for hamburger when popover is open */
      .account-switcher-container.account-switcher-open #nav-account-switcher {
-       width: calc(100% - 40px); /* Account for hamburger (32px) + gap (8px) */
+       width: calc(100% - 32px); /* Account for hamburger (24px) + gap (8px) */
      }
      
      .account-switcher-container:hover #nav-account-switcher .account-switcher-trigger {
@@ -361,6 +361,11 @@
        margin-left: 0; /* Remove the 8px margin from shared nav-item-label */
      }
      
+     /* Remove margin-left from all nav-item-label in account panel to prevent double spacing */
+     .account-panel .nav-item-label {
+       margin-left: 0; /* Use gap instead of margin for consistent 8px spacing */
+     }
+     
      /* Add Account Button */
      .add-account-button {
        position: relative;
@@ -450,6 +455,12 @@
        background-color: transparent !important; /* Override shared CSS - no background for active account on hover */
      }
      
+     /* Ensure no purple brand background on active account items */
+     .account-panel .account-item.nav-item.active,
+     .account-panel .account-item.nav-item.active:hover {
+       background-color: transparent !important;
+     }
+     
 
      
      /* Re-enable white hovers for non-active items */
@@ -462,11 +473,20 @@
      }
      
      .account-panel .add-account-button.nav-item:hover {
-       /* Remove background change from button itself */
+       background-color: white !important;
      }
      
      .account-panel .add-account-button.nav-item:hover::before {
-       background-color: white;
+       background-color: white !important;
+     }
+     
+     /* Persist white hover state when popover is open */
+     .account-panel .add-account-button.nav-item.popover-open {
+       background-color: white !important;
+     }
+     
+     .account-panel .add-account-button.nav-item.popover-open::before {
+       background-color: white !important;
      }
      
      /* User section nav item hover styles */
@@ -1313,39 +1333,7 @@
           ]
         });
         
-        // Initialize duplicate Create popover
-        const addAccountButton2 = document.getElementById('addAccountButton2');
-        const createPopover2 = new Popover(addAccountButton2, {
-          position: 'right',
-          offset: 8,
-          trigger: 'hover',
-          hideDelay: 100,
-          content: [
-            {
-              icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                       <line x1="12" y1="5" x2="12" y2="19"/>
-                       <line x1="5" y1="12" x2="19" y2="12"/>
-                     </svg>`,
-              label: 'Create account',
-              onClick: () => {
-                console.log('Create account clicked (button 2)');
-                // Add your create account logic here
-              }
-            },
-            {
-              icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                       <path d="M3 21h18"/>
-                       <path d="M5 21V7l8-4v18"/>
-                       <path d="M19 21V11l-6-4"/>
-                     </svg>`,
-              label: 'Create organization',
-              onClick: () => {
-                console.log('Create organization clicked (button 2)');
-                // Add your create organization logic here
-              }
-            }
-          ]
-        });
+
         
 
         
@@ -1419,17 +1407,6 @@
             </div>
             <span class="nav-item-label">Create</span>
           </div>
-          
-          <!-- Duplicate Add Account Button -->
-          <div class="add-account-button nav-item" id="addAccountButton2">
-            <div class="nav-item-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-            </div>
-            <span class="nav-item-label">Create</span>
-          </div>
         </div>
 
 
@@ -1466,7 +1443,7 @@
     <div class="layout-container">
          <!-- Navigation Panel -->
      <div class="nav-panel" id="navPanel">
-       <div style="padding: 12px 20px; flex: 1;">
+       <div style="padding: 6px 20px 12px 20px; flex: 1;">
          <!-- Account Switcher -->
          <div class="account-switcher-container">
            <button class="hamburger-button" type="button">

@@ -552,7 +552,7 @@
   border-radius: 8px;
   background: #FFF;
   box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
-  padding: 16px;
+  padding: 8px;
   min-width: 200px;
   z-index: 1001;
   opacity: 0;
@@ -593,22 +593,18 @@
 }
 
 /* Global behavior: Persist button hover state when popover is open */
-.nav-item.popover-open,
-.nav-item.popover-open:hover {
-  background: white !important;
-}
-
 .nav-item.popover-open::before,
 .nav-item.popover-open:hover::before {
-  background-color: white !important;
+  background-color: var(--neutral-50) !important;
 }
 
-.nav-item.popover-open .nav-item-label,
-.nav-item.popover-open:hover .nav-item-label {
-  color: var(--neutral-900) !important;
+/* For other button types that trigger popovers */
+button.popover-open,
+.popover-option.popover-open {
+  background-color: var(--neutral-50) !important;
 }
 
-.nav-item.popover-open .nav-item-icon svg,
-.nav-item.popover-open:hover .nav-item-icon svg {
-  stroke: var(--neutral-700) !important;
+/* Account switcher trigger specific styling */
+.account-switcher-trigger.popover-open {
+  background-color: var(--neutral-50) !important;
 }

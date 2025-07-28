@@ -134,7 +134,7 @@ class AccountSwitcher {
                            this.generateAvatarColor(currentAccount.name, currentAccount.id);
         
         return `
-          <div class="account-avatar" style="background-color: ${avatarColor} !important;">
+          <div class="account-avatar" data-color="${avatarColor}" style="background-color: ${avatarColor} !important;">
             <span class="avatar-initials">${initials}</span>
           </div>
         `;
@@ -180,7 +180,7 @@ class AccountSwitcher {
           <div class="account-switcher-dropdown">
             <div class="account-list">
               ${this.options.accounts.length > 1 ? `
-                <button class="account-item all-accounts" data-account-id="all-accounts" type="button">
+                <button class="account-item all-accounts ${currentAccount.id === 'all-accounts' ? 'active' : ''}" data-account-id="all-accounts" type="button">
                   <div class="account-avatar all-accounts-avatar" style="background: #F5F6F8 !important; background-color: #F5F6F8 !important; color: #6D7C8C !important;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                       <path d="M3 21h18"/>
@@ -195,6 +195,14 @@ class AccountSwitcher {
                   <div class="account-details">
                     <span class="account-name">All accounts</span>
                   </div>
+                  ${currentAccount.id === 'all-accounts' ? `
+                    <div class="account-check">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="9,12 11,14 15,10"/>
+                      </svg>
+                    </div>
+                  ` : ''}
                 </button>
                 <div class="account-divider"></div>
               ` : ''}
@@ -206,7 +214,7 @@ class AccountSwitcher {
                   return `
                     <button class="account-item ${account.id === currentAccount.id ? 'active' : ''}" 
                             data-account-id="${account.id}" type="button">
-                      <div class="account-avatar" style="background-color: ${accountAvatarColor} !important;">
+                      <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
                         <span class="avatar-initials">${accountInitials}</span>
                       </div>
                       <div class="account-details">
@@ -224,6 +232,41 @@ class AccountSwitcher {
                   `;
                 }).join('');
               })()}
+            </div>
+            
+            <!-- Account Actions Section -->
+            <div class="account-actions">
+              <button class="nav-item" type="button">
+                <div class="nav-item-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </div>
+                <span class="nav-item-label">Settings</span>
+              </button>
+              
+              <button class="nav-item" type="button" id="switchSandboxAction">
+                <div class="nav-item-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="7.5,4.21 12,6.81 16.5,4.21"/>
+                    <polyline points="7.5,19.79 7.5,14.6 3,12"/>
+                    <polyline points="21,12 16.5,14.6 16.5,19.79"/>
+                  </svg>
+                </div>
+                <span class="nav-item-label">Switch to sandbox</span>
+              </button>
+              
+              <button class="nav-item" type="button" id="createAccountAction">
+                <div class="nav-item-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 5v14"/>
+                    <path d="M5 12h14"/>
+                  </svg>
+                </div>
+                <span class="nav-item-label">Create account</span>
+              </button>
             </div>
           </div>
         ` : ''}
@@ -339,6 +382,7 @@ class AccountSwitcher {
       }
       
       .account-avatar {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -355,6 +399,98 @@ class AccountSwitcher {
         color: white;
         line-height: 1;
       }
+      
+      /* Active Account Avatar Stroke - Match account panel */
+      .account-item.active .account-avatar:after {
+        content: '';
+        position: absolute;
+        top: -2.5px;
+        left: -2.5px;
+        right: -2.5px;
+        bottom: -2.5px;
+        border: 1.5px solid;
+        border-radius: 6px;
+        pointer-events: none;
+      }
+      
+      /* Color-specific border colors for active avatars */
+      .account-item.active .account-avatar[data-color="#3B82F6"]:after { border-color: rgba(59, 130, 246, 0.5); }
+      .account-item.active .account-avatar[data-color="#10B981"]:after { border-color: rgba(16, 185, 129, 0.5); }
+      .account-item.active .account-avatar[data-color="#F59E0B"]:after { border-color: rgba(245, 158, 11, 0.5); }
+      .account-item.active .account-avatar[data-color="#8B5CF6"]:after { border-color: rgba(139, 92, 246, 0.5); }
+      .account-item.active .account-avatar[data-color="#F43F5E"]:after { border-color: rgba(244, 63, 94, 0.5); }
+      .account-item.active .account-avatar[data-color="#06B6D4"]:after { border-color: rgba(6, 182, 212, 0.5); }
+      .account-item.active .account-avatar[data-color="#84CC16"]:after { border-color: rgba(132, 204, 22, 0.5); }
+      .account-item.active .account-avatar[data-color="#EAB308"]:after { border-color: rgba(234, 179, 8, 0.5); }
+      
+             /* All accounts active avatar outline - lighter grey */
+       .account-item.all-accounts.active .account-avatar.all-accounts-avatar:after {
+         border-color: var(--neutral-200);
+       }
+       
+       /* Sandbox avatars in popover */
+       .sandbox-avatar {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         width: 16px;
+         height: 16px;
+         border-radius: 3px;
+         flex-shrink: 0;
+       }
+       
+       .sandbox-avatar .avatar-initials {
+         font-family: var(--font-family-ui);
+         font-size: 10px;
+         font-weight: var(--font-weight-medium);
+         color: white;
+         line-height: 1;
+       }
+       
+       /* Sandbox section styling */
+       .sandbox-section {
+         margin-bottom: 16px;
+       }
+       
+       .sandbox-section:last-of-type {
+         margin-bottom: 8px;
+         padding-bottom: 8px;
+         border-bottom: 1px solid var(--neutral-50);
+       }
+       
+       .sandbox-section-label {
+         font-family: var(--font-family-ui);
+         font-size: var(--font-size-11);
+         font-weight: var(--font-weight-medium);
+         color: var(--neutral-500);
+         text-transform: uppercase;
+         letter-spacing: 0.02em;
+         margin-bottom: 8px;
+         padding: 0 4px;
+       }
+       
+       /* Sandbox scope indicators */
+       .sandbox-scope-indicator {
+         font-family: var(--font-family-ui);
+         font-size: var(--font-size-11);
+         font-weight: var(--font-weight-medium);
+         color: var(--neutral-400);
+         margin-left: auto;
+         padding-left: 8px;
+         flex-shrink: 0;
+       }
+       
+       /* Organization sandbox styling */
+       .org-sandbox .sandbox-scope-indicator {
+         color: var(--blue-500);
+       }
+       
+       /* Account sandbox styling */
+       .account-sandbox .sandbox-scope-indicator {
+         color: var(--purple-500);
+       }
+       
+       
       
       .account-details {
         display: flex;
@@ -473,14 +609,14 @@ class AccountSwitcher {
       }
       
       .account-list {
-        padding: 8px;
+        padding: 16px 8px; /* Additional 8px top and bottom padding (16px total), 8px sides */
         border-bottom: 1px solid var(--color-border-subtle);
       }
       
       .account-item {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
         width: 100%;
         min-height: 32px;
         padding: 4px 12px;
@@ -571,6 +707,17 @@ class AccountSwitcher {
         color: var(--neutral-700) !important;
       }
       
+      /* All accounts active state */
+      .account-switcher .account-item.all-accounts.active .account-avatar.all-accounts-avatar {
+        background: var(--neutral-100) !important;
+        color: var(--neutral-700) !important;
+      }
+      
+      .account-switcher .account-item.all-accounts.active:hover .account-avatar.all-accounts-avatar {
+        background: var(--neutral-100) !important;
+        color: var(--neutral-700) !important;
+      }
+      
       /* Fallback override for stubborn CSS conflicts */
       [class*="all-accounts-avatar"] {
         background: var(--neutral-50) !important;
@@ -587,6 +734,233 @@ class AccountSwitcher {
         background: var(--neutral-100) !important;
         color: var(--neutral-700) !important;
       }
+      
+      /* Account Actions Section */
+      .account-actions {
+        padding: 16px 8px; /* Additional 8px top and bottom padding (16px total), 8px sides */
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px; /* 8px row gap between buttons */
+      }
+      
+      /* Account actions nav-item buttons */
+      .account-actions .nav-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 24px; /* Match nav panel button height */
+        padding: 4px 12px; /* Match account-item padding for consistent full-width */
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        text-decoration: none;
+        color: inherit;
+        font-family: inherit;
+      }
+      
+      /* Floating hover effect - match nav panel */
+      .account-actions .nav-item::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background-color: transparent;
+        border-radius: 8px;
+        transition: background-color var(--transition-fast);
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+      }
+      
+      .account-actions .nav-item:hover::before {
+        background-color: var(--neutral-50);
+      }
+      
+      .account-actions .nav-item .nav-item-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        color: var(--color-text-muted);
+        flex-shrink: 0;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .account-actions .nav-item .nav-item-icon svg {
+        width: 16px;
+        height: 16px;
+        stroke: var(--icon-default);
+      }
+      
+      .account-actions .nav-item .nav-item-label {
+        margin-left: 8px; /* Match nav panel spacing */
+        font-family: var(--font-family-ui);
+        font-size: var(--font-size-14);
+        font-weight: var(--font-weight-regular);
+        color: var(--neutral-900);
+        line-height: var(--line-height-20);
+        letter-spacing: -0.005em;
+        flex: 1;
+        position: relative;
+        z-index: 1;
+        text-align: left; /* Ensure left alignment */
+      }
+      
+             /* Popover Styles */
+       .popover {
+         position: fixed;
+         background: white;
+         border: 1px solid rgba(0, 39, 77, 0.08);
+         border-radius: 8px;
+         box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
+         padding: 8px;
+         opacity: 0;
+         visibility: hidden;
+         transform: translateX(-4px);
+         transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+         z-index: 10000;
+         min-width: 160px;
+         max-width: 280px;
+         top: 0;
+         left: 0;
+       }
+      
+             .popover.show {
+         opacity: 1;
+         visibility: visible;
+         transform: translateX(0);
+       }
+      
+      .popover-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        color: var(--neutral-900);
+        text-decoration: none;
+        min-height: 32px;
+      }
+      
+      .popover-option:hover {
+        background: var(--color-background);
+      }
+      
+      .popover-option .nav-item-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        color: var(--color-text-muted);
+        flex-shrink: 0;
+      }
+      
+      .popover-option .nav-item-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+      
+             .popover-option .nav-item-label {
+         font-family: var(--font-family-ui);
+         font-size: var(--font-size-14);
+         font-weight: var(--font-weight-regular);
+         color: var(--neutral-900);
+         line-height: var(--line-height-20);
+         white-space: nowrap;
+         margin-left: 0; /* Remove inherited margin to prevent double spacing with gap */
+       }
+       
+       /* Ensure action items are properly displayed in collapsed state */
+       .account-switcher-dropdown .action-item {
+         min-width: 0 !important;
+         flex-shrink: 0 !important;
+       }
+       
+       .account-switcher-dropdown .action-item .nav-item-label {
+         flex: 1 !important;
+         min-width: 0 !important;
+         white-space: nowrap !important;
+         overflow: hidden !important;
+         text-overflow: ellipsis !important;
+       }
+       
+       /* Override collapsed nav panel hiding - always show labels in account switcher dropdown */
+       .nav-panel.collapsed .account-switcher-dropdown .nav-item-label {
+         display: block !important;
+       }
+       
+       /* Sandbox popover group styling */
+       .sandbox-group {
+         margin-bottom: 8px;
+         padding-bottom: 8px;
+         border-bottom: 1px solid var(--neutral-50);
+       }
+       
+       .management-group {
+         margin-top: 8px;
+         padding-top: 0;
+       }
+       
+       /* Sandbox popover buttons should match nav panel styling */
+       .sandbox-group .popover-option,
+       .management-group .popover-option {
+         position: relative;
+         display: flex;
+         align-items: center;
+         height: 24px;
+         padding: 4px 12px;
+         background: transparent;
+         border: none;
+         border-radius: 6px;
+         cursor: pointer;
+         transition: all var(--transition-fast);
+         text-decoration: none;
+         color: inherit;
+         font-family: inherit;
+         margin-bottom: 0;
+       }
+       
+       /* Floating hover effect for sandbox buttons */
+       .sandbox-group .popover-option::before,
+       .management-group .popover-option::before {
+         content: '';
+         position: absolute;
+         top: -4px;
+         left: -4px;
+         right: -4px;
+         bottom: -4px;
+         background-color: transparent;
+         border-radius: 8px;
+         transition: background-color var(--transition-fast);
+         z-index: 0;
+         pointer-events: none;
+         display: block;
+       }
+       
+       .sandbox-group .popover-option:hover::before,
+       .management-group .popover-option:hover::before {
+         background-color: var(--neutral-50);
+       }
+       
+       .sandbox-group .popover-option .nav-item-icon,
+       .sandbox-group .popover-option .nav-item-label,
+       .management-group .popover-option .nav-item-icon,
+       .management-group .popover-option .nav-item-label {
+         position: relative;
+         z-index: 1;
+       }
     `;
     
     document.head.appendChild(styles);
@@ -639,6 +1013,25 @@ class AccountSwitcher {
           el.style.setProperty('flex-wrap', 'nowrap', 'important');
         });
         
+        // Ensure action items are also properly displayed in collapsed state
+        dropdown.querySelectorAll('.action-item').forEach(el => {
+          el.style.setProperty('width', '100%', 'important');
+          el.style.setProperty('min-width', '100%', 'important');
+          el.style.setProperty('display', 'flex', 'important');
+          el.style.setProperty('flex-direction', 'row', 'important');
+          el.style.setProperty('align-items', 'center', 'important');
+          el.style.setProperty('flex-wrap', 'nowrap', 'important');
+        });
+        
+        // Ensure action item labels are visible
+        dropdown.querySelectorAll('.action-item .nav-item-label').forEach(el => {
+          el.style.setProperty('display', 'block', 'important');
+          el.style.setProperty('visibility', 'visible', 'important');
+          el.style.setProperty('white-space', 'nowrap', 'important');
+          el.style.setProperty('overflow', 'hidden', 'important');
+          el.style.setProperty('text-overflow', 'ellipsis', 'important');
+        });
+        
         // Ensure account details don't wrap and take available space
         dropdown.querySelectorAll('.account-details').forEach(el => {
           el.style.setProperty('display', 'flex', 'important');
@@ -672,7 +1065,7 @@ class AccountSwitcher {
         dropdown.style.removeProperty('width');
         dropdown.style.removeProperty('min-width');
         
-        [...dropdown.querySelectorAll('.account-name, .account-type, .account-details, .account-item')].forEach(el => {
+        [...dropdown.querySelectorAll('.account-name, .account-type, .account-details, .account-item, .action-item')].forEach(el => {
           el.style.removeProperty('overflow');
           el.style.removeProperty('text-overflow');
           el.style.removeProperty('max-width');
@@ -686,6 +1079,15 @@ class AccountSwitcher {
           el.style.removeProperty('align-items');
           el.style.removeProperty('flex-wrap');
           el.style.removeProperty('flex');
+        });
+        
+        // Reset action item labels specifically
+        [...dropdown.querySelectorAll('.action-item .nav-item-label')].forEach(el => {
+          el.style.removeProperty('display');
+          el.style.removeProperty('visibility');
+          el.style.removeProperty('white-space');
+          el.style.removeProperty('overflow');
+          el.style.removeProperty('text-overflow');
         });
       }, 50);
     }
@@ -726,6 +1128,20 @@ class AccountSwitcher {
         this.selectAccount(accountId);
       });
     });
+    
+            // Initialize popover for Switch to sandbox action
+    const switchSandboxButton = this.container.querySelector('#switchSandboxAction');
+    if (switchSandboxButton && window.Popover) {
+      const sandboxPopover = new window.Popover(switchSandboxButton, {
+        position: 'right',
+        offset: 8,
+        trigger: 'hover',
+        hideDelay: 100,
+        showDelay: 0,
+        content: this.generateSandboxContent()
+      });
+    }
+
     
     // Close dropdown on outside click
     document.addEventListener('click', (e) => {
@@ -777,6 +1193,127 @@ class AccountSwitcher {
     this.container.querySelector('.account-switcher').classList.remove('open');
   }
   
+  generateSandboxContent() {
+    const currentAccount = this.options.currentAccount;
+    const isAllAccounts = currentAccount.id === 'all-accounts' || currentAccount.isAllAccounts;
+    
+    // Mock sandbox data - in real implementation, this would come from API
+    const orgSandboxes = [
+      { id: 'org-dev', name: 'Development', color: '#10B981', initial: 'D' },
+      { id: 'org-staging', name: 'Staging', color: '#F59E0B', initial: 'S' },
+      { id: 'org-prod', name: 'Production', color: '#EF4444', initial: 'P' }
+    ];
+    
+    const accountSandboxes = [
+      { id: 'acc-dev', name: 'Development', color: '#06B6D4', initial: 'D' },
+      { id: 'acc-test', name: 'Test', color: '#8B5CF6', initial: 'T' }
+    ];
+    
+    let content = '';
+    
+    if (isAllAccounts) {
+      // Show only organization-level sandboxes when viewing "All accounts"
+      content += `
+        <div class="sandbox-section">
+          <div class="sandbox-group">
+            ${orgSandboxes.map(sandbox => `
+              <div class="popover-option nav-item org-sandbox" onclick="console.log('Switch to ${sandbox.name} (org)'); this.closest('.popover').style.display='none';">
+                <div class="nav-item-icon">
+                  <div class="sandbox-avatar" style="background-color: ${sandbox.color};">
+                    <span class="avatar-initials">${sandbox.initial}</span>
+                  </div>
+                </div>
+                <span class="nav-item-label">${sandbox.name}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    } else {
+      // Show both org and account sandboxes when viewing specific account
+      content += `
+        <div class="sandbox-section">
+          <div class="sandbox-group">
+            ${orgSandboxes.map(sandbox => `
+              <div class="popover-option nav-item org-sandbox" onclick="console.log('Switch to ${sandbox.name} (org)'); this.closest('.popover').style.display='none';">
+                <div class="nav-item-icon">
+                  <div class="sandbox-avatar" style="background-color: ${sandbox.color};">
+                    <span class="avatar-initials">${sandbox.initial}</span>
+                  </div>
+                </div>
+                <span class="nav-item-label">${sandbox.name}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <div class="sandbox-section">
+          <div class="sandbox-section-label">${currentAccount.name} Sandboxes</div>
+          <div class="sandbox-group">
+            ${accountSandboxes.map(sandbox => `
+              <div class="popover-option nav-item account-sandbox" onclick="console.log('Switch to ${sandbox.name} (account)'); this.closest('.popover').style.display='none';">
+                <div class="nav-item-icon">
+                  <div class="sandbox-avatar" style="background-color: ${sandbox.color};">
+                    <span class="avatar-initials">${sandbox.initial}</span>
+                  </div>
+                </div>
+                <span class="nav-item-label">${sandbox.name}</span>
+                <span class="sandbox-scope-indicator">Account</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    
+    // Add management actions
+    content += `
+      <div class="management-group">
+        <div class="popover-option nav-item" onclick="console.log('Create new sandbox'); this.closest('.popover').style.display='none';">
+          <div class="nav-item-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 5v14"/>
+              <path d="M5 12h14"/>
+            </svg>
+          </div>
+          <span class="nav-item-label">Create</span>
+        </div>
+        <div class="popover-option nav-item" onclick="console.log('Manage sandboxes'); this.closest('.popover').style.display='none';">
+          <div class="nav-item-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </div>
+          <span class="nav-item-label">Manage sandboxes</span>
+        </div>
+      </div>
+    `;
+    
+    return content;
+  }
+  
+  refreshSandboxPopover() {
+    const switchSandboxButton = this.container.querySelector('#switchSandboxAction');
+    if (switchSandboxButton && window.Popover) {
+      // Find and remove existing popover
+      const existingPopover = document.querySelector('.popover');
+      if (existingPopover) {
+        existingPopover.remove();
+      }
+      
+      // Recreate popover with updated content
+      const sandboxPopover = new window.Popover(switchSandboxButton, {
+        position: 'right',
+        offset: 8,
+        trigger: 'hover',
+        hideDelay: 100,
+        showDelay: 0,
+        content: this.generateSandboxContent()
+      });
+    }
+  }
+  
       selectAccount(accountId) {
     if (accountId === 'all-accounts') {
       // Get parent organization name for "All accounts"
@@ -794,6 +1331,7 @@ class AccountSwitcher {
       this.options.onAccountChange(allAccountsOption);
       this.render();
       this.bindEvents();
+      this.refreshSandboxPopover();
       this.close();
       return;
     }
@@ -809,6 +1347,7 @@ class AccountSwitcher {
       this.options.onAccountChange(accountWithParent);
       this.render();
       this.bindEvents();
+      this.refreshSandboxPopover();
       this.close();
     }
   }
