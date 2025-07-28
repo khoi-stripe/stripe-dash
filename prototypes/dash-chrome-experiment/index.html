@@ -1301,12 +1301,14 @@
         window.updateContentPanel = updateContentPanel;
         
         // Initialize Create popover using global component
-        const createPopover = new Popover(addAccountButton, {
-          position: 'right',
-          offset: 8,
-          trigger: 'hover',
-          hideDelay: 100,
-          content: [
+        const createButton = document.getElementById('addAccountButton');
+        if (createButton && window.Popover) {
+          const createPopover = new Popover(createButton, {
+            position: 'right',
+            offset: 8,
+            trigger: 'hover',
+            hideDelay: 100,
+            content: [
             {
               icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                        <line x1="12" y1="5" x2="12" y2="19"/>
@@ -1332,6 +1334,7 @@
             }
           ]
         });
+        }
         
 
         

@@ -326,6 +326,11 @@ class AccountSwitcher {
     });
     
     this.addStyles();
+    
+    // Force remove any purple backgrounds after render
+    setTimeout(() => {
+      this.forceRemoveActiveBackgrounds();
+    }, 0);
   }
   
   addStyles() {
@@ -428,20 +433,21 @@ class AccountSwitcher {
          border-color: var(--neutral-200);
        }
        
-       /* Sandbox avatars in popover */
+       /* Sandbox avatars in popover - match account avatar styling */
        .sandbox-avatar {
+         position: relative;
          display: flex;
          align-items: center;
          justify-content: center;
-         width: 16px;
-         height: 16px;
-         border-radius: 3px;
+         width: 24px;
+         height: 24px;
+         border-radius: 4px;
          flex-shrink: 0;
        }
        
        .sandbox-avatar .avatar-initials {
          font-family: var(--font-family-ui);
-         font-size: 10px;
+         font-size: var(--font-size-12);
          font-weight: var(--font-weight-medium);
          color: white;
          line-height: 1;
@@ -641,8 +647,32 @@ class AccountSwitcher {
       }
       
       .account-item.active {
-        background: var(--brand-50);
+        background: transparent !important;
       }
+      
+      .account-item.active::before {
+        background-color: transparent !important;
+      }
+      
+             /* Nuclear option - target every possible combination */
+       .account-switcher .account-item.active,
+       .account-switcher .account-item.nav-item.active,
+       .account-switcher-dropdown .account-item.active,
+       .account-switcher-dropdown .account-item.nav-item.active,
+       .account-switcher .account-item.active::before,
+       .account-switcher .account-item.nav-item.active::before,
+       .account-switcher-dropdown .account-item.active::before,
+       .account-switcher-dropdown .account-item.nav-item.active::before {
+         background: transparent !important;
+         background-color: transparent !important;
+       }
+       
+       /* Override any brand-50 backgrounds specifically */
+       .account-switcher .account-item[style*="background"],
+       .account-switcher-dropdown .account-item[style*="background"] {
+         background: transparent !important;
+         background-color: transparent !important;
+       }
       
       .account-item.active .account-name {
         color: var(--brand-600);
@@ -961,6 +991,17 @@ class AccountSwitcher {
          position: relative;
          z-index: 1;
        }
+       
+       /* FINAL OVERRIDE - This should be the last rule with highest specificity */
+       div[class*="account-switcher"] button[class*="account-item"][class*="active"]:not(:hover) {
+         background: transparent !important;
+         background-color: transparent !important;
+       }
+       
+       div[class*="account-switcher"] button[class*="account-item"][class*="active"]:not(:hover)::before {
+         background: transparent !important;
+         background-color: transparent !important;
+       }
     `;
     
     document.head.appendChild(styles);
@@ -1099,6 +1140,9 @@ class AccountSwitcher {
       return;
     }
     
+    // Force remove purple backgrounds from active account items
+    this.forceRemoveActiveBackgrounds();
+    
     const trigger = this.container.querySelector('.account-switcher-trigger');
     const dropdown = this.container.querySelector('.account-switcher-dropdown');
     const accountItems = this.container.querySelectorAll('.account-item');
@@ -1230,25 +1274,9 @@ class AccountSwitcher {
         </div>
       `;
     } else {
-      // Show both org and account sandboxes when viewing specific account
+      // Show only account-level sandboxes when viewing specific account
       content += `
         <div class="sandbox-section">
-          <div class="sandbox-group">
-            ${orgSandboxes.map(sandbox => `
-              <div class="popover-option nav-item org-sandbox" onclick="console.log('Switch to ${sandbox.name} (org)'); this.closest('.popover').style.display='none';">
-                <div class="nav-item-icon">
-                  <div class="sandbox-avatar" style="background-color: ${sandbox.color};">
-                    <span class="avatar-initials">${sandbox.initial}</span>
-                  </div>
-                </div>
-                <span class="nav-item-label">${sandbox.name}</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-        
-        <div class="sandbox-section">
-          <div class="sandbox-section-label">${currentAccount.name} Sandboxes</div>
           <div class="sandbox-group">
             ${accountSandboxes.map(sandbox => `
               <div class="popover-option nav-item account-sandbox" onclick="console.log('Switch to ${sandbox.name} (account)'); this.closest('.popover').style.display='none';">
@@ -1258,7 +1286,6 @@ class AccountSwitcher {
                   </div>
                 </div>
                 <span class="nav-item-label">${sandbox.name}</span>
-                <span class="sandbox-scope-indicator">Account</span>
               </div>
             `).join('')}
           </div>
@@ -1291,6 +1318,49 @@ class AccountSwitcher {
     `;
     
     return content;
+  }
+  
+  forceRemoveActiveBackgrounds() {
+    // Use JavaScript to forcefully remove backgrounds from active account items
+    const removeBackgrounds = () => {
+      const activeItems = this.container.querySelectorAll('.account-item.active');
+      activeItems.forEach(item => {
+        // Remove any background styles
+        item.style.setProperty('background', 'transparent', 'important');
+        item.style.setProperty('background-color', 'transparent', 'important');
+        
+        // Also check for pseudo-element styling via a style injection
+        const styleId = 'force-no-active-bg';
+        if (!document.getElementById(styleId)) {
+          const style = document.createElement('style');
+          style.id = styleId;
+          style.innerHTML = `
+            .account-switcher .account-item.active:not(:hover),
+            .account-switcher .account-item.active:not(:hover)::before,
+            .account-switcher-dropdown .account-item.active:not(:hover),
+            .account-switcher-dropdown .account-item.active:not(:hover)::before {
+              background: transparent !important;
+              background-color: transparent !important;
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      });
+    };
+    
+    // Run immediately and also observe for changes
+    removeBackgrounds();
+    
+    // Set up a mutation observer to catch any dynamically added active states
+    const observer = new MutationObserver(() => {
+      removeBackgrounds();
+    });
+    
+    observer.observe(this.container, {
+      attributes: true,
+      attributeFilter: ['class'],
+      subtree: true
+    });
   }
   
   refreshSandboxPopover() {

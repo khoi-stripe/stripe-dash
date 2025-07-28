@@ -402,6 +402,11 @@
   stroke: var(--brand-600);
 }
 
+/* Active state - no background */
+.nav-item.active::before {
+  background-color: transparent;
+}
+
 /* Active + Hover state */
 .nav-item.active:hover::before {
   background-color: var(--brand-50);
@@ -573,6 +578,12 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background-color 0.15s ease;
+}
+
+/* Ensure popover nav-items match nav panel height */
+.popover-option.nav-item {
+  height: 24px;
+  margin-bottom: 4px;
 }
 
 .popover-option:last-child {
