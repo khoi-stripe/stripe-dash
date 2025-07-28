@@ -70,9 +70,7 @@
      }
      
      .nav-panel.collapsed #nav-account-switcher {
-       margin: 0 -20px 16px -20px;
-       display: flex;
-       justify-content: center;
+       width: auto;
      }
      
      .nav-panel.collapsed #nav-account-switcher .account-switcher-trigger {
@@ -90,10 +88,6 @@
      
      .nav-panel.collapsed .hamburger-button {
        display: none;
-     }
-     
-     .nav-panel.collapsed #nav-account-switcher {
-       width: auto;
      }
      
      /* Disable animations for account switcher during nav collapse */
@@ -147,12 +141,14 @@
      }
      
      .nav-panel.collapsed .nav-item:hover .nav-item-tooltip,
-     .nav-panel.collapsed .workload-item:hover .nav-item-tooltip {
+     .nav-panel.collapsed .workload-item:hover .nav-item-tooltip,
+     .nav-panel.collapsed .account-switcher-trigger:hover .account-switcher-tooltip {
        opacity: 1;
        visibility: visible;
      }
      
-     .nav-panel:not(.collapsed) .nav-item-tooltip {
+     .nav-panel:not(.collapsed) .nav-item-tooltip,
+     .nav-panel:not(.collapsed) .account-switcher-tooltip {
        display: none;
      }
      
@@ -209,11 +205,12 @@
        border-radius: var(--radius-sm);
        cursor: pointer;
        opacity: 0;
-       transform: translateX(-24px);
+       transform: translateX(-32px); /* Match the full width including padding */
        transition: all 0.2s ease;
        color: var(--icon-default);
        flex-shrink: 0;
        overflow: hidden;
+       padding: 0;
      }
      
      .hamburger-button:hover {
@@ -224,23 +221,27 @@
      .account-switcher-container:hover .hamburger-button {
        opacity: 1;
        transform: translateX(0);
-       width: 24px;
+       width: 32px; /* 24px icon + 4px padding on each side */
+       height: 32px;
+       padding: 4px;
      }
      
      /* Keep hamburger visible when account switcher is open */
      .account-switcher-container.account-switcher-open .hamburger-button {
        opacity: 1;
        transform: translateX(0);
-       width: 24px;
+       width: 32px; /* 24px icon + 4px padding on each side */
+       height: 32px;
+       padding: 4px;
      }
      
      .account-switcher-container:hover #nav-account-switcher {
-       width: calc(100% - 32px); /* Account for hamburger (24px) + gap (8px) */
+       width: calc(100% - 40px); /* Account for hamburger (32px) + gap (8px) */
      }
      
      /* Keep account switcher sized for hamburger when popover is open */
      .account-switcher-container.account-switcher-open #nav-account-switcher {
-       width: calc(100% - 32px);
+       width: calc(100% - 40px); /* Account for hamburger (32px) + gap (8px) */
      }
      
      .account-switcher-container:hover #nav-account-switcher .account-switcher-trigger {
@@ -356,6 +357,10 @@
        z-index: 1;
      }
      
+     .account-panel .account-item .nav-item-label {
+       margin-left: 0; /* Remove the 8px margin from shared nav-item-label */
+     }
+     
      /* Add Account Button */
      .add-account-button {
        position: relative;
@@ -421,21 +426,28 @@
        margin-left: 0; /* Remove inherited left margin */
      }
      
+     /* More specific override for account-item labels to ensure no vertical spacing */
+     .account-panel .account-item .nav-item-label {
+       line-height: 1; /* Force line-height to 1 to eliminate vertical spacing */
+       padding: 0; /* Ensure no padding */
+       margin: 0; /* Ensure no margin */
+     }
+     
      /* Only active account is non-interactive */
      .account-panel .account-item.nav-item.active {
        /* Active state - white floating background */
      }
      
      .account-panel .account-item.nav-item.active::before {
-       background-color: white; /* Active account has white floating background */
+       background-color: transparent !important; /* Override shared CSS - no background for active account */
      }
      
      .account-panel .account-item.nav-item.active:hover {
-       /* Active state hover - handled by floating pseudo-element */
+       /* Active state hover - no background */
      }
      
      .account-panel .account-item.nav-item.active:hover::before {
-       background-color: white; /* Active items keep white floating background on hover */
+       background-color: transparent !important; /* Override shared CSS - no background for active account on hover */
      }
      
 
@@ -907,14 +919,14 @@
           }
         });
         
-        // Handle Create button click
-        const createButton = accountPanel.querySelector('.add-account-button');
-        if (createButton) {
+        // Handle Create button clicks (both buttons)
+        const createButtons = accountPanel.querySelectorAll('.add-account-button');
+        createButtons.forEach(function(createButton) {
           createButton.addEventListener('click', function(event) {
             event.stopPropagation(); // Prevent panel from closing
             // Add create account functionality here if needed
           });
-        }
+        });
         
         // Handle Username button click
         const usernameButton = document.getElementById('usernameButton');
@@ -1076,15 +1088,17 @@
         }
         
         function updateActiveAccount(accountId) {
-          // Remove active class from all account items
+          // Remove active class and tooltip from all account items
           accountItems.forEach(item => {
             item.classList.remove('active');
+            item.removeAttribute('title');
           });
           
-          // Add active class to selected account
+          // Add active class and tooltip to selected account
           const activeItem = document.querySelector(`[data-account="${accountId}"]`);
           if (activeItem) {
             activeItem.classList.add('active');
+            activeItem.setAttribute('title', 'Current account');
           }
         }
         
@@ -1299,6 +1313,40 @@
           ]
         });
         
+        // Initialize duplicate Create popover
+        const addAccountButton2 = document.getElementById('addAccountButton2');
+        const createPopover2 = new Popover(addAccountButton2, {
+          position: 'right',
+          offset: 8,
+          trigger: 'hover',
+          hideDelay: 100,
+          content: [
+            {
+              icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                       <line x1="12" y1="5" x2="12" y2="19"/>
+                       <line x1="5" y1="12" x2="19" y2="12"/>
+                     </svg>`,
+              label: 'Create account',
+              onClick: () => {
+                console.log('Create account clicked (button 2)');
+                // Add your create account logic here
+              }
+            },
+            {
+              icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                       <path d="M3 21h18"/>
+                       <path d="M5 21V7l8-4v18"/>
+                       <path d="M19 21V11l-6-4"/>
+                     </svg>`,
+              label: 'Create organization',
+              onClick: () => {
+                console.log('Create organization clicked (button 2)');
+                // Add your create organization logic here
+              }
+            }
+          ]
+        });
+        
 
         
         // Initialize account list order
@@ -1338,7 +1386,7 @@
         <!-- Account Group -->
         <div class="account-group">
           <!-- Account Items -->
-          <div class="account-item nav-item active" data-account="acme-inc">
+          <div class="account-item nav-item active" data-account="acme-inc" title="Current account">
             <div class="nav-item-icon">
               <div class="account-avatar" data-initials="AI" data-color="#3B82F6"></div>
             </div>
@@ -1363,6 +1411,17 @@
           
           <!-- Add Account Button -->
           <div class="add-account-button nav-item" id="addAccountButton">
+            <div class="nav-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </div>
+            <span class="nav-item-label">Create</span>
+          </div>
+          
+          <!-- Duplicate Add Account Button -->
+          <div class="add-account-button nav-item" id="addAccountButton2">
             <div class="nav-item-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <line x1="12" y1="5" x2="12" y2="19"/>
