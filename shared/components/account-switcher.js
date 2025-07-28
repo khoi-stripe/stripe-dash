@@ -159,25 +159,25 @@ class AccountSwitcher {
     };
     
     const hasMultipleAccounts = this.options.accounts.length > 1;
+    const isOrgAccount = hasMultipleAccounts; // For now, treat multiple accounts as org accounts
     
     this.container.innerHTML = `
-      <div class="account-switcher account-switcher-${variant} ${!hasMultipleAccounts ? 'account-switcher-disabled' : ''}">
-        <button class="account-switcher-trigger" type="button" ${!hasMultipleAccounts ? 'disabled' : ''}>
+      <div class="account-switcher account-switcher-${variant}">
+        <button class="account-switcher-trigger" type="button">
           <div class="account-info">
             ${renderAvatar()}
             ${renderAccountDetails()}
           </div>
-          ${hasMultipleAccounts ? `
-            <div class="account-switcher-caret">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <polyline points="6,9 12,15 18,9"/>
-              </svg>
-            </div>
-          ` : ''}
+          <div class="account-switcher-caret">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="6,9 12,15 18,9"/>
+            </svg>
+          </div>
         </button>
         
-        ${hasMultipleAccounts ? `
-          <div class="account-switcher-dropdown">
+        <div class="account-switcher-dropdown">
+          ${isOrgAccount ? `
+            <!-- Org Account: Show account list + actions -->
             <div class="account-list">
               ${this.options.accounts.length > 1 ? `
                 <button class="account-item all-accounts ${currentAccount.id === 'all-accounts' ? 'active' : ''}" data-account-id="all-accounts" type="button">
@@ -206,6 +206,7 @@ class AccountSwitcher {
                 </button>
                 <div class="account-divider"></div>
               ` : ''}
+              
               ${(() => {
                 const uniqueColors = this.generateUniqueColors(this.options.accounts);
                 return this.options.accounts.map(account => {
@@ -268,8 +269,43 @@ class AccountSwitcher {
                 <span class="nav-item-label">Create account</span>
               </button>
             </div>
-          </div>
-        ` : ''}
+          ` : `
+            <!-- Non-Org Account: Show only actions -->
+            <div class="account-actions">
+              <button class="nav-item" type="button">
+                <div class="nav-item-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </div>
+                <span class="nav-item-label">Settings</span>
+              </button>
+              
+              <button class="nav-item" type="button" id="switchSandboxAction">
+                <div class="nav-item-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="7.5,4.21 12,6.81 16.5,4.21"/>
+                    <polyline points="7.5,19.79 7.5,14.6 3,12"/>
+                    <polyline points="21,12 16.5,14.6 16.5,19.79"/>
+                  </svg>
+                </div>
+                <span class="nav-item-label">Switch to sandbox</span>
+              </button>
+              
+              <button class="nav-item" type="button" id="createAccountAction">
+                <div class="nav-item-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 5v14"/>
+                    <path d="M5 12h14"/>
+                  </svg>
+                </div>
+                <span class="nav-item-label">Create account</span>
+              </button>
+            </div>
+          `}
+        </div>
       </div>
     `;
     
@@ -1147,14 +1183,9 @@ class AccountSwitcher {
     const dropdown = this.container.querySelector('.account-switcher-dropdown');
     const accountItems = this.container.querySelectorAll('.account-item');
     
-    // Only add interactive behavior if there are multiple accounts
+    // Always add interactive behavior for account switcher
     const hasMultipleAccounts = this.options.accounts.length > 1;
-    
-    if (!hasMultipleAccounts) {
-      // For single accounts, no interaction needed
-      this.eventsBound = true;
-      return;
-    }
+    const isOrgAccount = hasMultipleAccounts;
     
     // Toggle dropdown
     trigger.addEventListener('click', (e) => {
@@ -1163,15 +1194,17 @@ class AccountSwitcher {
       this.toggle();
     });
     
-    // Account selection
-    accountItems.forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const accountId = item.dataset.accountId;
-        this.selectAccount(accountId);
+    // Account selection (only for org accounts)
+    if (isOrgAccount) {
+      accountItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const accountId = item.dataset.accountId;
+          this.selectAccount(accountId);
+        });
       });
-    });
+    }
     
             // Initialize popover for Switch to sandbox action
     const switchSandboxButton = this.container.querySelector('#switchSandboxAction');
@@ -1240,6 +1273,7 @@ class AccountSwitcher {
   generateSandboxContent() {
     const currentAccount = this.options.currentAccount;
     const isAllAccounts = currentAccount.id === 'all-accounts' || currentAccount.isAllAccounts;
+    const isOrgAccount = this.options.accounts.length > 1;
     
     // Mock sandbox data - in real implementation, this would come from API
     const orgSandboxes = [
@@ -1255,8 +1289,8 @@ class AccountSwitcher {
     
     let content = '';
     
-    if (isAllAccounts) {
-      // Show only organization-level sandboxes when viewing "All accounts"
+    if (isOrgAccount && isAllAccounts) {
+      // Show only organization-level sandboxes when viewing "All accounts" in org
       content += `
         <div class="sandbox-section">
           <div class="sandbox-group">
@@ -1274,7 +1308,7 @@ class AccountSwitcher {
         </div>
       `;
     } else {
-      // Show only account-level sandboxes when viewing specific account
+      // Show only account-level sandboxes (both for specific accounts in orgs and non-org accounts)
       content += `
         <div class="sandbox-section">
           <div class="sandbox-group">
