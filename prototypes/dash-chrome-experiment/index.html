@@ -286,10 +286,13 @@
        transition: width 0.3s ease;
        overflow: hidden;
        flex-shrink: 0;
+       position: relative;
+       z-index: 10;
      }
      
      .account-panel.open {
        width: 240px; /* Expand to full width */
+       box-shadow: inset -2px 0 2px rgba(0, 0, 0, 0.03);
      }
      
      .account-panel-content {
@@ -554,6 +557,32 @@
        letter-spacing: 0;
        min-width: 16px;
        text-align: center;
+     }
+
+     /* Account items need relative positioning for absolute badges/checkmarks */
+     .account-item {
+       position: relative;
+     }
+
+     /* Account Check (for active accounts) */
+     .account-check {
+       position: absolute;
+       right: 8px;
+       top: 50%;
+       transform: translateY(-50%);
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       color: var(--brand-600);
+       width: 16px;
+       height: 16px;
+       flex-shrink: 0;
+     }
+     
+     .account-check svg {
+       width: 16px;
+       height: 16px;
+       stroke: var(--brand-600);
      }
      
 
@@ -1108,18 +1137,56 @@
         }
         
         function updateActiveAccount(accountId) {
-          // Remove active class and tooltip from all account items
+          // Remove active class, tooltip, checkmarks, and badges from all account items
           accountItems.forEach(item => {
             item.classList.remove('active');
             item.removeAttribute('title');
+            
+            // Remove existing checkmark if present
+            const existingCheck = item.querySelector('.account-check');
+            if (existingCheck) {
+              existingCheck.remove();
+            }
+            
+            // Remove existing badge if present
+            const existingBadge = item.querySelector('.account-badge');
+            if (existingBadge) {
+              existingBadge.remove();
+            }
           });
           
-          // Add active class and tooltip to selected account
-          const activeItem = document.querySelector(`[data-account="${accountId}"]`);
-          if (activeItem) {
-            activeItem.classList.add('active');
-            activeItem.setAttribute('title', 'Current account');
-          }
+          // Update all accounts with appropriate indicators
+          accountItems.forEach(item => {
+            const itemAccountId = item.dataset.account;
+            const account = accounts[itemAccountId];
+            
+            if (itemAccountId === accountId) {
+              // This is the active account
+              item.classList.add('active');
+              item.setAttribute('title', 'Current account');
+              
+              // Add checkmark for all active accounts
+              const checkmark = document.createElement('div');
+              checkmark.className = 'account-check';
+              checkmark.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="9,12 11,14 15,10"/>
+                </svg>
+              `;
+              item.appendChild(checkmark);
+            } else {
+              // This is not the active account
+              // Add count badge only if it's an organization
+              if (account && account.isOrganization && account.subAccounts) {
+                const subAccountCount = Object.keys(account.subAccounts).length;
+                const badge = document.createElement('span');
+                badge.className = 'account-badge';
+                badge.textContent = subAccountCount;
+                item.appendChild(badge);
+              }
+            }
+          });
         }
         
         function updateNavAccountSwitcher(account) {
@@ -1344,6 +1411,7 @@
         reorderAccountList(currentAccount);
         
         // Initialize the current account display
+        updateActiveAccount(currentAccount);
         
         // Update content panel - show "All accounts" if that's the current selection
         const account = accounts[currentAccount];
@@ -1382,7 +1450,6 @@
               <div class="account-avatar" data-initials="AI" data-color="#3B82F6"></div>
             </div>
             <span class="nav-item-label">Acme, Inc.</span>
-            <span class="account-badge">8</span>
           </div>
           
           <div class="account-item nav-item" data-account="cactus-practice">
@@ -1397,7 +1464,6 @@
               <div class="account-avatar" data-initials="LF" data-color="#F59E0B"></div>
             </div>
             <span class="nav-item-label">Lil'Fatsos</span>
-            <span class="account-badge">5</span>
           </div>
           
           <!-- Add Account Button -->

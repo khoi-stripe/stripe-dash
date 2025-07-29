@@ -162,7 +162,7 @@ class AccountSwitcher {
     const isOrgAccount = hasMultipleAccounts; // For now, treat multiple accounts as org accounts
     
     this.container.innerHTML = `
-      <div class="account-switcher account-switcher-${variant}">
+      <div class="account-switcher account-switcher-${variant} ${isOrgAccount ? 'account-switcher-org' : 'account-switcher-individual'}">
         <button class="account-switcher-trigger" type="button">
           <div class="account-info">
             ${renderAvatar()}
@@ -172,6 +172,9 @@ class AccountSwitcher {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <polyline points="6,9 12,15 18,9"/>
             </svg>
+          </div>
+          <div class="account-switcher-tooltip">
+            ${currentAccount.name}${currentAccount.type ? ` • ${currentAccount.type}` : ''}
           </div>
         </button>
         
@@ -204,7 +207,6 @@ class AccountSwitcher {
                     </div>
                   ` : ''}
                 </button>
-                <div class="account-divider"></div>
               ` : ''}
               
               ${(() => {
@@ -381,6 +383,7 @@ class AccountSwitcher {
       }
       
       .account-switcher-trigger {
+        position: relative;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -394,6 +397,12 @@ class AccountSwitcher {
       }
       
       .account-switcher-trigger:hover {
+        border-color: var(--color-border-strong);
+        background: var(--color-background);
+      }
+      
+      /* Persist hover state when popover is open */
+      .account-switcher-trigger.popover-open {
         border-color: var(--color-border-strong);
         background: var(--color-background);
       }
@@ -598,13 +607,13 @@ class AccountSwitcher {
         letter-spacing: 0;
       }
       
-      /* Trigger button should use label/small typography */
+      /* Trigger button should use label/medium emphasized typography */
       .account-switcher-trigger .account-name {
-        font-size: var(--font-size-12);
+        font-size: var(--font-size-14);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text);
-        line-height: var(--line-height-16);
-        letter-spacing: 0;
+        line-height: var(--line-height-20);
+        letter-spacing: -0.005em;
       }
       
       .account-switcher-trigger .account-type {
@@ -799,6 +808,50 @@ class AccountSwitcher {
       .account-switcher-trigger:hover .all-accounts-avatar {
         background: var(--neutral-100) !important;
         color: var(--neutral-700) !important;
+      }
+      
+      /* Persist all-accounts avatar hover state when popover is open */
+      .account-switcher-trigger.popover-open .all-accounts-avatar {
+        background: var(--neutral-100) !important;
+        color: var(--neutral-700) !important;
+      }
+      
+      /* Account switcher tooltip for collapsed state */
+      .account-switcher-tooltip {
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 8px;
+        padding: 4px 8px;
+        background: var(--neutral-900);
+        color: white;
+        font-family: var(--font-family-ui);
+        font-size: var(--font-size-12);
+        font-weight: var(--font-weight-medium);
+        line-height: var(--line-height-16);
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+        pointer-events: none;
+        z-index: 99999;
+        box-shadow: var(--shadow-md);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .account-switcher-tooltip::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -4px;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 4px 4px 4px 0;
+        border-color: transparent var(--neutral-900) transparent transparent;
       }
       
       /* Account Actions Section */
@@ -1259,6 +1312,12 @@ class AccountSwitcher {
     this.isOpen = true;
     this.container.querySelector('.account-switcher').classList.add('open');
     
+    // Add popover-open class to trigger for persistent hover state
+    const trigger = this.container.querySelector('.account-switcher-trigger');
+    if (trigger) {
+      trigger.classList.add('popover-open');
+    }
+    
     // Use requestAnimationFrame to ensure positioning happens after any CSS transitions
     requestAnimationFrame(() => {
       this.positionDropdown();
@@ -1268,6 +1327,12 @@ class AccountSwitcher {
   close() {
     this.isOpen = false;
     this.container.querySelector('.account-switcher').classList.remove('open');
+    
+    // Remove popover-open class from trigger
+    const trigger = this.container.querySelector('.account-switcher-trigger');
+    if (trigger) {
+      trigger.classList.remove('popover-open');
+    }
   }
   
   generateSandboxContent() {
