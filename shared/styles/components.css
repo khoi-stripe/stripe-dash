@@ -299,15 +299,15 @@
    ========================================
    
    When creating icons:
-   1. Use simple, line art SVGs (stroke-based, not fill-based)
-   2. MINIMUM stroke width: 1.5px (enforced globally)
-   3. Default color: #6C7688 (var(--icon-default))
-   4. Size: 16px x 16px in 24px container
-   5. ViewBox: "0 0 24 24" for scalability
+   1. Use clean, fill-based SVGs (no stroke outlines)
+   2. Default color: #6C7688 (use fill="currentColor" for inheritance)
+   3. Size: 16px x 16px in 24px container
+   4. ViewBox: "0 0 16 16" for consistency
+   5. No stroke attributes
    
    Example:
-   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6C7688" stroke-width="1.5">
-     <path d="..."/>
+   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+     <path d="..." fill="currentColor"/>
    </svg>
    ======================================== */
 
@@ -348,10 +348,11 @@
 }
 
 .nav-item-icon svg {
-  stroke: var(--icon-default);
+  stroke: none;
+  color: #6C7688;
 }
 
-/* Global icon stroke width is enforced in base.css */
+/* Icons now use fill-based design without strokes */
 
 .nav-item-label {
   margin-left: 8px;
@@ -399,7 +400,7 @@
 }
 
 .nav-item.active .nav-item-icon svg {
-  stroke: var(--brand-600);
+  stroke: none;
 }
 
 /* Active state - no background */
@@ -417,7 +418,7 @@
 }
 
 .nav-item.active:hover .nav-item-icon svg {
-  stroke: var(--brand-600);
+  stroke: none;
 }
 
 /* Workload Item Variant */
@@ -453,7 +454,8 @@
   height: 16px;
   display: block;
   margin: auto; /* Ensure SVG is perfectly centered in container */
-  stroke: var(--icon-default);
+  stroke: none;
+  color: #6C7688;
 }
 
 .workload-item .nav-item-label {
@@ -479,11 +481,11 @@
 }
 
 .workload-item .workload-caret-icon svg {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   display: block;
   margin: auto; /* Ensure caret SVG is perfectly centered in container */
-  stroke: var(--icon-default);
+  color: #6C7688;
 }
 
 /* Workload Item Hover state */
@@ -520,11 +522,11 @@
 }
 
 .workload-item.active .nav-item-icon svg {
-  stroke: var(--brand-600);
+  stroke: none;
 }
 
 .workload-item.active .workload-caret-icon svg {
-  stroke: var(--brand-600);
+  color: var(--brand-600);
 }
 
 /* Workload Item Active + Hover state */
@@ -537,11 +539,11 @@
 }
 
 .workload-item.active:hover .nav-item-icon svg {
-  stroke: var(--brand-600);
+  stroke: none;
 }
 
 .workload-item.active:hover .workload-caret-icon svg {
-  stroke: var(--brand-600);
+  color: var(--brand-600);
 } 
 
 /* ========================================
@@ -586,6 +588,10 @@
   margin-bottom: 4px;
 }
 
+.popover-option .nav-item-icon svg {
+  color: #6C7688;
+}
+
 .popover-option:last-child {
   margin-bottom: 0;
 }
@@ -600,7 +606,8 @@
 }
 
 .popover-option:hover .nav-item-icon svg {
-  stroke: var(--neutral-700);
+  stroke: none;
+  color: #6C7688;
 }
 
 /* Global behavior: Persist button hover state when popover is open */
