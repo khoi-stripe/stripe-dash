@@ -148,6 +148,12 @@ input, textarea, select, button {
   font-size: inherit;
 }
 
+/* Reset button width to allow full expansion */
+button {
+  width: auto;
+  max-width: none;
+}
+
 /* Focus states */
 :focus {
   outline: 2px solid var(--color-primary);
@@ -170,14 +176,14 @@ input, textarea, select, button {
   border: 0 !important;
 } 
 
-/* Global Icon Standards */
+/* Icon System */
 svg {
-  stroke-width: 1.5;
+  color: currentColor;
+  flex-shrink: 0;
 }
 
-/* Override for any icons with stroke-width less than 1.5 */
-svg[stroke-width="1"],
-svg[stroke-width="0.5"],
-svg[stroke-width="1.0"] {
-  stroke-width: 1.5 !important;
+/* Base icon styling - no stroke properties */
+.nav-item-icon svg,
+.workload-item .nav-item-icon svg {
+  color: currentColor;
 } 

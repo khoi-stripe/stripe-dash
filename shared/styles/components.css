@@ -317,12 +317,16 @@
   display: flex;
   align-items: center;
   height: 24px;
-  max-width: 240px;
   width: 100%;
   padding: 0;
   text-decoration: none;
   transition: all var(--transition-fast);
   border-radius: var(--radius-sm);
+}
+
+/* Limit width only in navigation panels, not in popovers */
+.nav-panel .nav-item {
+  max-width: 240px;
 }
 
 .nav-item:hover {
@@ -427,12 +431,16 @@
   display: flex;
   align-items: center;
   height: 24px;
-  max-width: 240px;
   width: 100%;
   padding: 0;
   text-decoration: none;
   transition: all var(--transition-fast);
   border-radius: var(--radius-sm);
+}
+
+/* Limit width only in navigation panels, not in popovers */
+.nav-panel .workload-item {
+  max-width: 240px;
 }
 
 .workload-item:hover {
@@ -560,12 +568,14 @@
   background: #FFF;
   box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
   padding: 8px;
-  min-width: 200px;
+  min-width: 284px;
   z-index: 1001;
   opacity: 0;
   visibility: hidden;
   transform: translateX(-8px);
   transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .popover.show {
@@ -576,24 +586,42 @@
 
 /* Popover content item */
 .popover-option {
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background-color 0.15s ease;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Ensure popover nav-items match nav panel height */
-.popover-option.nav-item {
-  height: 24px;
-  margin-bottom: 4px;
+/* Remove margin from last item */
+.popover-option:last-child {
+  margin-bottom: 0;
+}
+
+/* Ensure popover nav-items match nav panel height and expand full width */
+.popover-option.nav-item,
+.popover .nav-item {
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  margin-bottom: 8px;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100%;
+}
+
+/* Override margin for nav-items in structured groups that use gap */
+.sandbox-group .popover-option.nav-item,
+.management-group .popover-option.nav-item,
+.account-actions .nav-item {
+  margin-bottom: 0 !important;
 }
 
 .popover-option .nav-item-icon svg {
   color: #6C7688;
-}
-
-.popover-option:last-child {
-  margin-bottom: 0;
 }
 
 /* Popover option hover states */

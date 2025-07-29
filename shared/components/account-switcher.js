@@ -117,10 +117,10 @@ class AccountSwitcher {
           <div class="account-avatar all-accounts-avatar" style="background: #F5F6F8 !important; background-color: #F5F6F8 !important; color: #6D7C8C !important;">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.75C0 1.23122 1.23122 0 2.75 0H8C9.51878 0 10.75 1.23122 10.75 2.75V3C10.75 3.41421 10.4142 3.75 10 3.75C9.58579 3.75 9.25 3.41421 9.25 3V2.75C9.25 2.05964 8.69036 1.5 8 1.5H2.75C2.05964 1.5 1.5 2.05964 1.5 2.75V14.25C1.5 14.3881 1.61193 14.5 1.75 14.5H4.25C4.66421 14.5 5 14.8358 5 15.25C5 15.6642 4.66421 16 4.25 16H1.75C0.783502 16 0 15.2165 0 14.25V2.75ZM10.8525 5.864C11.0957 5.712 11.4043 5.712 11.6475 5.864L15.6475 8.364C15.8668 8.50106 16 8.74141 16 9V14.25C16 15.2165 15.2165 16 14.25 16H8.25C7.2835 16 6.5 15.2165 6.5 14.25V9C6.5 8.74141 6.63321 8.50106 6.8525 8.364L10.8525 5.864ZM8 9.41569V14.25C8 14.3881 8.11193 14.5 8.25 14.5H10.5V13C10.5 12.5858 10.8358 12.25 11.25 12.25C11.6642 12.25 12 12.5858 12 13V14.5H14.25C14.3881 14.5 14.5 14.3881 14.5 14.25V9.41569L11.25 7.38444L8 9.41569Z" fill="currentColor"/>
-              <path d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
-              <path d="M3 8C3 7.44772 3.44772 7 4 7C4.55228 7 5 7.44772 5 8C5 8.55228 4.55228 9 4 9C3.44772 9 3 8.55228 3 8Z" fill="currentColor"/>
-              <path d="M6 4.5C6 3.94772 6.44772 3.5 7 3.5C7.55228 3.5 8 3.94772 8 4.5C8 5.05228 7.55228 5.5 7 5.5C6.44772 5.5 6 5.05228 6 4.5Z" fill="currentColor"/>
-              <path d="M3 11.5C3 10.9477 3.44772 10.5 4 10.5C4.55228 10.5 5 10.9477 5 11.5C5 12.0523 4.55228 12.5 4 12.5C3.44772 12.5 3 12.0523 3 11.5Z" fill="currentColor"/>
+              <path fill="currentColor" d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
+              <path fill="currentColor" d="M3 8C3 7.44772 3.44772 7 4 7C4.55228 7 5 7.44772 5 8C5 8.55228 4.55228 9 4 9C3.44772 9 3 8.55228 3 8Z" fill="currentColor"/>
+              <path fill="currentColor" d="M6 4.5C6 3.94772 6.44772 3.5 7 3.5C7.55228 3.5 8 3.94772 8 4.5C8 5.05228 7.55228 5.5 7 5.5C6.44772 5.5 6 5.05228 6 4.5Z" fill="currentColor"/>
+              <path fill="currentColor" d="M3 11.5C3 10.9477 3.44772 10.5 4 10.5C4.55228 10.5 5 10.9477 5 11.5C5 12.0523 4.55228 12.5 4 12.5C3.44772 12.5 3 12.0523 3 11.5Z" fill="currentColor"/>
             </svg>
           </div>
         `;
@@ -180,46 +180,69 @@ class AccountSwitcher {
           ${isOrgAccount ? `
             <!-- Org Account: Show account list + actions -->
             <div class="account-list">
-              ${this.options.accounts.length > 1 ? `
-                <button class="account-item all-accounts ${currentAccount.id === 'all-accounts' ? 'active' : ''}" data-account-id="all-accounts" type="button">
-                  <div class="account-avatar all-accounts-avatar" style="background: #F5F6F8 !important; background-color: #F5F6F8 !important; color: #6D7C8C !important;">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.75C0 1.23122 1.23122 0 2.75 0H8C9.51878 0 10.75 1.23122 10.75 2.75V3C10.75 3.41421 10.4142 3.75 10 3.75C9.58579 3.75 9.25 3.41421 9.25 3V2.75C9.25 2.05964 8.69036 1.5 8 1.5H2.75C2.05964 1.5 1.5 2.05964 1.5 2.75V14.25C1.5 14.3881 1.61193 14.5 1.75 14.5H4.25C4.66421 14.5 5 14.8358 5 15.25C5 15.6642 4.66421 16 4.25 16H1.75C0.783502 16 0 15.2165 0 14.25V2.75ZM10.8525 5.864C11.0957 5.712 11.4043 5.712 11.6475 5.864L15.6475 8.364C15.8668 8.50106 16 8.74141 16 9V14.25C16 15.2165 15.2165 16 14.25 16H8.25C7.2835 16 6.5 15.2165 6.5 14.25V9C6.5 8.74141 6.63321 8.50106 6.8525 8.364L10.8525 5.864ZM8 9.41569V14.25C8 14.3881 8.11193 14.5 8.25 14.5H10.5V13C10.5 12.5858 10.8358 12.25 11.25 12.25C11.6642 12.25 12 12.5858 12 13V14.5H14.25C14.3881 14.5 14.5 14.3881 14.5 14.25V9.41569L11.25 7.38444L8 9.41569Z" fill="currentColor"/>
-                      <path d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
-                      <path d="M3 8C3 7.44772 3.44772 7 4 7C4.55228 7 5 7.44772 5 8C5 8.55228 4.55228 9 4 9C3.44772 9 3 8.55228 3 8Z" fill="currentColor"/>
-                      <path d="M6 4.5C6 3.94772 6.44772 3.5 7 3.5C7.55228 3.5 8 3.94772 8 4.5C8 5.05228 7.55228 5.5 7 5.5C6.44772 5.5 6 5.05228 6 4.5Z" fill="currentColor"/>
-                      <path d="M3 11.5C3 10.9477 3.44772 10.5 4 10.5C4.55228 10.5 5 10.9477 5 11.5C5 12.0523 4.55228 12.5 4 12.5C3.44772 12.5 3 12.0523 3 11.5Z" fill="currentColor"/>
-                    </svg>
-                  </div>
-                  <div class="account-details">
-                    <span class="account-name">All accounts</span>
-                  </div>
-                  ${currentAccount.id === 'all-accounts' ? `
-                    <div class="account-check">
+              ${this.options.accounts.length >= 8 ? `
+                <div class="account-search-container">
+                  <div class="account-search-input-wrapper">
+                    <div class="search-icon">
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/>
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5788 11.8163C9.57969 12.5599 8.34124 13 7 13C3.68629 13 1 10.3137 1 7C1 3.68629 3.68629 1 7 1C10.3137 1 13 3.68629 13 7C13 8.34124 12.5599 9.57969 11.8163 10.5788L15.2437 14.0063C15.5854 14.348 15.5854 14.902 15.2437 15.2437C14.902 15.5854 14.348 15.5854 14.0063 15.2437L10.5788 11.8163ZM11.25 7C11.25 9.34721 9.34721 11.25 7 11.25C4.65279 11.25 2.75 9.34721 2.75 7C2.75 4.65279 4.65279 2.75 7 2.75C9.34721 2.75 11.25 4.65279 11.25 7Z" fill="currentColor"/>
                       </svg>
                     </div>
-                  ` : ''}
-                </button>
+                    <input type="text" class="account-search-input" placeholder="Search accounts..." />
+                  </div>
+                </div>
               ` : ''}
-              
+              <div class="account-items-container">
               ${(() => {
                 const uniqueColors = this.generateUniqueColors(this.options.accounts);
-                return this.options.accounts.map(account => {
-                  const accountInitials = this.generateInitials(account.name);
-                  const accountAvatarColor = account.color || uniqueColors[account.id];
-                  return `
-                    <button class="account-item ${account.id === currentAccount.id ? 'active' : ''}" 
-                            data-account-id="${account.id}" type="button">
-                      <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
-                        <span class="avatar-initials">${accountInitials}</span>
+                const hasMultipleAccounts = this.options.accounts.length > 1;
+                const isAllAccountsActive = currentAccount.id === 'all-accounts';
+                let accountsHtml = '';
+                
+                if (hasMultipleAccounts) {
+                  // Multiple accounts scenario
+                  
+                  // 1. First render active account if it's not "all-accounts"
+                  if (!isAllAccountsActive) {
+                    const activeAccount = this.options.accounts.find(acc => acc.id === currentAccount.id);
+                    if (activeAccount) {
+                      const accountInitials = this.generateInitials(activeAccount.name);
+                      const accountAvatarColor = activeAccount.color || uniqueColors[activeAccount.id];
+                      accountsHtml += `
+                        <button class="account-item active" data-account-id="${activeAccount.id}" type="button">
+                          <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
+                            <span class="avatar-initials">${accountInitials}</span>
+                          </div>
+                          <div class="account-details">
+                            <span class="account-name">${activeAccount.name}</span>
+                          </div>
+                          <div class="account-check">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/>
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/>
+                            </svg>
+                          </div>
+                        </button>
+                      `;
+                    }
+                  }
+                  
+                  // 2. Then render "All accounts"
+                  accountsHtml += `
+                    <button class="account-item all-accounts ${isAllAccountsActive ? 'active' : ''}" data-account-id="all-accounts" type="button">
+                      <div class="account-avatar all-accounts-avatar" style="background: #F5F6F8 !important; background-color: #F5F6F8 !important; color: #6D7C8C !important;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.75C0 1.23122 1.23122 0 2.75 0H8C9.51878 0 10.75 1.23122 10.75 2.75V3C10.75 3.41421 10.4142 3.75 10 3.75C9.58579 3.75 9.25 3.41421 9.25 3V2.75C9.25 2.05964 8.69036 1.5 8 1.5H2.75C2.05964 1.5 1.5 2.05964 1.5 2.75V14.25C1.5 14.3881 1.61193 14.5 1.75 14.5H4.25C4.66421 14.5 5 14.8358 5 15.25C5 15.6642 4.66421 16 4.25 16H1.75C0.783502 16 0 15.2165 0 14.25V2.75ZM10.8525 5.864C11.0957 5.712 11.4043 5.712 11.6475 5.864L15.6475 8.364C15.8668 8.50106 16 8.74141 16 9V14.25C16 15.2165 15.2165 16 14.25 16H8.25C7.2835 16 6.5 15.2165 6.5 14.25V9C6.5 8.74141 6.63321 8.50106 6.8525 8.364L10.8525 5.864ZM8 9.41569V14.25C8 14.3881 8.11193 14.5 8.25 14.5H10.5V13C10.5 12.5858 10.8358 12.25 11.25 12.25C11.6642 12.25 12 12.5858 12 13V14.5H14.25C14.3881 14.5 14.5 14.3881 14.5 14.25V9.41569L11.25 7.38444L8 9.41569Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M3 8C3 7.44772 3.44772 7 4 7C4.55228 7 5 7.44772 5 8C5 8.55228 4.55228 9 4 9C3.44772 9 3 8.55228 3 8Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M6 4.5C6 3.94772 6.44772 3.5 7 3.5C7.55228 3.5 8 3.94772 8 4.5C8 5.05228 7.55228 5.5 7 5.5C6.44772 5.5 6 5.05228 6 4.5Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M3 11.5C3 10.9477 3.44772 10.5 4 10.5C4.55228 10.5 5 10.9477 5 11.5C5 12.0523 4.55228 12.5 4 12.5C3.44772 12.5 3 12.0523 3 11.5Z" fill="currentColor"/>
+                        </svg>
                       </div>
                       <div class="account-details">
-                        <span class="account-name">${account.name}</span>
+                        <span class="account-name">All accounts</span>
                       </div>
-                      ${account.id === currentAccount.id ? `
+                      ${isAllAccountsActive ? `
                         <div class="account-check">
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/>
@@ -229,8 +252,54 @@ class AccountSwitcher {
                       ` : ''}
                     </button>
                   `;
-                }).join('');
+                  
+                  // 3. Finally render all other accounts (excluding the active account that was already rendered above)
+                  const otherAccounts = this.options.accounts.filter(acc => acc.id !== currentAccount.id);
+                  accountsHtml += otherAccounts.map(account => {
+                    const accountInitials = this.generateInitials(account.name);
+                    const accountAvatarColor = account.color || uniqueColors[account.id];
+                    return `
+                      <button class="account-item" data-account-id="${account.id}" type="button">
+                        <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
+                          <span class="avatar-initials">${accountInitials}</span>
+                        </div>
+                        <div class="account-details">
+                          <span class="account-name">${account.name}</span>
+                        </div>
+                      </button>
+                    `;
+                  }).join('');
+                  
+                } else {
+                  // Single account scenario - just render the account as is
+                  accountsHtml += this.options.accounts.map(account => {
+                    const accountInitials = this.generateInitials(account.name);
+                    const accountAvatarColor = account.color || uniqueColors[account.id];
+                    const isActive = account.id === currentAccount.id;
+                    return `
+                      <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
+                        <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
+                          <span class="avatar-initials">${accountInitials}</span>
+                        </div>
+                        <div class="account-details">
+                          <span class="account-name">${account.name}</span>
+                        </div>
+                        ${isActive ? `
+                          <div class="account-check">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/>
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/>
+                            </svg>
+                          </div>
+                        ` : ''}
+                      </button>
+                    `;
+                  }).join('');
+                }
+                
+                return accountsHtml;
               })()}
+              </div>
             </div>
             
             <!-- Account Actions Section -->
@@ -249,7 +318,7 @@ class AccountSwitcher {
                 <div class="nav-item-icon">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M0 6C0 5.6898 0.162753 5.40235 0.428746 5.24275L7.07125 1.25725C7.3518 1.08892 7.67283 1 8 1C8.32717 1 8.6482 1.08892 8.92875 1.25725L15.5713 5.24275C15.8372 5.40235 16 5.6898 16 6C16 6.3102 15.8372 6.59765 15.5713 6.75725L8.92875 10.7428C8.6482 10.9111 8.32717 11 8 11C7.67283 11 7.3518 10.9111 7.07125 10.7428L0.428746 6.75725C0.162753 6.59765 0 6.3102 0 6ZM7.89445 9.37076L2.27651 6L7.89445 2.62924C7.92633 2.61011 7.96282 2.6 8 2.6C8.03718 2.6 8.07367 2.61011 8.10555 2.62924L13.7235 6L8.10555 9.37076C8.07367 9.38989 8.03718 9.4 8 9.4C7.96281 9.4 7.92633 9.38989 7.89445 9.37076Z" fill="currentColor"/>
-                    <path d="M1.43422 9.82811C1.06312 9.58833 0.5679 9.69478 0.328114 10.0659C0.0883268 10.437 0.194776 10.9322 0.565875 11.172L6.69425 15.1319C7.06621 15.3722 7.49965 15.5 7.9425 15.5H8.0576C8.50045 15.5 8.93388 15.3722 9.30584 15.1319L15.4342 11.172C15.8053 10.9322 15.9118 10.437 15.672 10.0659C15.4322 9.69478 14.937 9.58833 14.5659 9.82811L8.4375 13.788C8.32429 13.8611 8.19238 13.9 8.0576 13.9H7.9425C7.80772 13.9 7.6758 13.8611 7.5626 13.788L1.43422 9.82811Z" fill="currentColor"/>
+                    <path fill="currentColor" d="M1.43422 9.82811C1.06312 9.58833 0.5679 9.69478 0.328114 10.0659C0.0883268 10.437 0.194776 10.9322 0.565875 11.172L6.69425 15.1319C7.06621 15.3722 7.49965 15.5 7.9425 15.5H8.0576C8.50045 15.5 8.93388 15.3722 9.30584 15.1319L15.4342 11.172C15.8053 10.9322 15.9118 10.437 15.672 10.0659C15.4322 9.69478 14.937 9.58833 14.5659 9.82811L8.4375 13.788C8.32429 13.8611 8.19238 13.9 8.0576 13.9H7.9425C7.80772 13.9 7.6758 13.8611 7.5626 13.788L1.43422 9.82811Z" fill="currentColor"/>
                   </svg>
                 </div>
                 <span class="nav-item-label">Switch to sandbox</span>
@@ -258,7 +327,7 @@ class AccountSwitcher {
               <button class="nav-item" type="button" id="createAccountAction">
                 <div class="nav-item-icon">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0.5C8.27614 0.5 8.5 0.723858 8.5 1V7.5H15C15.2761 7.5 15.5 7.72386 15.5 8C15.5 8.27614 15.2761 8.5 15 8.5H8.5V15C8.5 15.2761 8.27614 15.5 8 15.5C7.72386 15.5 7.5 15.2761 7.5 15V8.5H1C0.723858 8.5 0.5 8.27614 0.5 8C0.5 7.72386 0.723858 7.5 1 7.5H7.5V1C7.5 0.723858 7.72386 0.5 8 0.5Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0.25C8.48325 0.25 8.875 0.641751 8.875 1.125V7.125H14.875C15.3582 7.125 15.75 7.51675 15.75 8C15.75 8.48325 15.3582 8.875 14.875 8.875H8.875V14.875C8.875 15.3582 8.48325 15.75 8 15.75C7.51675 15.75 7.125 15.3582 7.125 14.875V8.875H1.125C0.641751 8.875 0.25 8.48325 0.25 8C0.25 7.51675 0.641751 7.125 1.125 7.125H7.125V1.125C7.125 0.641751 7.51675 0.25 8 0.25Z" fill="currentColor"/>
                   </svg>
                 </div>
                 <span class="nav-item-label">Create account</span>
@@ -281,7 +350,7 @@ class AccountSwitcher {
                 <div class="nav-item-icon">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M0 6C0 5.6898 0.162753 5.40235 0.428746 5.24275L7.07125 1.25725C7.3518 1.08892 7.67283 1 8 1C8.32717 1 8.6482 1.08892 8.92875 1.25725L15.5713 5.24275C15.8372 5.40235 16 5.6898 16 6C16 6.3102 15.8372 6.59765 15.5713 6.75725L8.92875 10.7428C8.6482 10.9111 8.32717 11 8 11C7.67283 11 7.3518 10.9111 7.07125 10.7428L0.428746 6.75725C0.162753 6.59765 0 6.3102 0 6ZM7.89445 9.37076L2.27651 6L7.89445 2.62924C7.92633 2.61011 7.96282 2.6 8 2.6C8.03718 2.6 8.07367 2.61011 8.10555 2.62924L13.7235 6L8.10555 9.37076C8.07367 9.38989 8.03718 9.4 8 9.4C7.96281 9.4 7.92633 9.38989 7.89445 9.37076Z" fill="currentColor"/>
-                    <path d="M1.43422 9.82811C1.06312 9.58833 0.5679 9.69478 0.328114 10.0659C0.0883268 10.437 0.194776 10.9322 0.565875 11.172L6.69425 15.1319C7.06621 15.3722 7.49965 15.5 7.9425 15.5H8.0576C8.50045 15.5 8.93388 15.3722 9.30584 15.1319L15.4342 11.172C15.8053 10.9322 15.9118 10.437 15.672 10.0659C15.4322 9.69478 14.937 9.58833 14.5659 9.82811L8.4375 13.788C8.32429 13.8611 8.19238 13.9 8.0576 13.9H7.9425C7.80772 13.9 7.6758 13.8611 7.5626 13.788L1.43422 9.82811Z" fill="currentColor"/>
+                    <path fill="currentColor" d="M1.43422 9.82811C1.06312 9.58833 0.5679 9.69478 0.328114 10.0659C0.0883268 10.437 0.194776 10.9322 0.565875 11.172L6.69425 15.1319C7.06621 15.3722 7.49965 15.5 7.9425 15.5H8.0576C8.50045 15.5 8.93388 15.3722 9.30584 15.1319L15.4342 11.172C15.8053 10.9322 15.9118 10.437 15.672 10.0659C15.4322 9.69478 14.937 9.58833 14.5659 9.82811L8.4375 13.788C8.32429 13.8611 8.19238 13.9 8.0576 13.9H7.9425C7.80772 13.9 7.6758 13.8611 7.5626 13.788L1.43422 9.82811Z" fill="currentColor"/>
                   </svg>
                 </div>
                 <span class="nav-item-label">Switch to sandbox</span>
@@ -290,7 +359,7 @@ class AccountSwitcher {
               <button class="nav-item" type="button" id="createAccountAction">
                 <div class="nav-item-icon">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0.5C8.27614 0.5 8.5 0.723858 8.5 1V7.5H15C15.2761 7.5 15.5 7.72386 15.5 8C15.5 8.27614 15.2761 8.5 15 8.5H8.5V15C8.5 15.2761 8.27614 15.5 8 15.5C7.72386 15.5 7.5 15.2761 7.5 15V8.5H1C0.723858 8.5 0.5 8.27614 0.5 8C0.5 7.72386 0.723858 7.5 1 7.5H7.5V1C7.5 0.723858 7.72386 0.5 8 0.5Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0.25C8.48325 0.25 8.875 0.641751 8.875 1.125V7.125H14.875C15.3582 7.125 15.75 7.51675 15.75 8C15.75 8.48325 15.3582 8.875 14.875 8.875H8.875V14.875C8.875 15.3582 8.48325 15.75 8 15.75C7.51675 15.75 7.125 15.3582 7.125 14.875V8.875H1.125C0.641751 8.875 0.25 8.48325 0.25 8C0.25 7.51675 0.641751 7.125 1.125 7.125H7.125V1.125C7.125 0.641751 7.51675 0.25 8 0.25Z" fill="currentColor"/>
                   </svg>
                 </div>
                 <span class="nav-item-label">Create account</span>
@@ -630,7 +699,7 @@ class AccountSwitcher {
       
       .account-switcher-dropdown {
         position: fixed;
-        width: 280px;
+        min-width: 284px;
         background: white;
         border: none;
         border-radius: 8px;
@@ -669,8 +738,36 @@ class AccountSwitcher {
         min-width: 0;
       }
       
+      /* Add floating hover effect for account items to match nav-items */
+      .account-item::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background-color: transparent;
+        border-radius: 8px;
+        transition: background-color var(--transition-fast);
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+      }
+      
+      .account-item:hover::before {
+        background-color: var(--neutral-50);
+      }
+      
       .account-item:hover {
-        background: var(--color-background);
+        background: transparent;
+      }
+      
+      /* Position account item content above hover pseudo-element */
+      .account-item .account-avatar,
+      .account-item .account-details,
+      .account-item .account-check {
+        position: relative;
+        z-index: 1;
       }
       
       .account-item:hover .account-name {
@@ -851,14 +948,19 @@ class AccountSwitcher {
         display: flex;
         flex-direction: column;
         gap: 8px; /* 8px row gap between buttons */
+        width: 100%;
+        box-sizing: border-box;
       }
       
       /* Account actions nav-item buttons */
-      .account-actions .nav-item {
+      .account-actions .nav-item,
+      .account-actions button.nav-item {
         position: relative;
-        display: flex;
+        display: flex !important;
         align-items: center;
-        width: 100%;
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 100% !important;
         height: 24px; /* Match nav panel button height */
         padding: 4px 12px; /* Match account-item padding for consistent full-width */
         background: transparent;
@@ -869,6 +971,7 @@ class AccountSwitcher {
         text-decoration: none;
         color: inherit;
         font-family: inherit;
+        box-sizing: border-box !important;
       }
       
       /* Floating hover effect - match nav panel */
@@ -937,10 +1040,12 @@ class AccountSwitcher {
          transform: translateX(-4px);
          transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
          z-index: 10000;
-         min-width: 160px;
-         max-width: 280px;
+         min-width: 284px;
+         max-width: 284px;
          top: 0;
          left: 0;
+         display: flex;
+         flex-direction: column;
        }
       
              .popover.show {
@@ -960,7 +1065,24 @@ class AccountSwitcher {
         color: var(--neutral-900);
         text-decoration: none;
         min-height: 32px;
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 100%;
+        box-sizing: border-box;
       }
+      
+             /* Override height for nav-item popover options to match nav panel */
+       .popover-option.nav-item {
+         height: 24px !important;
+         min-height: 24px !important;
+         max-height: 24px !important;
+       }
+       
+       /* Ensure consistent spacing in structured groups */
+       .sandbox-group .popover-option:last-child,
+       .management-group .popover-option:last-child {
+         margin-bottom: 0 !important;
+       }
       
       .popover-option:hover {
         background: var(--color-background);
@@ -1008,18 +1130,41 @@ class AccountSwitcher {
        /* Override collapsed nav panel hiding - always show labels in account switcher dropdown */
        .nav-panel.collapsed .account-switcher-dropdown .nav-item-label {
          display: block !important;
-       }
+             }
+      
+      /* Force full width for all buttons in popovers and account actions */
+      .popover button,
+      .account-actions button,
+      .sandbox-group button,
+      .management-group button {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        height: 24px !important;
+        min-height: 24px !important;
+        max-height: 24px !important;
+      }
        
-       /* Sandbox popover group styling */
+             /* Sandbox popover group styling */
        .sandbox-group {
          margin-bottom: 8px;
          padding-bottom: 8px;
          border-bottom: 1px solid var(--neutral-50);
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         gap: 8px;
        }
        
        .management-group {
          margin-top: 8px;
          padding-top: 0;
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         gap: 8px;
        }
        
        /* Sandbox popover buttons should match nav panel styling */
@@ -1028,7 +1173,9 @@ class AccountSwitcher {
          position: relative;
          display: flex;
          align-items: center;
-         height: 24px;
+         height: 24px !important;
+         min-height: 24px !important;
+         max-height: 24px !important;
          padding: 4px 12px;
          background: transparent;
          border: none;
@@ -1038,7 +1185,11 @@ class AccountSwitcher {
          text-decoration: none;
          color: inherit;
          font-family: inherit;
-         margin-bottom: 0;
+         margin-bottom: 0 !important;
+         width: 100% !important;
+         max-width: none !important;
+         min-width: 100%;
+         box-sizing: border-box;
        }
        
        /* Floating hover effect for sandbox buttons */
@@ -1077,11 +1228,63 @@ class AccountSwitcher {
          background-color: transparent !important;
        }
        
-       div[class*="account-switcher"] button[class*="account-item"][class*="active"]:not(:hover)::before {
-         background: transparent !important;
-         background-color: transparent !important;
-       }
-    `;
+             div[class*="account-switcher"] button[class*="account-item"][class*="active"]:not(:hover)::before {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+      
+      /* Account Search */
+      .account-search-container {
+        padding: 8px 12px;
+        margin-bottom: 8px;
+      }
+      
+      .account-search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      
+      .search-icon {
+        position: absolute;
+        left: 8px;
+        color: var(--neutral-400);
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+      }
+      
+      .account-search-input {
+        width: 100%;
+        height: 32px;
+        padding: 0 12px 0 32px;
+        border: 1px solid var(--neutral-200);
+        border-radius: 6px;
+        background: white;
+        font-family: var(--font-family-ui);
+        font-size: var(--font-size-14);
+        color: var(--neutral-700);
+        outline: none;
+        transition: border-color 0.15s ease;
+      }
+      
+      .account-search-input:focus {
+        border-color: var(--brand-300);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+      
+      .account-search-input::placeholder {
+        color: var(--neutral-400);
+      }
+      
+      /* Hide filtered accounts */
+      .account-item.filtered-hidden {
+        display: none !important;
+      }
+   `;
     
     document.head.appendChild(styles);
   }
@@ -1121,7 +1324,7 @@ class AccountSwitcher {
         
         // Ensure dropdown and items have proper width when collapsed
         dropdown.style.setProperty('width', '320px', 'important');
-        dropdown.style.setProperty('min-width', '320px', 'important');
+        dropdown.style.setProperty('min-width', '284px', 'important');
         
         // Ensure account items span full width and maintain horizontal layout
         dropdown.querySelectorAll('.account-item').forEach(el => {
@@ -1247,6 +1450,51 @@ class AccountSwitcher {
           this.selectAccount(accountId);
         });
       });
+    }
+    
+    // Account search functionality
+    const searchInput = this.container.querySelector('.account-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        const accountItems = this.container.querySelectorAll('.account-item:not(.all-accounts)');
+        
+        accountItems.forEach(item => {
+          const accountName = item.querySelector('.account-name')?.textContent?.toLowerCase() || '';
+          const shouldShow = searchTerm === '' || accountName.includes(searchTerm);
+          
+          if (shouldShow) {
+            item.classList.remove('filtered-hidden');
+          } else {
+            item.classList.add('filtered-hidden');
+          }
+        });
+        
+        // Also handle "All accounts" item - show it when search is empty or matches "all"
+        const allAccountsItem = this.container.querySelector('.account-item.all-accounts');
+        if (allAccountsItem) {
+          const shouldShowAll = searchTerm === '' || 'all accounts'.includes(searchTerm);
+          if (shouldShowAll) {
+            allAccountsItem.classList.remove('filtered-hidden');
+          } else {
+            allAccountsItem.classList.add('filtered-hidden');
+          }
+        }
+      });
+      
+      // Clear search when dropdown closes
+      const originalClose = this.close.bind(this);
+      this.close = () => {
+        if (searchInput) {
+          searchInput.value = '';
+          // Reset all items to visible
+          const allItems = this.container.querySelectorAll('.account-item');
+          allItems.forEach(item => {
+            item.classList.remove('filtered-hidden');
+          });
+        }
+        originalClose();
+      };
     }
     
             // Initialize popover for Switch to sandbox action

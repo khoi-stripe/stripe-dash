@@ -180,9 +180,7 @@ export function injectNavigationStyles() {
     .nav-icon svg {
       width: 16px;
       height: 16px;
-      stroke: currentColor;
-      stroke-width: 1.5;
-      fill: none;
+      color: currentColor;
     }
 
     .nav-label {
@@ -243,6 +241,12 @@ export function injectNavigationStyles() {
     .shared-nav::-webkit-scrollbar-thumb:hover {
       background: var(--neutral-400);
     }
+
+    /* Workload caret styling */
+    .workload-caret-icon svg {
+      color: currentColor;
+      transition: all var(--transition-fast);
+    }
   `;
 
   document.head.appendChild(style);
@@ -256,19 +260,19 @@ export const defaultNavConfig = {
     {
       label: 'Overview',
       href: '#overview',
-      icon: '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9,22 9,12 15,12 15,22"></polyline></svg>',
+      icon: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline fill="currentColor" points="9,22 9,12 15,12 15,22"></polyline></svg>',
       active: true
     },
     {
       label: 'Analytics',
       href: '#analytics',
-      icon: '<svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline></svg>',
+      icon: '<svg viewBox="0 0 24 24"><polyline fill="currentColor" points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline></svg>',
       badge: { text: '12', variant: 'brand' }
     },
     {
       label: 'Users',
       href: '#users',
-      icon: '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>'
+      icon: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle fill="currentColor" cx="9" cy="7" r="4"></circle><path fill="currentColor" d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path fill="currentColor" d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>'
     },
     {
       type: 'divider'
@@ -280,13 +284,13 @@ export const defaultNavConfig = {
     {
       label: 'Products',
       href: '#products',
-      icon: '<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>',
+      icon: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line fill="currentColor" x1="3" y1="6" x2="21" y2="6"></line><path fill="currentColor" d="M16 10a4 4 0 0 1-8 0"></path></svg>',
       badge: { text: 'New', variant: 'success' }
     },
     {
       label: 'Orders',
       href: '#orders',
-      icon: '<svg viewBox="0 0 24 24"><path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4"></path><polyline points="9,11 9,4 15,4 15,11"></polyline></svg>'
+      icon: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4"></path><polyline fill="currentColor" points="9,11 9,4 15,4 15,11"></polyline></svg>'
     },
     {
       type: 'divider'
@@ -298,12 +302,12 @@ export const defaultNavConfig = {
     {
       label: 'Preferences',
       href: '#preferences',
-      icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
+      icon: '<svg viewBox="0 0 24 24"><circle fill="currentColor" cx="12" cy="12" r="3"></circle><path fill="currentColor" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
     },
     {
       label: 'Help & Support',
       href: '#help',
-      icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
+      icon: '<svg viewBox="0 0 24 24"><circle fill="currentColor" cx="12" cy="12" r="10"></circle><path fill="currentColor" d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line fill="currentColor" x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
     }
   ]
 }; 
