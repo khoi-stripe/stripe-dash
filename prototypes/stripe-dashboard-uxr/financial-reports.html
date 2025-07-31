@@ -785,8 +785,8 @@
        <div class="content-body">
          <div style="background: white; border-radius: 8px; padding: 32px; border: 1px solid var(--neutral-200);">
           <div style="margin-bottom: 32px;">
-            <h2 style="font-size: 24px; font-weight: 600; color: var(--neutral-900); margin: 0 0 8px 0;">Financial Reports</h2>
-            <p style="font-size: 14px; color: var(--neutral-600); margin: 0; line-height: 1.5;">
+            <h2 id="reports-title" style="font-size: 24px; font-weight: 600; color: var(--neutral-900); margin: 0 0 8px 0;">Financial Reports</h2>
+            <p id="reports-description" style="font-size: 14px; color: var(--neutral-600); margin: 0; line-height: 1.5;">
               View financial data and analytics. Use the account group filter to see how data changes based on selected account groups.
             </p>
           </div>
@@ -904,7 +904,11 @@
 
     function switchToSubAccount(subAccountId) {
       if (window.OrgDataManager.switchToSubAccount(subAccountId)) {
-        // No page reload needed - account switcher handles the transition
+        // Reload financial reports to reflect the new account context
+        loadFinancialReports();
+        
+        // Clear any active filters when switching accounts
+        clearActiveFilters();
       }
     }
 
@@ -938,18 +942,53 @@
       });
     }
 
-    function loadFinancialReports() {
-      const currentOrg = window.OrgDataManager.getCurrentOrganization();
-      const allSubAccounts = currentOrg.accounts.filter(acc => !acc.isAggregate); // Exclude "All accounts"
+    // Generate deterministic financial data based on account ID
+    function generateAccountFinancialData(account) {
+      // Create a deterministic hash from account ID and name
+      const seed = account.id + account.name;
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & 0xffffffff; // Convert to 32-bit integer
+      }
       
-      // Update active accounts count
-      document.getElementById('active-accounts').textContent = allSubAccounts.length;
+      // Use hash to generate consistent pseudo-random values
+      const random1 = Math.abs(hash) / 0xffffffff;
+      const random2 = Math.abs(hash * 13) / 0xffffffff;
+      const random3 = Math.abs(hash * 17) / 0xffffffff;
       
-      // Load account breakdown
-      updateAccountBreakdown(allSubAccounts);
+      return {
+        ...account,
+        revenue: Math.floor(random1 * 80000) + 15000, // $15K-$95K
+        transactions: Math.floor(random2 * 2000) + 250, // 250-2250 transactions
+        growth: ((random3 * 40) - 15).toFixed(1) // -15% to +25% growth
+      };
     }
 
-    function updateAccountBreakdown(accounts) {
+    function loadFinancialReports() {
+      const currentSubAccount = window.OrgDataManager.getCurrentSubAccount();
+      const currentOrg = window.OrgDataManager.getCurrentOrganization();
+      const allSubAccounts = currentOrg.accounts.filter(acc => !acc.isAggregate);
+      
+      // Check if we're viewing organization aggregate or specific account
+      if (currentSubAccount.isAggregate) {
+        // Organization view - show all accounts with aggregate totals
+        document.getElementById('reports-title').textContent = `${currentOrg.name} - Financial Reports`;
+        document.getElementById('reports-description').textContent = `Organization-wide financial data and analytics for all ${allSubAccounts.length} accounts. Switch to individual accounts for detailed breakdowns.`;
+        document.getElementById('active-accounts').textContent = allSubAccounts.length;
+        updateAccountBreakdown(allSubAccounts, true); // true = show aggregate
+      } else {
+        // Specific account view - show only current account
+        const currentAccountOnly = allSubAccounts.filter(acc => acc.id === currentSubAccount.id);
+        document.getElementById('reports-title').textContent = `${currentSubAccount.name} - Financial Reports`;
+        document.getElementById('reports-description').textContent = `Detailed financial data and analytics for the ${currentSubAccount.name} account. Switch to organization view for aggregated data.`;
+        document.getElementById('active-accounts').textContent = 1;
+        updateAccountBreakdown(currentAccountOnly, false); // false = individual account
+      }
+    }
+
+    function updateAccountBreakdown(accounts, isAggregateView = false) {
       const breakdown = document.getElementById('account-breakdown');
       
       if (accounts.length === 0) {
@@ -957,40 +996,82 @@
         return;
       }
       
-      // Generate mock data for each account
-      const accountData = accounts.map(account => ({
-        ...account,
-        revenue: Math.floor(Math.random() * 50000) + 10000,
-        transactions: Math.floor(Math.random() * 1000) + 100,
-        growth: (Math.random() * 30 - 10).toFixed(1) // -10% to +20%
-      }));
+      // Generate consistent financial data for each account
+      const accountData = accounts.map(account => generateAccountFinancialData(account));
       
-      breakdown.innerHTML = accountData.map(account => `
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--neutral-200); border-radius: 6px; margin-bottom: 8px;">
-          <div style="flex: 1;">
-            <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px;">${account.name}</div>
-            <div style="font-size: 12px; color: var(--neutral-500);">${account.type}</div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 24px;">
-            <div style="text-align: right;">
-              <div style="font-weight: 600; color: var(--neutral-900);">$${account.revenue.toLocaleString()}</div>
-              <div style="font-size: 12px; color: var(--neutral-500);">Revenue</div>
+      if (isAggregateView) {
+        // Show all accounts in organization view
+        breakdown.innerHTML = accountData.map(account => `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--neutral-200); border-radius: 6px; margin-bottom: 8px;">
+            <div style="flex: 1;">
+              <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px;">${account.name}</div>
+              <div style="font-size: 12px; color: var(--neutral-500);">Account</div>
             </div>
-            <div style="text-align: right;">
-              <div style="font-weight: 600; color: var(--neutral-900);">${account.transactions}</div>
-              <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
-            </div>
-            <div style="text-align: right; min-width: 60px;">
-              <div style="font-weight: 600; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
-                ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
+            <div style="display: flex; align-items: center; gap: 24px;">
+              <div style="text-align: right;">
+                <div style="font-weight: 600; color: var(--neutral-900);">$${account.revenue.toLocaleString()}</div>
+                <div style="font-size: 12px; color: var(--neutral-500);">Revenue</div>
               </div>
-              <div style="font-size: 12px; color: var(--neutral-500);">Growth</div>
+              <div style="text-align: right;">
+                <div style="font-weight: 600; color: var(--neutral-900);">${account.transactions.toLocaleString()}</div>
+                <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
+              </div>
+              <div style="text-align: right; min-width: 60px;">
+                <div style="font-weight: 600; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
+                  ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
+                </div>
+                <div style="font-size: 12px; color: var(--neutral-500);">Growth</div>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `).join('');
+      } else {
+        // Show single account view with more detailed breakdown
+        const account = accountData[0];
+        breakdown.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px; border: 1px solid var(--neutral-200); border-radius: 6px; margin-bottom: 16px; background: var(--neutral-25);">
+            <div style="flex: 1;">
+              <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px; font-size: 18px;">${account.name}</div>
+              <div style="font-size: 14px; color: var(--neutral-500);">Primary Account Metrics</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 32px;">
+              <div style="text-align: right;">
+                <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
+                <div style="font-size: 12px; color: var(--neutral-500);">Total Revenue</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
+                <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
+              </div>
+              <div style="text-align: right; min-width: 80px;">
+                <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
+                  ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
+                </div>
+                <div style="font-size: 12px; color: var(--neutral-500);">Growth Rate</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 16px; background: var(--neutral-50); border-radius: 6px; margin-top: 16px;">
+            <div style="font-size: 14px; color: var(--neutral-700); margin-bottom: 8px; font-weight: 500;">Account Details</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; font-size: 13px;">
+              <div>
+                <div style="color: var(--neutral-500);">Average Transaction</div>
+                <div style="font-weight: 600; color: var(--neutral-900);">$${Math.round(account.revenue / account.transactions).toLocaleString()}</div>
+              </div>
+              <div>
+                <div style="color: var(--neutral-500);">Revenue per Day</div>
+                <div style="font-weight: 600; color: var(--neutral-900);">$${Math.round(account.revenue / 30).toLocaleString()}</div>
+              </div>
+              <div>
+                <div style="color: var(--neutral-500);">Transaction Volume</div>
+                <div style="font-weight: 600; color: var(--neutral-900);">${Math.round(account.transactions / 30)} per day</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
       
-      // Update totals
+      // Calculate and update totals (aggregated from all accounts)
       const totalRevenue = accountData.reduce((sum, acc) => sum + acc.revenue, 0);
       const totalTransactions = accountData.reduce((sum, acc) => sum + acc.transactions, 0);
       
@@ -1017,8 +1098,8 @@
         const allSubAccounts = window.OrgDataManager.getAllSubAccounts().filter(acc => !acc.isAggregate);
         const filteredAccounts = allSubAccounts.filter(account => accountIds.has(account.id));
         
-        // Update financial reports with filtered accounts
-        updateAccountBreakdown(filteredAccounts);
+        // Update financial reports with filtered accounts (always show as list view when filtering)
+        updateAccountBreakdown(filteredAccounts, true);
         document.getElementById('active-accounts').textContent = filteredAccounts.length;
         
         // Show filter message
