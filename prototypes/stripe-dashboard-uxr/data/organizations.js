@@ -58,15 +58,21 @@ class SpreadsheetDataLoader {
   }
 
   generateAccountId(orgName, accountName) {
-    // Use timestamp + random number for absolute uniqueness - no more collisions!
+    // Generate deterministic IDs that remain stable across page loads
     const orgClean = orgName.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 4);
     const accClean = accountName.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 8);
     
-    // Guarantee uniqueness with timestamp + random
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substr(2, 3);
+    // Use a simple hash of the combined string for consistency
+    const combined = `${orgName}_${accountName}`;
+    let hash = 0;
+    for (let i = 0; i < combined.length; i++) {
+      const char = combined.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    const hashStr = Math.abs(hash).toString(36).slice(0, 3);
     
-    return `${orgClean}_${accClean}_${timestamp}_${random}`;
+    return `${orgClean}_${accClean}_${hashStr}`;
   }
 
   // Generate sample CSV content for users
@@ -146,9 +152,6 @@ class OrganizationDataManager {
     const savedOrgName = localStorage.getItem('uxr_current_organization');
     const savedSubAccountId = localStorage.getItem('uxr_current_sub_account');
     
-    console.log('🔍 INIT DEBUG - Saved org name:', savedOrgName);
-    console.log('🔍 INIT DEBUG - Saved sub-account ID:', savedSubAccountId);
-    
     // Set current organization (or default to first)
     const org = savedOrgName ? 
       this.getOrganizationByName(savedOrgName) : 
@@ -163,16 +166,9 @@ class OrganizationDataManager {
     this.setCurrentOrganization(org);
     
     // Set current sub-account - preserve saved state, otherwise default to "All accounts"
-    let subAccount = null;
-    if (savedSubAccountId) {
-      subAccount = this.getSubAccountById(savedSubAccountId);
-      console.log('🔍 INIT DEBUG - Found saved sub-account:', subAccount ? subAccount.name : 'NOT FOUND');
-    }
-    
-    if (!subAccount) {
-      subAccount = org.accounts?.find(acc => acc.isAggregate);
-      console.log('🔍 INIT DEBUG - Fallback to All accounts:', subAccount ? subAccount.name : 'NOT FOUND');
-    }
+    const subAccount = savedSubAccountId ? 
+      this.getSubAccountById(savedSubAccountId) : 
+      org.accounts?.find(acc => acc.isAggregate);
     
     // Safety check: ensure we have a valid sub-account
     if (!subAccount) {
@@ -262,7 +258,6 @@ class OrganizationDataManager {
   }
 
   setCurrentSubAccount(subAccount) {
-    console.log('💾 SAVING sub-account:', subAccount.name, 'ID:', subAccount.id);
     this.currentSubAccount = subAccount;
     localStorage.setItem('uxr_current_sub_account', subAccount.id);
   }
