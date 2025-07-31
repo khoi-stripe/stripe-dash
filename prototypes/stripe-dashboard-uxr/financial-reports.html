@@ -875,6 +875,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       // Initialize account switcher with SUB-ACCOUNT data
       const switcherData = window.OrgDataManager.getAccountSwitcherData();
+      console.log('🔍 FINANCIAL REPORTS SWITCHER DATA DEBUG:', switcherData);
       const navAccountSwitcher = new AccountSwitcher(
         document.getElementById('nav-account-switcher'),
         {
