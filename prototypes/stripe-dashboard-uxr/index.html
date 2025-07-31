@@ -794,11 +794,14 @@
 
          <script type="module">
     // Initialize UXR functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize account switcher with SUB-ACCOUNT data
-      const switcherData = window.OrgDataManager.getAccountSwitcherData();
-      console.log('🔍 SWITCHER DATA DEBUG:', switcherData);
-      const navAccountSwitcher = new AccountSwitcher(
+          document.addEventListener('DOMContentLoaded', async function() {
+        try {
+          // Wait for OrgDataManager to be ready
+          await window.OrgDataManager.waitForReady();
+          
+          // Initialize account switcher with SUB-ACCOUNT data
+          const switcherData = window.OrgDataManager.getAccountSwitcherData();
+          const navAccountSwitcher = new AccountSwitcher(
         document.getElementById('nav-account-switcher'),
         {
           currentAccount: switcherData.currentAccount,
@@ -812,11 +815,14 @@
 
 
 
-      // Set up navigation panel collapse (matching dash-chrome)
-      setupNavCollapse();
-      
-      console.log('🚀 Dashboard ready!');
-    });
+          // Set up navigation panel collapse (matching dash-chrome)
+          setupNavCollapse();
+          
+          console.log('🚀 Dashboard ready!');
+        } catch (error) {
+          console.error('Failed to initialize dashboard:', error);
+        }
+      });
 
     function switchToSubAccount(subAccountId) {
       if (window.OrgDataManager.switchToSubAccount(subAccountId)) {

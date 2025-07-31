@@ -827,10 +827,13 @@
 
          <script type="module">
     // Initialize UXR functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize account switcher with SUB-ACCOUNT data
-      const switcherData = window.OrgDataManager.getAccountSwitcherData();
-      const navAccountSwitcher = new AccountSwitcher(
+          document.addEventListener('DOMContentLoaded', async function() {
+        // Wait for OrgDataManager to be ready
+        await window.OrgDataManager.waitForReady();
+        
+        // Initialize account switcher with SUB-ACCOUNT data
+        const switcherData = window.OrgDataManager.getAccountSwitcherData();
+        const navAccountSwitcher = new AccountSwitcher(
         document.getElementById('nav-account-switcher'),
         {
           currentAccount: switcherData.currentAccount,

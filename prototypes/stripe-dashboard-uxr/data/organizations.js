@@ -37,7 +37,7 @@ class SpreadsheetDataLoader {
           organizations.set(orgName, {
             name: orgName,
             accounts: [
-              { id: "all_accounts", name: "All accounts", type: "Aggregate view", isAggregate: true }
+              { id: "all_accounts", name: orgName, type: "Aggregate view", isAggregate: true }
             ]
           });
         }
@@ -63,15 +63,17 @@ class SpreadsheetDataLoader {
     const orgClean = orgName.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 4);
     const accClean = accountName.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 8);
     
-    // Use a simple hash of the combined string for consistency
+    // Use a more robust hash of the combined string for better uniqueness
     const combined = `${orgName}_${accountName}`;
     let hash = 0;
     for (let i = 0; i < combined.length; i++) {
       const char = combined.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash = hash & 0xffffffff; // Convert to 32-bit integer properly
     }
-    const hashStr = Math.abs(hash).toString(36).slice(0, 3);
+    
+    // Use longer hash for better uniqueness (6 chars instead of 3)
+    const hashStr = Math.abs(hash).toString(36).slice(0, 6);
     
     return `${orgClean}_${accClean}_${hashStr}`;
   }
@@ -162,7 +164,8 @@ class OrganizationDataManager {
     this.accountGroups = [];
     this.spreadsheetLoader = new SpreadsheetDataLoader();
     this.organizations = [];
-    this.init();
+    this.isReady = false;
+    this.initPromise = this.init();
   }
 
   async init() {
@@ -224,6 +227,14 @@ class OrganizationDataManager {
     }
     
     this.setCurrentSubAccount(subAccount);
+    this.isReady = true;
+  }
+
+  // Wait for initialization to complete
+  async waitForReady() {
+    if (this.isReady) return true;
+    await this.initPromise;
+    return this.isReady;
   }
 
   // Spreadsheet integration methods

@@ -202,23 +202,31 @@ class AccountSwitcher {
                 if (hasMultipleAccounts) {
                   // Multiple accounts scenario - always show active account first
                   
-                  // Sort accounts to put active account first
+                  // Sort accounts to pin "All accounts" at top, then active account
                   const sortedAccounts = [...this.options.accounts].sort((a, b) => {
+                    // "All accounts" (aggregate) always goes first
+                    if (a.isAggregate && !b.isAggregate) return -1;
+                    if (!a.isAggregate && b.isAggregate) return 1;
+                    
+                    // If both are aggregate or neither are aggregate, prioritize active account
                     const aIsActive = a.id === currentAccount.id;
                     const bIsActive = b.id === currentAccount.id;
-                    if (aIsActive) return -1; // Active account goes first
-                    if (bIsActive) return 1;
+                    if (aIsActive && !bIsActive) return -1; // Active account goes first
+                    if (!aIsActive && bIsActive) return 1;
+                    
                     return 0; // Maintain original order for others
                   });
                   
-                  accountsHtml += sortedAccounts.map(account => {
+                  accountsHtml += sortedAccounts.map((account, index) => {
                     const accountInitials = this.generateInitials(account.name);
                     const accountAvatarColor = account.color || uniqueColors[account.id];
                     const isActive = account.id === currentAccount.id;
                     
+                    let accountItemHtml = '';
+                    
                     // Check if this is an aggregate account and render with office icon
                     if (account.isAggregate) {
-                      return `
+                      accountItemHtml = `
                         <button class="account-item all-accounts ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
                           <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important;">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -235,8 +243,13 @@ class AccountSwitcher {
                           ${isActive ? '<div class="account-check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/></svg></div>' : ''}
                         </button>
                       `;
+                      
+                      // Add divider after "All accounts" if there are more accounts
+                      if (index < sortedAccounts.length - 1) {
+                        accountItemHtml += `<div class="account-divider" style="border-bottom: 1px solid var(--color-border-subtle); margin: 8px 16px;"></div>`;
+                      }
                     } else {
-                      return `
+                      accountItemHtml = `
                         <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
                           <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
                             <span class="avatar-initials">${accountInitials}</span>
@@ -248,6 +261,8 @@ class AccountSwitcher {
                         </button>
                       `;
                     }
+                    
+                    return accountItemHtml;
                   }).join('');
                   
                 } else {
@@ -1543,10 +1558,14 @@ class AccountSwitcher {
           }
         });
         
-        // Also handle "All accounts" item - show it when search is empty or matches "all"
+        // Also handle aggregate account (organization) item - show it when search is empty or matches "all" or the org name
         const allAccountsItem = this.container.querySelector('.account-item.all-accounts');
         if (allAccountsItem) {
-          const shouldShowAll = searchTerm === '' || 'all accounts'.includes(searchTerm);
+          const aggregateAccount = this.options.accounts.find(acc => acc.isAggregate);
+          const orgName = aggregateAccount ? aggregateAccount.name.toLowerCase() : '';
+          const shouldShowAll = searchTerm === '' || 
+                                'all'.includes(searchTerm) || 
+                                orgName.includes(searchTerm);
           if (shouldShowAll) {
             allAccountsItem.classList.remove('filtered-hidden');
           } else {
@@ -1830,12 +1849,18 @@ class AccountSwitcher {
     const hasMultipleAccounts = this.options.accounts.length > 1;
     
     if (hasMultipleAccounts) {
-      // Sort accounts to put active account first (same logic as main render)
+      // Sort accounts to pin "All accounts" at top, then active account (same logic as main render)
       const sortedAccounts = [...this.options.accounts].sort((a, b) => {
+        // "All accounts" (aggregate) always goes first
+        if (a.isAggregate && !b.isAggregate) return -1;
+        if (!a.isAggregate && b.isAggregate) return 1;
+        
+        // If both are aggregate or neither are aggregate, prioritize active account
         const aIsActive = a.id === currentAccount.id;
         const bIsActive = b.id === currentAccount.id;
-        if (aIsActive) return -1; // Active account goes first
-        if (bIsActive) return 1;
+        if (aIsActive && !bIsActive) return -1; // Active account goes first
+        if (!aIsActive && bIsActive) return 1;
+        
         return 0; // Maintain original order for others
       });
       
@@ -1843,14 +1868,16 @@ class AccountSwitcher {
       const uniqueColors = this.generateUniqueColors(this.options.accounts);
       
       // Re-generate the accounts HTML
-      const accountsHtml = sortedAccounts.map(account => {
+      const accountsHtml = sortedAccounts.map((account, index) => {
         const accountInitials = this.generateInitials(account.name);
         const accountAvatarColor = account.color || uniqueColors[account.id];
         const isActive = account.id === currentAccount.id;
         
+        let accountItemHtml = '';
+        
         // Check if this is an aggregate account and render with office icon
         if (account.isAggregate) {
-          return `
+          accountItemHtml = `
             <button class="account-item all-accounts ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
               <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important;">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1867,8 +1894,13 @@ class AccountSwitcher {
               ${isActive ? '<div class="account-check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/></svg></div>' : ''}
             </button>
           `;
+          
+          // Add divider after "All accounts" if there are more accounts
+          if (index < sortedAccounts.length - 1) {
+            accountItemHtml += `<div class="account-divider" style="border-bottom: 1px solid var(--color-border-subtle); margin: 8px 16px;"></div>`;
+          }
         } else {
-          return `
+          accountItemHtml = `
             <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
               <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
                 <span class="avatar-initials">${accountInitials}</span>
@@ -1880,6 +1912,8 @@ class AccountSwitcher {
             </button>
           `;
         }
+        
+        return accountItemHtml;
       }).join('');
       
       // Update only the account items container content
@@ -1927,7 +1961,15 @@ class AccountSwitcher {
   }
   
   getParentOrganizationName() {
-    // Look up parent organization name from window.accounts
+    // Look up parent organization name from window.OrgDataManager (new system)
+    if (window.OrgDataManager) {
+      const currentOrg = window.OrgDataManager.getCurrentOrganization();
+      if (currentOrg && currentOrg.name) {
+        return currentOrg.name;
+      }
+    }
+    
+    // Legacy fallback - Look up parent organization name from window.accounts
     if (window.accounts && window.currentAccount) {
       const parentAccount = window.accounts[window.currentAccount];
       if (parentAccount && parentAccount.name) {
@@ -1935,7 +1977,7 @@ class AccountSwitcher {
       }
     }
     
-    // Fallback - try to determine from current context
+    // Final fallback
     return 'Organization';
   }
 
