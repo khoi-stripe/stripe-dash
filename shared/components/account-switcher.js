@@ -114,7 +114,7 @@ class AccountSwitcher {
     const renderAvatar = () => {
       if (isAllAccounts) {
         return `
-          <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important; border: none !important; outline: none !important;">
+          <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important;">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.75C0 1.23122 1.23122 0 2.75 0H8C9.51878 0 10.75 1.23122 10.75 2.75V3C10.75 3.41421 10.4142 3.75 10 3.75C9.58579 3.75 9.25 3.41421 9.25 3V2.75C9.25 2.05964 8.69036 1.5 8 1.5H2.75C2.05964 1.5 1.5 2.05964 1.5 2.75V14.25C1.5 14.3881 1.61193 14.5 1.75 14.5H4.25C4.66421 14.5 5 14.8358 5 15.25C5 15.6642 4.66421 16 4.25 16H1.75C0.783502 16 0 15.2165 0 14.25V2.75ZM10.8525 5.864C11.0957 5.712 11.4043 5.712 11.6475 5.864L15.6475 8.364C15.8668 8.50106 16 8.74141 16 9V14.25C16 15.2165 15.2165 16 14.25 16H8.25C7.2835 16 6.5 15.2165 6.5 14.25V9C6.5 8.74141 6.63321 8.50106 6.8525 8.364L10.8525 5.864ZM8 9.41569V14.25C8 14.3881 8.11193 14.5 8.25 14.5H10.5V13C10.5 12.5858 10.8358 12.25 11.25 12.25C11.6642 12.25 12 12.5858 12 13V14.5H14.25C14.3881 14.5 14.5 14.3881 14.5 14.25V9.41569L11.25 7.38444L8 9.41569Z" fill="currentColor"/>
               <path fill="currentColor" d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
@@ -132,7 +132,7 @@ class AccountSwitcher {
                            this.generateAvatarColor(currentAccount.name, currentAccount.id);
         
         return `
-          <div class="account-avatar" data-color="${avatarColor}" style="background-color: ${avatarColor} !important; border: none !important; outline: none !important;">
+          <div class="account-avatar" data-color="${avatarColor}" style="background-color: ${avatarColor} !important;">
             <span class="avatar-initials">${initials}</span>
           </div>
         `;
@@ -218,7 +218,7 @@ class AccountSwitcher {
                     if (account.isAggregate) {
                       return `
                         <button class="account-item all-accounts ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
-                          <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important; ${isActive ? 'border: none !important; outline: none !important;' : ''}">
+                          <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important;">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.75C0 1.23122 1.23122 0 2.75 0H8C9.51878 0 10.75 1.23122 10.75 2.75V3C10.75 3.41421 10.4142 3.75 10 3.75C9.58579 3.75 9.25 3.41421 9.25 3V2.75C9.25 2.05964 8.69036 1.5 8 1.5H2.75C2.05964 1.5 1.5 2.05964 1.5 2.75V14.25C1.5 14.3881 1.61193 14.5 1.75 14.5H4.25C4.66421 14.5 5 14.8358 5 15.25C5 15.6642 4.66421 16 4.25 16H1.75C0.783502 16 0 15.2165 0 14.25V2.75ZM10.8525 5.864C11.0957 5.712 11.4043 5.712 11.6475 5.864L15.6475 8.364C15.8668 8.50106 16 8.74141 16 9V14.25C16 15.2165 15.2165 16 14.25 16H8.25C7.2835 16 6.5 15.2165 6.5 14.25V9C6.5 8.74141 6.63321 8.50106 6.8525 8.364L10.8525 5.864ZM8 9.41569V14.25C8 14.3881 8.11193 14.5 8.25 14.5H10.5V13C10.5 12.5858 10.8358 12.25 11.25 12.25C11.6642 12.25 12 12.5858 12 13V14.5H14.25C14.3881 14.5 14.5 14.3881 14.5 14.25V9.41569L11.25 7.38444L8 9.41569Z" fill="currentColor"/>
                               <path fill="currentColor" d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
@@ -236,7 +236,7 @@ class AccountSwitcher {
                     } else {
                       return `
                         <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
-                          <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important; ${isActive ? 'border: none !important; outline: none !important;' : ''}">
+                          <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
                             <span class="avatar-initials">${accountInitials}</span>
                           </div>
                           <div class="account-details">
@@ -1858,7 +1858,7 @@ class AccountSwitcher {
         if (account.isAggregate) {
           return `
             <button class="account-item all-accounts ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
-              <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important; ${isActive ? 'border: none !important; outline: none !important;' : ''}">
+              <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important;">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M2 3C2 2.44772 2.44772 2 3 2H6C6.55228 2 7 2.44772 7 3V6C7 6.55228 6.55228 7 6 7H3C2.44772 7 2 6.55228 2 6V3ZM3 3V6H6V3H3Z" fill="currentColor"/>
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M9 3C9 2.44772 9.44772 2 10 2H13C13.5523 2 14 2.44772 14 3V6C14 6.55228 13.5523 7 13 7H10C9.44772 7 9 6.55228 9 6V3ZM10 3V6H13V3H10Z" fill="currentColor"/>
@@ -1875,7 +1875,7 @@ class AccountSwitcher {
         } else {
           return `
             <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
-              <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important; ${isActive ? 'border: none !important; outline: none !important;' : ''}">
+              <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
                 <span class="avatar-initials">${accountInitials}</span>
               </div>
               <div class="account-details">
@@ -1972,7 +1972,7 @@ class AccountSwitcher {
           </svg>
         `;
         avatarElement.className = 'account-avatar all-accounts-avatar';
-        avatarElement.style.cssText = 'background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important; border: none !important; outline: none !important;';
+        avatarElement.style.cssText = 'background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important;';
       } else {
         // Update to initials
         const initials = this.generateInitials(account.name);
@@ -1982,7 +1982,7 @@ class AccountSwitcher {
                      this.generateAvatarColor(account.name, account.id);
         avatarElement.innerHTML = `<span class="avatar-initials">${initials}</span>`;
         avatarElement.className = 'account-avatar';
-        avatarElement.style.cssText = `background-color: ${color} !important; border: none !important; outline: none !important;`;
+        avatarElement.style.cssText = `background-color: ${color} !important;`;
         avatarElement.removeAttribute('data-color');
         avatarElement.setAttribute('data-color', color);
       }

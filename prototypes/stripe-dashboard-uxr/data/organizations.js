@@ -159,7 +159,7 @@ class OrganizationDataManager {
     
     this.setCurrentOrganization(org);
     
-    // Set current sub-account (always default to "All accounts" if no saved state)
+    // Set current sub-account - preserve saved state, otherwise default to "All accounts"
     const subAccount = savedSubAccountId ? 
       this.getSubAccountById(savedSubAccountId) : 
       org.accounts?.find(acc => acc.isAggregate);
