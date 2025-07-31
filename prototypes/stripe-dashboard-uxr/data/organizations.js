@@ -45,7 +45,8 @@ class SpreadsheetDataLoader {
         organizations.get(orgName).accounts.push({
           id: accountId,
           name: accountName,
-          type: "Account" // Default type for all accounts
+          type: "Account", // Default type for all accounts
+          color: this.generateAccountColor(accountName, accountId)
         });
       }
       
@@ -73,6 +74,36 @@ class SpreadsheetDataLoader {
     const hashStr = Math.abs(hash).toString(36).slice(0, 3);
     
     return `${orgClean}_${accClean}_${hashStr}`;
+  }
+
+  generateAccountColor(accountName, accountId) {
+    // Deterministic color generation based on account name and ID
+    const colors = [
+      '#3B82F6', // blue-500
+      '#8B5CF6', // violet-500
+      '#10B981', // emerald-500
+      '#F59E0B', // amber-500
+      '#EF4444', // red-500
+      '#EC4899', // pink-500
+      '#06B6D4', // cyan-500
+      '#84CC16', // lime-500
+      '#F97316', // orange-500
+      '#6366F1', // indigo-500
+      '#14B8A6', // teal-500
+      '#F87171', // red-400
+      '#A78BFA', // violet-400
+      '#34D399', // emerald-400
+      '#FBBF24', // amber-400
+    ];
+
+    // Generate consistent color based on account name + ID
+    const combined = `${accountName}_${accountId}`;
+    let hash = 0;
+    for (let i = 0; i < combined.length; i++) {
+      hash = combined.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
   }
 
   // Generate sample CSV content for users
@@ -135,9 +166,22 @@ class OrganizationDataManager {
   }
 
   async init() {
-    // Try to load from saved spreadsheet data, fallback to defaults
+    // Try to load from saved organizations data (with colors), then CSV, then defaults
+    const savedOrganizationsData = localStorage.getItem('uxr_organizations_data');
     const savedCsvData = localStorage.getItem('uxr_csv_data');
-    if (savedCsvData) {
+    
+    if (savedOrganizationsData) {
+      try {
+        this.organizations = JSON.parse(savedOrganizationsData);
+      } catch (error) {
+        console.warn('Failed to load saved organizations data, trying CSV fallback:', error);
+        if (savedCsvData) {
+          this.organizations = await this.spreadsheetLoader.loadFromCSV(savedCsvData);
+        } else {
+          this.organizations = await this.spreadsheetLoader.getDefaultData();
+        }
+      }
+    } else if (savedCsvData) {
       try {
         this.organizations = await this.spreadsheetLoader.loadFromCSV(savedCsvData);
       } catch (error) {
@@ -147,6 +191,9 @@ class OrganizationDataManager {
     } else {
       this.organizations = await this.spreadsheetLoader.getDefaultData();
     }
+
+    // Ensure all accounts have colors assigned
+    this.ensureAccountColors();
 
     // Load saved state - organization and sub-account
     const savedOrgName = localStorage.getItem('uxr_current_organization');
@@ -183,6 +230,9 @@ class OrganizationDataManager {
   async loadFromSpreadsheet(csvContent) {
     try {
       this.organizations = await this.spreadsheetLoader.loadFromCSV(csvContent);
+      
+      // Ensure all accounts have colors assigned
+      this.ensureAccountColors();
       
       // Save the CSV data
       localStorage.setItem('uxr_csv_data', csvContent);
@@ -260,6 +310,30 @@ class OrganizationDataManager {
   setCurrentSubAccount(subAccount) {
     this.currentSubAccount = subAccount;
     localStorage.setItem('uxr_current_sub_account', subAccount.id);
+  }
+
+  ensureAccountColors() {
+    // Ensure all accounts have consistent colors assigned
+    this.organizations.forEach(org => {
+      org.accounts.forEach(account => {
+        // Skip "All accounts" aggregate views
+        if (account.isAggregate) return;
+        
+        // If account doesn't have a color, generate one
+        if (!account.color) {
+          account.color = this.spreadsheetLoader.generateAccountColor(account.name, account.id);
+        }
+      });
+    });
+    
+    // Save updated organizations back to localStorage
+    this.saveOrganizations();
+  }
+
+  saveOrganizations() {
+    // Save the full organizations data with colors to localStorage
+    const organizationsData = JSON.stringify(this.organizations);
+    localStorage.setItem('uxr_organizations_data', organizationsData);
   }
 
   getSubAccountById(id) {
@@ -416,6 +490,7 @@ class OrganizationDataManager {
     localStorage.removeItem('uxr_current_organization');
     localStorage.removeItem('uxr_current_sub_account');
     localStorage.removeItem('uxr_csv_data'); // Clear saved CSV data
+    localStorage.removeItem('uxr_organizations_data'); // Clear saved organizations data with colors
     Object.keys(localStorage).forEach(key => {
       if (key.startsWith('uxr_account_groups_')) {
         localStorage.removeItem(key);
