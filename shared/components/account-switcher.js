@@ -1535,6 +1535,7 @@ class AccountSwitcher {
           e.preventDefault();
           e.stopPropagation();
           const accountId = item.dataset.accountId;
+          console.log('🎯 Account item clicked:', accountId);
           this.selectAccount(accountId);
         });
       });
@@ -1575,18 +1576,20 @@ class AccountSwitcher {
       });
       
       // Clear search when dropdown closes
-      const originalClose = this.close.bind(this);
-      this.close = () => {
-        if (searchInput) {
-          searchInput.value = '';
-          // Reset all items to visible
-          const allItems = this.container.querySelectorAll('.account-item');
-          allItems.forEach(item => {
-            item.classList.remove('filtered-hidden');
-          });
-        }
-        originalClose();
-      };
+      if (!this.originalClose) {
+        this.originalClose = this.close.bind(this);
+        this.close = () => {
+          if (searchInput) {
+            searchInput.value = '';
+            // Reset all items to visible
+            const allItems = this.container.querySelectorAll('.account-item');
+            allItems.forEach(item => {
+              item.classList.remove('filtered-hidden');
+            });
+          }
+          this.originalClose();
+        };
+      }
     }
     
             // Initialize popover for Switch to sandbox action
@@ -1647,19 +1650,20 @@ class AccountSwitcher {
   bindAccountItemEvents() {
     // Only bind account item click events (for dynamic re-rendering)
     const accountItems = this.container.querySelectorAll('.account-item');
-    const hasMultipleAccounts = this.options.accounts.length > 1;
-    const isOrgAccount = hasMultipleAccounts;
     
-    if (isOrgAccount) {
-      accountItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const accountId = item.dataset.accountId;
-          this.selectAccount(accountId);
-        });
+    console.log('🔗 bindAccountItemEvents called, found', accountItems.length, 'items');
+    
+    // Simple approach - just bind click events
+    accountItems.forEach(item => {
+      console.log('🔗 Binding event to item:', item.dataset.accountId);
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const accountId = item.dataset.accountId;
+        console.log('🎯 Dynamic click handler triggered for:', accountId);
+        this.selectAccount(accountId);
       });
-    }
+    });
   }
   
   toggle() {
@@ -1684,7 +1688,11 @@ class AccountSwitcher {
   
   close() {
     this.isOpen = false;
-    this.container.querySelector('.account-switcher').classList.remove('open');
+    
+    const switcher = this.container.querySelector('.account-switcher');
+    if (switcher) {
+      switcher.classList.remove('open');
+    }
     
     // Remove popover-open class from trigger
     const trigger = this.container.querySelector('.account-switcher-trigger');
@@ -1925,7 +1933,6 @@ class AccountSwitcher {
   }
   
   selectAccount(accountId) {
-    
     const selectedAccount = this.options.accounts.find(acc => acc.id === accountId);
     
     if (selectedAccount) {
@@ -1952,11 +1959,9 @@ class AccountSwitcher {
       // Notify of account change
       this.options.onAccountChange(accountWithParent);
       
-      // Close dropdown after a brief delay for better visual feedback
-      setTimeout(() => {
-        this.close();
-        this.refreshSandboxPopover();
-      }, 150);
+      // Close dropdown immediately after selection
+      this.close();
+      this.refreshSandboxPopover();
     }
   }
   

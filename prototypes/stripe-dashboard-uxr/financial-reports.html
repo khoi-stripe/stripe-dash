@@ -886,7 +886,10 @@
           variant: '2-line',
           onAccountChange: (account) => {
             console.log('Sub-account switched to:', account.name);
-            switchToSubAccount(account.id);
+            // Use setTimeout to ensure DOM manipulation doesn't interfere with account switcher closing
+            setTimeout(() => {
+              switchToSubAccount(account.id);
+            }, 100);
           }
         }
       );
@@ -1120,8 +1123,7 @@
       filteredAccountsCount.textContent = 'All';
       filterMessage.style.display = 'none';
       
-      // Reset to show all accounts
-      loadFinancialReports();
+      // Don't reload reports here - let the caller handle it to avoid double execution
     }
 
     // Initialize expandable workload items

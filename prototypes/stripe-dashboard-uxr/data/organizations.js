@@ -375,14 +375,14 @@ class OrganizationDataManager {
       currentAccount: {
         id: this.currentSubAccount.id,
         name: this.currentSubAccount.name, // First line
-        type: this.currentOrganization.name, // Second line (org name)
+        type: this.currentSubAccount.isAggregate ? "Organization" : this.currentOrganization.name, // Second line
         isAggregate: this.currentSubAccount.isAggregate, // Preserve aggregate flag
         color: this.currentSubAccount.color // Preserve color for consistency
       },
       accounts: accounts.map(acc => ({
         id: acc.id,
         name: acc.name, // First line
-        type: this.currentOrganization.name, // Second line (org name)
+        type: acc.isAggregate ? "Organization" : this.currentOrganization.name, // Second line
         isAggregate: acc.isAggregate, // Preserve aggregate flag
         color: acc.color // Preserve color for consistency
       }))
