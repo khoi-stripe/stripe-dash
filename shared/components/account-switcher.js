@@ -712,6 +712,11 @@ class AccountSwitcher {
         overflow: hidden;
       }
       
+      /* Ensure dropdown container itself doesn't respond to hover */
+      .account-switcher-dropdown:hover {
+        background: white !important;
+      }
+      
       .account-switcher.open .account-switcher-dropdown {
         opacity: 1;
         visibility: visible;
@@ -721,6 +726,62 @@ class AccountSwitcher {
       .account-list {
         padding: 16px 8px; /* Additional 8px top and bottom padding (16px total), 8px sides */
         border-bottom: 1px solid var(--color-border-subtle);
+      }
+      
+      /* Remove hover effects from container elements */
+      .account-switcher-dropdown .account-list:hover,
+      .account-switcher-dropdown .account-actions:hover,
+      .account-switcher-dropdown .account-items-container:hover {
+        background: transparent !important;
+      }
+      
+      /* Override any global popover hover styles specifically for account switcher */
+      .account-switcher-dropdown .popover-option,
+      .account-switcher-dropdown .popover-option:hover,
+      .account-switcher-dropdown .popover-option:focus {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+      
+      /* Also override for sandbox popovers (regular .popover class) */
+      .popover .popover-option,
+      .popover .popover-option:hover,
+      .popover .popover-option:focus {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+      
+      /* Add floating hover for sandbox popovers */
+      .popover .popover-option::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background-color: transparent;
+        border-radius: 8px;
+        transition: background-color var(--transition-fast);
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+      }
+      
+      .popover .popover-option:hover::before {
+        background-color: var(--neutral-50);
+      }
+      
+      /* Ensure sandbox popover content is above hover pseudo-element */
+      .popover .popover-option .nav-item-icon,
+      .popover .popover-option .nav-item-label,
+      .popover .popover-option .sandbox-avatar {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Ensure popover containers don't have hover effects */
+      .popover:hover {
+        background: white !important;
       }
       
       .account-item {
@@ -736,10 +797,11 @@ class AccountSwitcher {
         cursor: pointer;
         transition: all var(--transition-fast);
         min-width: 0;
+        position: relative;
       }
       
-      /* Add floating hover effect for account items to match nav-items */
-      .account-item::before {
+      /* Only add hover effects to non-active account items */
+      .account-switcher-dropdown .account-item:not(.active)::before {
         content: '';
         position: absolute;
         top: -4px;
@@ -754,8 +816,14 @@ class AccountSwitcher {
         display: block;
       }
       
-      .account-item:hover::before {
+      .account-switcher-dropdown .account-item:not(.active):hover::before {
         background-color: var(--neutral-50);
+      }
+      
+      /* Override any existing account-item hover backgrounds */
+      .account-switcher-dropdown .account-item:hover {
+        background: transparent !important;
+        background-color: transparent !important;
       }
       
       .account-item:hover {
@@ -815,16 +883,18 @@ class AccountSwitcher {
         color: var(--color-text-subdued);
       }
       
-      .account-item.active:hover {
-        background: var(--brand-50);
+      /* Override active account item hover to prevent background change */
+      .account-switcher-dropdown .account-item.active:hover {
+        background: transparent !important;
+        background-color: transparent !important;
       }
       
-      .account-item.active:hover .account-name {
+      .account-switcher-dropdown .account-item.active:hover .account-name {
         color: var(--brand-600);
         font-weight: var(--font-weight-semibold);
       }
       
-      .account-item.active:hover .account-type {
+      .account-switcher-dropdown .account-item.active:hover .account-type {
         color: var(--color-text-subdued);
       }
       
@@ -939,6 +1009,18 @@ class AccountSwitcher {
         border-style: solid;
         border-width: 4px 4px 4px 0;
         border-color: transparent var(--neutral-900) transparent transparent;
+      }
+      
+      /* Show tooltip on hover when nav panel is collapsed */
+      .nav-panel.collapsed .account-switcher-trigger:hover .account-switcher-tooltip {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      /* Hide tooltip when dropdown is open */
+      .nav-panel.collapsed .account-switcher.open .account-switcher-tooltip {
+        opacity: 0 !important;
+        visibility: hidden !important;
       }
       
       /* Account Actions Section */
@@ -1069,6 +1151,7 @@ class AccountSwitcher {
         max-width: none !important;
         min-width: 100%;
         box-sizing: border-box;
+        position: relative;
       }
       
              /* Override height for nav-item popover options to match nav panel */
@@ -1084,8 +1167,30 @@ class AccountSwitcher {
          margin-bottom: 0 !important;
        }
       
-      .popover-option:hover {
-        background: var(--color-background);
+      /* Override global popover option hover styles */
+      .account-switcher-dropdown .popover-option:hover {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+      
+      /* Add specific hover for account switcher popover options only */
+      .account-switcher-dropdown .popover-option::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background-color: transparent;
+        border-radius: 8px;
+        transition: background-color var(--transition-fast);
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+      }
+      
+      .account-switcher-dropdown .popover-option:hover::before {
+        background-color: var(--neutral-50);
       }
       
       .popover-option .nav-item-icon {
@@ -1101,6 +1206,14 @@ class AccountSwitcher {
       .popover-option .nav-item-icon svg {
         width: 16px;
         height: 16px;
+      }
+      
+      /* Ensure account switcher popover option content is above hover pseudo-element */
+      .account-switcher-dropdown .popover-option .nav-item-icon,
+      .account-switcher-dropdown .popover-option .nav-item-label,
+      .account-switcher-dropdown .popover-option .sandbox-avatar {
+        position: relative;
+        z-index: 1;
       }
       
              .popover-option .nav-item-label {
@@ -1192,27 +1305,7 @@ class AccountSwitcher {
          box-sizing: border-box;
        }
        
-       /* Floating hover effect for sandbox buttons */
-       .sandbox-group .popover-option::before,
-       .management-group .popover-option::before {
-         content: '';
-         position: absolute;
-         top: -4px;
-         left: -4px;
-         right: -4px;
-         bottom: -4px;
-         background-color: transparent;
-         border-radius: 8px;
-         transition: background-color var(--transition-fast);
-         z-index: 0;
-         pointer-events: none;
-         display: block;
-       }
-       
-       .sandbox-group .popover-option:hover::before,
-       .management-group .popover-option:hover::before {
-         background-color: var(--neutral-50);
-       }
+             /* Floating hover effect for sandbox buttons - inherit from general popover-option */
        
        .sandbox-group .popover-option .nav-item-icon,
        .sandbox-group .popover-option .nav-item-label,
@@ -1598,7 +1691,7 @@ class AccountSwitcher {
         <div class="sandbox-section">
           <div class="sandbox-group">
             ${orgSandboxes.map(sandbox => `
-              <div class="popover-option nav-item org-sandbox" onclick="console.log('Switch to ${sandbox.name} (org)'); this.closest('.popover').style.display='none';">
+              <div class="popover-option nav-item org-sandbox" style="position: relative;" onclick="console.log('Switch to ${sandbox.name} (org)'); this.closest('.popover').style.display='none';">
                 <div class="nav-item-icon">
                   <div class="sandbox-avatar" style="background-color: ${sandbox.color};">
                     <span class="avatar-initials">${sandbox.initial}</span>
@@ -1616,7 +1709,7 @@ class AccountSwitcher {
         <div class="sandbox-section">
           <div class="sandbox-group">
             ${accountSandboxes.map(sandbox => `
-              <div class="popover-option nav-item account-sandbox" onclick="console.log('Switch to ${sandbox.name} (account)'); this.closest('.popover').style.display='none';">
+              <div class="popover-option nav-item account-sandbox" style="position: relative;" onclick="console.log('Switch to ${sandbox.name} (account)'); this.closest('.popover').style.display='none';">
                 <div class="nav-item-icon">
                   <div class="sandbox-avatar" style="background-color: ${sandbox.color};">
                     <span class="avatar-initials">${sandbox.initial}</span>
@@ -1633,7 +1726,7 @@ class AccountSwitcher {
     // Add management actions
     content += `
       <div class="management-group">
-        <div class="popover-option nav-item" onclick="console.log('Create new sandbox'); this.closest('.popover').style.display='none';">
+        <div class="popover-option nav-item" style="position: relative;" onclick="console.log('Create new sandbox'); this.closest('.popover').style.display='none';">
           <div class="nav-item-icon">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0.5C8.27614 0.5 8.5 0.723858 8.5 1V7.5H15C15.2761 7.5 15.5 7.72386 15.5 8C15.5 8.27614 15.2761 8.5 15 8.5H8.5V15C8.5 15.2761 8.27614 15.5 8 15.5C7.72386 15.5 7.5 15.2761 7.5 15V8.5H1C0.723858 8.5 0.5 8.27614 0.5 8C0.5 7.72386 0.723858 7.5 1 7.5H7.5V1C7.5 0.723858 7.72386 0.5 8 0.5Z" fill="currentColor"/>
@@ -1641,7 +1734,7 @@ class AccountSwitcher {
           </div>
           <span class="nav-item-label">Create</span>
         </div>
-        <div class="popover-option nav-item" onclick="console.log('Manage sandboxes'); this.closest('.popover').style.display='none';">
+        <div class="popover-option nav-item" style="position: relative;" onclick="console.log('Manage sandboxes'); this.closest('.popover').style.display='none';">
           <div class="nav-item-icon">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M7.99996 10C9.10453 10 9.99996 9.10457 9.99996 8C9.99996 6.89543 9.10453 6 7.99996 6C6.89539 6 5.99996 6.89543 5.99996 8C5.99996 9.10457 6.89539 10 7.99996 10ZM7.99996 11.5C9.93295 11.5 11.5 9.933 11.5 8C11.5 6.067 9.93295 4.5 7.99996 4.5C6.06696 4.5 4.49996 6.067 4.49996 8C4.49996 9.933 6.06696 11.5 7.99996 11.5Z" fill="currentColor"/>
