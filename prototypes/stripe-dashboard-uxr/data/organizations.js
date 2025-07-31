@@ -146,6 +146,9 @@ class OrganizationDataManager {
     const savedOrgName = localStorage.getItem('uxr_current_organization');
     const savedSubAccountId = localStorage.getItem('uxr_current_sub_account');
     
+    console.log('🔍 INIT DEBUG - Saved org name:', savedOrgName);
+    console.log('🔍 INIT DEBUG - Saved sub-account ID:', savedSubAccountId);
+    
     // Set current organization (or default to first)
     const org = savedOrgName ? 
       this.getOrganizationByName(savedOrgName) : 
@@ -160,9 +163,16 @@ class OrganizationDataManager {
     this.setCurrentOrganization(org);
     
     // Set current sub-account - preserve saved state, otherwise default to "All accounts"
-    const subAccount = savedSubAccountId ? 
-      this.getSubAccountById(savedSubAccountId) : 
-      org.accounts?.find(acc => acc.isAggregate);
+    let subAccount = null;
+    if (savedSubAccountId) {
+      subAccount = this.getSubAccountById(savedSubAccountId);
+      console.log('🔍 INIT DEBUG - Found saved sub-account:', subAccount ? subAccount.name : 'NOT FOUND');
+    }
+    
+    if (!subAccount) {
+      subAccount = org.accounts?.find(acc => acc.isAggregate);
+      console.log('🔍 INIT DEBUG - Fallback to All accounts:', subAccount ? subAccount.name : 'NOT FOUND');
+    }
     
     // Safety check: ensure we have a valid sub-account
     if (!subAccount) {
@@ -252,6 +262,7 @@ class OrganizationDataManager {
   }
 
   setCurrentSubAccount(subAccount) {
+    console.log('💾 SAVING sub-account:', subAccount.name, 'ID:', subAccount.id);
     this.currentSubAccount = subAccount;
     localStorage.setItem('uxr_current_sub_account', subAccount.id);
   }
