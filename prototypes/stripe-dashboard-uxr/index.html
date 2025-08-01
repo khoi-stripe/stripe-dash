@@ -629,6 +629,24 @@
         });
       });
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-apply 'active' class to nav items based on current URL
+  var navLinks = document.querySelectorAll('.nav-panel .nav-item');
+  var currentPath = window.location.pathname.replace(/\/index\.html$/, '/');
+  navLinks.forEach(function(link) {
+    var href = link.getAttribute('href');
+    if (!href) return;
+    // Normalize for ./, /, and .html endings
+    var normalizedHref = href.replace(/\/index\.html$/, '/').replace(/^\./, '');
+    if (normalizedHref === currentPath || (normalizedHref !== '/' && currentPath.startsWith(normalizedHref))) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+});
+</script>
 </head>
 <body>
   <div class="layout-container">
@@ -1044,13 +1062,17 @@
     // Initialize expandable workload items
     function initExpandableWorkloads() {
       const expandableItems = document.querySelectorAll('.workload-item.expandable');
-      
       expandableItems.forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function(e) {
+          const navPanel = document.getElementById('navPanel');
+          if (navPanel && navPanel.classList.contains('collapsed')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
           const section = this.getAttribute('data-section');
           const submenu = document.querySelector(`.workload-submenu[data-section="${section}"]`);
           const isExpanded = this.classList.contains('expanded');
-          
           if (isExpanded) {
             // Collapse
             this.classList.remove('expanded');

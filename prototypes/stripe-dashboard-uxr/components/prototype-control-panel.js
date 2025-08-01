@@ -696,26 +696,33 @@ class PrototypeControlPanel {
   }
 
   showUploadSuccess() {
-    const uploadButton = document.querySelector('.upload-buttons .btn-secondary');
-    if (!uploadButton) return;
+    // Show inline success message above the buttons
+    let msg = document.getElementById('csv-upload-success-msg');
+    if (!msg) {
+      msg = document.createElement('div');
+      msg.id = 'csv-upload-success-msg';
+      msg.style.marginBottom = '8px';
+      msg.style.color = 'var(--success-600)';
+      msg.style.fontWeight = '500';
+      msg.style.fontSize = '14px';
+      const uploadContent = document.getElementById('upload-content');
+      if (uploadContent) {
+        uploadContent.insertBefore(msg, uploadContent.querySelector('.upload-buttons'));
+      }
+    }
+    msg.textContent = 'Uploaded successfully!';
 
-    // Store original content
-    const originalContent = uploadButton.innerHTML;
-    
-    // Update button to success state
-    uploadButton.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px;">
-        <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Uploaded Successfully
-    `;
-    uploadButton.classList.add('btn-success');
-    uploadButton.disabled = true;
-
-    // Reset after 3 seconds
+    // Reset message after 3 seconds
     setTimeout(() => {
-      this.resetUploadButton();
+      if (msg) msg.textContent = '';
     }, 3000);
+
+    // Button remains unchanged
+    const uploadButton = document.querySelector('.upload-buttons .btn-secondary');
+    if (uploadButton) {
+      uploadButton.innerHTML = 'Upload CSV File';
+      uploadButton.disabled = false;
+    }
   }
 
   resetUploadButton() {
@@ -723,7 +730,8 @@ class PrototypeControlPanel {
     if (!uploadButton) return;
 
     uploadButton.innerHTML = 'Upload CSV File';
-    uploadButton.classList.remove('btn-success');
+    // Do NOT remove btn-success, just keep btn-secondary
+    // uploadButton.classList.remove('btn-success');
     uploadButton.disabled = false;
   }
 

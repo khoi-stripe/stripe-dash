@@ -672,3 +672,17 @@ button.popover-open,
 .workload-subitem.active {
   text-decoration: none !important;
 }
+
+.nav-panel.collapsed .nav-item.active,
+.nav-panel.collapsed .workload-item.active {
+  background: var(--brand-50) !important;
+}
+.nav-panel.collapsed .nav-item.active .nav-item-label,
+.nav-panel.collapsed .workload-item.active .nav-item-label {
+  color: var(--brand-600) !important;
+  font-weight: var(--font-weight-semibold);
+}
+.nav-panel.collapsed .nav-item.active .nav-item-icon svg,
+.nav-panel.collapsed .workload-item.active .nav-item-icon svg {
+  color: var(--brand-600) !important;
+}
