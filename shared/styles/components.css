@@ -405,6 +405,7 @@
 
 .nav-item.active .nav-item-icon svg {
   stroke: none;
+  color: var(--brand-600) !important;
 }
 
 /* Active state - no background */
@@ -423,6 +424,7 @@
 
 .nav-item.active:hover .nav-item-icon svg {
   stroke: none;
+  color: var(--brand-600) !important;
 }
 
 /* Workload Item Variant */
@@ -531,6 +533,7 @@
 
 .workload-item.active .nav-item-icon svg {
   stroke: none;
+  color: var(--brand-600) !important;
 }
 
 .workload-item.active .workload-caret-icon svg {
@@ -548,6 +551,7 @@
 
 .workload-item.active:hover .nav-item-icon svg {
   stroke: none;
+  color: var(--brand-600) !important;
 }
 
 .workload-item.active:hover .workload-caret-icon svg {

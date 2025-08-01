@@ -46,7 +46,8 @@
      }
      
           .nav-panel.collapsed .nav-item-label,
-     .nav-panel.collapsed .workload-caret-icon {
+     .nav-panel.collapsed .workload-caret-icon,
+     .nav-panel.collapsed .section-header {
        display: none;
      }
      
@@ -279,10 +280,12 @@
       width: 100%;
       text-align: left;
       cursor: pointer;
+      text-decoration: none;
     }
 
     .workload-item.expandable:hover {
       background-color: var(--neutral-50);
+      text-decoration: none;
     }
 
     .workload-submenu {
@@ -352,6 +355,67 @@
 
     .workload-subitem.disabled:hover {
       background-color: transparent;
+    }
+
+    /* Workload Subitem Active state */
+    .workload-subitem.active .nav-item-label {
+      color: var(--brand-600);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* No background for active workload subitems */
+    .workload-subitem.active::before {
+      background-color: transparent;
+    }
+
+    .workload-subitem.active:hover::before {
+      background-color: var(--neutral-50);
+    }
+
+    .workload-subitem.active:hover .nav-item-label {
+      color: var(--brand-600);
+    }
+
+    /* Workload Item Active state when containing active subitems - ONLY when collapsed */
+    .workload-item-container:has(.workload-subitem.active) .workload-item:not(.expanded) .nav-item-label {
+      color: var(--brand-600);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .workload-item-container:has(.workload-subitem.active) .workload-item:not(.expanded) .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
+    }
+
+    .workload-item-container:has(.workload-subitem.active) .workload-item:not(.expanded) .workload-caret-icon svg {
+      color: var(--brand-600);
+    }
+
+    /* Active state for workload items when nav panel is collapsed (workloads are always collapsed when nav is collapsed) */
+    .nav-panel.collapsed .workload-item-container:has(.workload-subitem.active) .workload-item .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
+    }
+
+    /* Fallback for browsers that don't support :has() - check active subitems via JavaScript */
+    .workload-item.has-active-subitem:not(.expanded) .nav-item-label {
+      color: var(--brand-600);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .workload-item.has-active-subitem:not(.expanded) .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
+    }
+
+    .workload-item.has-active-subitem:not(.expanded) .workload-caret-icon svg {
+      color: var(--brand-600);
+    }
+
+    /* When nav panel is collapsed, always show active state regardless of expanded state */
+    .nav-panel.collapsed .workload-item.has-active-subitem .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
     }
 
     /* Caret icon rotation */
@@ -603,7 +667,7 @@
          </div>
          
          <div class="workloads-section">
-           <div class="text-label-small text-neutral-600" style="padding: 12px 16px 8px 0px;">Products</div>
+           <div class="section-header text-label-small text-neutral-600" style="padding: 12px 16px 8px 0px;">Products</div>
            <div class="workloads-nav">
                      <a href="#" class="workload-item">
             <div class="nav-item-icon">
@@ -781,7 +845,7 @@
        <div class="content-body">
          <div style="background: white; border-radius: 8px; padding: 32px; border: 1px solid var(--neutral-200);">
           <div style="margin-bottom: 32px;">
-            <h1 style="font-size: 28px; font-weight: 600; color: var(--neutral-900); margin: 0 0 8px 0;">Organization Settings</h1>
+            <h1 class="text-heading-xlarge" style="color: var(--neutral-900); margin: 0 0 8px 0;">Organization Settings</h1>
             <p style="font-size: 16px; color: var(--neutral-600); margin: 0; line-height: 1.5;">
               Manage your organization's configuration and account groupings for the UXR study.
             </p>
@@ -882,6 +946,7 @@
       const tooltip = document.querySelector('.collapse-tooltip');
       
       let isCollapsed = false;
+      let savedWorkloadStates = {}; // Store workload expansion states
       
       // Toggle navigation panel on handle click (matching dash-chrome)
       collapseHandle.addEventListener('click', function() {
@@ -891,6 +956,10 @@
         isCollapsed = !isCollapsed;
         
         if (isCollapsed) {
+          // Save current workload states before collapsing
+          saveWorkloadStates();
+          collapseAllWorkloads();
+          
           navPanel.classList.add('collapsed');
           collapseHandle.classList.add('collapsed');
           tooltip.textContent = 'Expand';
@@ -900,10 +969,59 @@
           navPanel.classList.remove('collapsed');
           collapseHandle.classList.remove('collapsed');
           tooltip.textContent = 'Collapse';
+          
+          // Restore workload states after expanding
+          restoreWorkloadStates();
+          
           // Allow hover again once expanded
           collapseHandle.classList.remove('no-hover');
         }
       });
+      
+      // Save current expansion state of all workload sections
+      function saveWorkloadStates() {
+        const expandableItems = document.querySelectorAll('.workload-item.expandable');
+        savedWorkloadStates = {};
+        
+        expandableItems.forEach(item => {
+          const section = item.getAttribute('data-section');
+          savedWorkloadStates[section] = item.classList.contains('expanded');
+        });
+      }
+      
+      // Collapse all workload sections
+      function collapseAllWorkloads() {
+        const expandableItems = document.querySelectorAll('.workload-item.expandable');
+        
+        expandableItems.forEach(item => {
+          const section = item.getAttribute('data-section');
+          const submenu = document.querySelector(`.workload-submenu[data-section="${section}"]`);
+          
+          if (item.classList.contains('expanded')) {
+            item.classList.remove('expanded');
+            submenu.classList.remove('expanded');
+          }
+        });
+      }
+      
+      // Restore workload states to their previous state
+      function restoreWorkloadStates() {
+        const expandableItems = document.querySelectorAll('.workload-item.expandable');
+        
+        expandableItems.forEach(item => {
+          const section = item.getAttribute('data-section');
+          const submenu = document.querySelector(`.workload-submenu[data-section="${section}"]`);
+          
+          // Restore to saved state (default to collapsed if no saved state)
+          if (savedWorkloadStates[section] === true) {
+            item.classList.add('expanded');
+            submenu.classList.add('expanded');
+          } else {
+            item.classList.remove('expanded');
+            submenu.classList.remove('expanded');
+          }
+        });
+      }
     }
 
     // Initialize expandable workload items
@@ -931,6 +1049,27 @@
 
     // Initialize on DOM content loaded
     initExpandableWorkloads();
+
+    // Update workload active states based on active subitems
+    function updateWorkloadActiveStates() {
+      const workloadContainers = document.querySelectorAll('.workload-item-container');
+      
+      workloadContainers.forEach(container => {
+        const workloadItem = container.querySelector('.workload-item');
+        const activeSubitem = container.querySelector('.workload-subitem.active');
+        
+        if (workloadItem) {
+          if (activeSubitem) {
+            workloadItem.classList.add('has-active-subitem');
+          } else {
+            workloadItem.classList.remove('has-active-subitem');
+          }
+        }
+      });
+    }
+
+    // Initialize workload active states
+    updateWorkloadActiveStates();
 
    </script>
 

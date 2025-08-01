@@ -709,6 +709,8 @@ class AccountSwitcher {
       .account-switcher-dropdown {
         position: fixed;
         min-width: 284px;
+        max-width: 400px;
+        max-height: 95vh;
         background: white;
         border: none;
         border-radius: 8px;
@@ -719,6 +721,8 @@ class AccountSwitcher {
         transition: all 0.2s ease;
         z-index: 9999;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
       
       /* Ensure dropdown container itself doesn't respond to hover */
@@ -735,6 +739,59 @@ class AccountSwitcher {
       .account-list {
         padding: 16px 8px; /* Additional 8px top and bottom padding (16px total), 8px sides */
         border-bottom: 1px solid var(--color-border-subtle);
+        flex: 1; /* Allow to grow and fill available space */
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* Allow flex item to shrink below content size */
+      }
+      
+      .account-items-container {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden; /* Prevent horizontal scrolling */
+        min-height: 0; /* Allow flex item to shrink below content size */
+        
+        /* Custom scrollbar styling */
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: rgba(0, 0, 0, 0.15) transparent; /* Firefox */
+      }
+      
+      /* Webkit scrollbar styling (Chrome, Safari, Edge) */
+      .account-items-container::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      .account-items-container::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .account-items-container::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 3px;
+        transition: background 0.2s ease;
+      }
+      
+      .account-items-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.25);
+      }
+      
+      /* Account details container */
+      .account-details {
+        flex: 1;
+        min-width: 0; /* Allow shrinking below content size */
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      
+      /* Account name and type with text truncation */
+      .account-name,
+      .account-type {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        width: 100%;
       }
       
       /* Remove hover effects from container elements */
@@ -806,6 +863,8 @@ class AccountSwitcher {
         cursor: pointer;
         transition: all var(--transition-fast);
         min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
         position: relative;
       }
       
@@ -1027,6 +1086,7 @@ class AccountSwitcher {
         gap: 8px; /* 8px row gap between buttons */
         width: 100%;
         box-sizing: border-box;
+        flex-shrink: 0; /* Don't shrink the actions section */
       }
       
       /* Account actions nav-item buttons */
@@ -1325,6 +1385,7 @@ class AccountSwitcher {
       .account-search-container {
         padding: 8px 12px;
         margin-bottom: 8px;
+        flex-shrink: 0; /* Don't shrink the search container */
       }
       
       .account-search-input-wrapper {
@@ -1391,13 +1452,32 @@ class AccountSwitcher {
     
     if (isNavCollapsed) {
       // When nav is collapsed, position dropdown to the right of trigger
-      const newTop = triggerRect.top;
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - triggerRect.top;
+      const accountCount = this.options.accounts ? this.options.accounts.length : 1;
+      const hasActions = true;
+      const approximateDropdownHeight = Math.min(
+        (accountCount * 56) + (hasActions ? 120 : 0) + 50,
+        viewportHeight * 0.9
+      );
+      
+      let newTop = triggerRect.top;
+      let maxHeight = Math.min(spaceBelow - 20, viewportHeight * 0.95);
+      
+      // If dropdown would extend beyond viewport, adjust top position
+      if (newTop + approximateDropdownHeight > viewportHeight) {
+        newTop = Math.max(20, viewportHeight - approximateDropdownHeight - 20);
+        maxHeight = Math.min(viewportHeight - newTop - 20, viewportHeight * 0.95);
+      }
+      
       const newLeft = triggerRect.right + 8;
       
       dropdown.style.top = `${newTop}px`;
       dropdown.style.left = `${newLeft}px`;
       dropdown.style.position = 'fixed';
       dropdown.style.zIndex = '9999';
+      dropdown.style.maxHeight = `${maxHeight}px`;
+      dropdown.style.transform = 'translateY(0)'; // Reset any previous transform
       
             // Force styles directly to ensure visibility when nav is collapsed  
       setTimeout(() => {
@@ -1461,14 +1541,52 @@ class AccountSwitcher {
       
 
     } else {
-      // Normal positioning: below the trigger with 4px spacing
-      const newTop = triggerRect.bottom + 4;
+      // Normal positioning: calculate best position based on available space
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - triggerRect.bottom;
+      const spaceAbove = triggerRect.top;
+      const spacing = 4;
+      
+      // Get approximate dropdown height (estimate based on content)
+      const accountCount = this.options.accounts ? this.options.accounts.length : 1;
+      const hasActions = true; // assume actions are present
+      const approximateDropdownHeight = Math.min(
+        (accountCount * 56) + (hasActions ? 120 : 0) + 50, // 56px per account + actions + padding
+        viewportHeight * 0.9 // max 90% of viewport
+      );
+      
+      let newTop, maxHeight;
+      
+      if (spaceBelow >= approximateDropdownHeight + spacing) {
+        // Enough space below - position below trigger
+        newTop = triggerRect.bottom + spacing;
+        maxHeight = Math.min(spaceBelow - spacing - 20, viewportHeight * 0.95); // 20px buffer
+        dropdown.style.transform = 'translateY(0)'; // Reset any previous transform
+      } else if (spaceAbove >= approximateDropdownHeight + spacing) {
+        // Not enough space below but enough above - position above trigger
+        newTop = triggerRect.top - spacing;
+        maxHeight = Math.min(spaceAbove - spacing - 20, viewportHeight * 0.95);
+        dropdown.style.transform = 'translateY(-100%)';
+      } else {
+        // Limited space both ways - use the larger space and adjust height
+        if (spaceBelow > spaceAbove) {
+          newTop = triggerRect.bottom + spacing;
+          maxHeight = spaceBelow - spacing - 20;
+          dropdown.style.transform = 'translateY(0)'; // Reset any previous transform
+        } else {
+          newTop = triggerRect.top - spacing;
+          maxHeight = spaceAbove - spacing - 20;
+          dropdown.style.transform = 'translateY(-100%)';
+        }
+      }
+      
       const newLeft = triggerRect.left;
       
       dropdown.style.top = `${newTop}px`;
       dropdown.style.left = `${newLeft}px`;
       dropdown.style.position = 'fixed';
       dropdown.style.zIndex = '9999';
+      dropdown.style.maxHeight = `${maxHeight}px`;
       
             // Reset any inline styles applied in collapsed mode
       setTimeout(() => {

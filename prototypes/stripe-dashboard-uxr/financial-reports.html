@@ -46,7 +46,8 @@
      }
      
           .nav-panel.collapsed .nav-item-label,
-     .nav-panel.collapsed .workload-caret-icon {
+     .nav-panel.collapsed .workload-caret-icon,
+     .nav-panel.collapsed .section-header {
        display: none;
      }
      
@@ -279,10 +280,12 @@
       width: 100%;
       text-align: left;
       cursor: pointer;
+      text-decoration: none;
     }
 
     .workload-item.expandable:hover {
       background-color: var(--neutral-50);
+      text-decoration: none;
     }
 
     .workload-submenu {
@@ -352,6 +355,25 @@
 
     .workload-subitem.disabled:hover {
       background-color: transparent;
+    }
+
+    /* Workload Subitem Active state */
+    .workload-subitem.active .nav-item-label {
+      color: var(--brand-600);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* No background for active workload subitems */
+    .workload-subitem.active::before {
+      background-color: transparent;
+    }
+
+    .workload-subitem.active:hover::before {
+      background-color: var(--neutral-50);
+    }
+
+    .workload-subitem.active:hover .nav-item-label {
+      color: var(--brand-600);
     }
 
     /* Caret icon rotation */
@@ -472,6 +494,106 @@
        border-radius: 12px;
      }
 
+     /* Reports Structure Classes */
+     .reports-container {
+       background: white;
+       border-radius: 8px;
+     }
+
+     .reports-header {
+       margin-bottom: 32px;
+     }
+
+     .metrics-grid {
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+       gap: 24px;
+       margin-bottom: 32px;
+       border-radius: 16px;
+       padding: 24px;
+       background: var(--neutral-50);
+     }
+
+     .account-breakdown-card {
+       background: white;
+       border: 1px solid var(--neutral-100);
+       border-radius: 8px;
+       padding: 24px;
+     }
+
+     .breakdown-title {
+       margin: 0 0 20px 0;
+       font-size: 18px;
+       font-weight: 600;
+       color: var(--neutral-900);
+     }
+
+     .filter-message {
+       margin-top: 24px;
+       padding: 16px;
+       background: var(--blue-50);
+       border: 1px solid var(--blue-200);
+       border-radius: 8px;
+       color: var(--blue-700);
+       font-size: 14px;
+       display: none;
+     }
+
+     /* Metric Card Classes */
+     .metric-card {
+       background: white;
+       border-radius: 12px;
+       padding: 24px;
+     }
+
+     .metric-header {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       margin-bottom: 16px;
+     }
+
+     .metric-title {
+       margin: 0;
+       font-size: 16px;
+       font-weight: 600;
+       color: var(--neutral-900);
+     }
+
+     .metric-badge {
+       padding: 2px 6px;
+       border-radius: 12px;
+       font-size: 12px;
+       font-weight: 500;
+     }
+
+     .metric-badge--positive {
+       background: var(--green-100);
+       color: var(--green-700);
+     }
+
+     .metric-badge--info {
+       background: var(--blue-100);
+       color: var(--blue-700);
+     }
+
+     .metric-badge--neutral {
+       background: var(--neutral-100);
+       color: var(--neutral-700);
+     }
+
+     .metric-value {
+       font-size: 32px;
+       font-weight: 700;
+       color: var(--neutral-900);
+       margin-bottom: 8px;
+     }
+
+     .metric-subtitle {
+       font-size: 12px;
+       color: var(--neutral-500);
+     }
+
 
 
     /* Responsive behavior */
@@ -503,6 +625,50 @@
         width: 64px;
       }
     }
+
+    /* Workload Item Active state when containing active subitems - ONLY when collapsed */
+    .workload-item-container:has(.workload-subitem.active) .workload-item:not(.expanded) .nav-item-label {
+      color: var(--brand-600);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .workload-item-container:has(.workload-subitem.active) .workload-item:not(.expanded) .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
+    }
+
+    .workload-item-container:has(.workload-subitem.active) .workload-item:not(.expanded) .workload-caret-icon svg {
+      color: var(--brand-600);
+    }
+
+    /* Active state for workload items when nav panel is collapsed (workloads are always collapsed when nav is collapsed) */
+    .nav-panel.collapsed .workload-item-container:has(.workload-subitem.active) .workload-item .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
+    }
+
+    /* Fallback for browsers that don't support :has() - check active subitems via JavaScript */
+    .workload-item.has-active-subitem:not(.expanded) .nav-item-label {
+      color: var(--brand-600);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .workload-item.has-active-subitem:not(.expanded) .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
+    }
+
+    .workload-item.has-active-subitem:not(.expanded) .workload-caret-icon svg {
+      color: var(--brand-600);
+    }
+
+    /* When nav panel is collapsed, always show active state regardless of expanded state */
+    .nav-panel.collapsed .workload-item.has-active-subitem .nav-item-icon svg {
+      stroke: none;
+      color: var(--brand-600) !important;
+    }
+
+    /* Caret icon rotation */
   </style>
     
     <script>
@@ -603,7 +769,7 @@
          </div>
          
          <div class="workloads-section">
-           <div class="text-label-small text-neutral-600" style="padding: 12px 16px 8px 0px;">Products</div>
+           <div class="section-header text-label-small text-neutral-600" style="padding: 12px 16px 8px 0px;">Products</div>
            <div class="workloads-nav">
                      <a href="#" class="workload-item">
             <div class="nav-item-icon">
@@ -658,7 +824,7 @@
           </a>
            
                      <div class="workload-item-container">
-            <button class="workload-item expandable" data-section="reporting" type="button">
+            <button class="workload-item expandable expanded" data-section="reporting" type="button">
               <div class="nav-item-icon">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M14 1.875C14 1.39175 13.6082 1 13.125 1C12.6418 1 12.25 1.39175 12.25 1.875V10.625C12.25 11.1082 12.6418 11.5 13.125 11.5C13.6082 11.5 14 11.1082 14 10.625V1.875Z" fill="currentColor"/>
@@ -675,7 +841,7 @@
               </div>
               <div class="nav-item-tooltip">Reporting</div>
             </button>
-            <div class="workload-submenu" data-section="reporting">
+            <div class="workload-submenu expanded" data-section="reporting">
               <a href="./financial-reports.html" class="workload-subitem active">
                 <span class="nav-item-label">Reports</span>
               </a>
@@ -781,67 +947,67 @@
          </div>
        </div>
        
-       <!-- Content Body -->
-       <div class="content-body">
-         <div style="background: white; border-radius: 8px; padding: 32px; border: 1px solid var(--neutral-200);">
-          <div style="margin-bottom: 32px;">
-            <h2 id="reports-title" style="font-size: 24px; font-weight: 600; color: var(--neutral-900); margin: 0 0 8px 0;">Financial Reports</h2>
+             <!-- Content Body -->
+      <div class="content-body">
+        <div class="reports-container">
+         <div class="reports-header">
+            <h2 id="reports-title" class="text-heading-xlarge" style="color: var(--neutral-900); margin: 0 0 8px 0;">Financial Reports</h2>
             <p id="reports-description" style="font-size: 14px; color: var(--neutral-600); margin: 0; line-height: 1.5;">
               View financial data and analytics. Use the account group filter to see how data changes based on selected account groups.
             </p>
           </div>
 
           <!-- Sample Financial Reports Grid -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
-            <div style="background: white; border: 1px solid var(--neutral-200); border-radius: 8px; padding: 24px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--neutral-900);">Total Revenue</h3>
-                <div style="background: var(--green-100); color: var(--green-700); padding: 2px 6px; border-radius: 12px; font-size: 12px; font-weight: 500;">
+          <div class="metrics-grid">
+            <div class="metric-card revenue-card">
+              <div class="metric-header">
+                <h3 class="metric-title">Total Revenue</h3>
+                <div class="metric-badge metric-badge--positive">
                   +12.5%
                 </div>
               </div>
-              <div style="font-size: 32px; font-weight: 700; color: var(--neutral-900); margin-bottom: 8px;" id="total-revenue">
+              <div class="metric-value" id="total-revenue">
                 $142,580
               </div>
-              <div style="font-size: 12px; color: var(--neutral-500);">
+              <div class="metric-subtitle">
                 Last 30 days
               </div>
             </div>
 
-            <div style="background: white; border: 1px solid var(--neutral-200); border-radius: 8px; padding: 24px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--neutral-900);">Transactions</h3>
-                <div style="background: var(--blue-100); color: var(--blue-700); padding: 2px 6px; border-radius: 12px; font-size: 12px; font-weight: 500;">
+            <div class="metric-card transactions-card">
+              <div class="metric-header">
+                <h3 class="metric-title">Transactions</h3>
+                <div class="metric-badge metric-badge--info">
                   +8.2%
                 </div>
               </div>
-              <div style="font-size: 32px; font-weight: 700; color: var(--neutral-900); margin-bottom: 8px;" id="total-transactions">
+              <div class="metric-value" id="total-transactions">
                 2,847
               </div>
-              <div style="font-size: 12px; color: var(--neutral-500);">
+              <div class="metric-subtitle">
                 Last 30 days
               </div>
             </div>
 
-            <div style="background: white; border: 1px solid var(--neutral-200); border-radius: 8px; padding: 24px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--neutral-900);">Active Accounts</h3>
-                <div style="background: var(--neutral-100); color: var(--neutral-700); padding: 2px 6px; border-radius: 12px; font-size: 12px; font-weight: 500;">
+            <div class="metric-card accounts-card">
+              <div class="metric-header">
+                <h3 class="metric-title">Active Accounts</h3>
+                <div class="metric-badge metric-badge--neutral">
                   <span id="filtered-accounts-count">All</span>
                 </div>
               </div>
-              <div style="font-size: 32px; font-weight: 700; color: var(--neutral-900); margin-bottom: 8px;" id="active-accounts">
+              <div class="metric-value" id="active-accounts">
                 5
               </div>
-              <div style="font-size: 12px; color: var(--neutral-500);">
+              <div class="metric-subtitle">
                 Current organization
               </div>
             </div>
           </div>
 
           <!-- Account-wise breakdown -->
-          <div style="background: white; border: 1px solid var(--neutral-200); border-radius: 8px; padding: 24px;">
-            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: var(--neutral-900);">Account Breakdown</h3>
+          <div class="account-breakdown-card">
+            <h3 class="breakdown-title">Account Breakdown</h3>
             
             <div id="account-breakdown">
               <!-- This will be populated by JavaScript based on filters -->
@@ -849,7 +1015,7 @@
           </div>
 
           <!-- Filter impact message -->
-          <div id="filter-message" style="margin-top: 24px; padding: 16px; background: var(--blue-50); border: 1px solid var(--blue-200); border-radius: 8px; color: var(--blue-700); font-size: 14px; display: none;">
+          <div id="filter-message" class="filter-message">
             <div style="display: flex; align-items: center; gap: 8px;">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM8.75 4.75V8H12.25V9.5H7.25V4.75H8.75Z" fill="currentColor"/>
@@ -921,6 +1087,7 @@
       const tooltip = document.querySelector('.collapse-tooltip');
       
       let isCollapsed = false;
+      let savedWorkloadStates = {}; // Store workload expansion states
       
       // Toggle navigation panel on handle click (matching dash-chrome)
       collapseHandle.addEventListener('click', function() {
@@ -930,6 +1097,10 @@
         isCollapsed = !isCollapsed;
         
         if (isCollapsed) {
+          // Save current workload states before collapsing
+          saveWorkloadStates();
+          collapseAllWorkloads();
+          
           navPanel.classList.add('collapsed');
           collapseHandle.classList.add('collapsed');
           tooltip.textContent = 'Expand';
@@ -939,10 +1110,59 @@
           navPanel.classList.remove('collapsed');
           collapseHandle.classList.remove('collapsed');
           tooltip.textContent = 'Collapse';
+          
+          // Restore workload states after expanding
+          restoreWorkloadStates();
+          
           // Allow hover again once expanded
           collapseHandle.classList.remove('no-hover');
         }
       });
+      
+      // Save current expansion state of all workload sections
+      function saveWorkloadStates() {
+        const expandableItems = document.querySelectorAll('.workload-item.expandable');
+        savedWorkloadStates = {};
+        
+        expandableItems.forEach(item => {
+          const section = item.getAttribute('data-section');
+          savedWorkloadStates[section] = item.classList.contains('expanded');
+        });
+      }
+      
+      // Collapse all workload sections
+      function collapseAllWorkloads() {
+        const expandableItems = document.querySelectorAll('.workload-item.expandable');
+        
+        expandableItems.forEach(item => {
+          const section = item.getAttribute('data-section');
+          const submenu = document.querySelector(`.workload-submenu[data-section="${section}"]`);
+          
+          if (item.classList.contains('expanded')) {
+            item.classList.remove('expanded');
+            submenu.classList.remove('expanded');
+          }
+        });
+      }
+      
+      // Restore workload states to their previous state
+      function restoreWorkloadStates() {
+        const expandableItems = document.querySelectorAll('.workload-item.expandable');
+        
+        expandableItems.forEach(item => {
+          const section = item.getAttribute('data-section');
+          const submenu = document.querySelector(`.workload-submenu[data-section="${section}"]`);
+          
+          // Restore to saved state (default to collapsed if no saved state)
+          if (savedWorkloadStates[section] === true) {
+            item.classList.add('expanded');
+            submenu.classList.add('expanded');
+          } else {
+            item.classList.remove('expanded');
+            submenu.classList.remove('expanded');
+          }
+        });
+      }
     }
 
     // Generate deterministic financial data based on account ID
@@ -980,13 +1200,14 @@
         document.getElementById('reports-title').textContent = `${currentOrg.name} - Financial Reports`;
         document.getElementById('reports-description').textContent = `Organization-wide financial data and analytics for all ${allSubAccounts.length} accounts. Switch to individual accounts for detailed breakdowns.`;
         document.getElementById('active-accounts').textContent = allSubAccounts.length;
+        document.querySelector('.accounts-card').style.display = 'block';
         updateAccountBreakdown(allSubAccounts, true); // true = show aggregate
       } else {
         // Specific account view - show only current account
         const currentAccountOnly = allSubAccounts.filter(acc => acc.id === currentSubAccount.id);
         document.getElementById('reports-title').textContent = `${currentSubAccount.name} - Financial Reports`;
         document.getElementById('reports-description').textContent = `Detailed financial data and analytics for the ${currentSubAccount.name} account. Switch to organization view for aggregated data.`;
-        document.getElementById('active-accounts').textContent = 1;
+        document.querySelector('.accounts-card').style.display = 'none';
         updateAccountBreakdown(currentAccountOnly, false); // false = individual account
       }
     }
@@ -1005,25 +1226,27 @@
       if (isAggregateView) {
         // Show all accounts in organization view
         breakdown.innerHTML = accountData.map(account => `
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--neutral-200); border-radius: 6px; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px; border-radius: 6px; margin-bottom: 16px; background: var(--neutral-25);">
             <div style="flex: 1;">
-              <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px;">${account.name}</div>
-              <div style="font-size: 12px; color: var(--neutral-500);">Account</div>
+              <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px; font-size: 18px;">${account.name}</div>
+              <div style="font-size: 14px; color: var(--neutral-500);">Primary Account Metrics</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 24px;">
-              <div style="text-align: right;">
-                <div style="font-weight: 600; color: var(--neutral-900);">$${account.revenue.toLocaleString()}</div>
-                <div style="font-size: 12px; color: var(--neutral-500);">Revenue</div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-weight: 600; color: var(--neutral-900);">${account.transactions.toLocaleString()}</div>
-                <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
-              </div>
-              <div style="text-align: right; min-width: 60px;">
-                <div style="font-weight: 600; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
-                  ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
+            <div style="display: flex; align-items: center; gap: 32px;">
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: right;">
+                <div>
+                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
+                  <div style="font-size: 12px; color: var(--neutral-500);">Total Revenue</div>
                 </div>
-                <div style="font-size: 12px; color: var(--neutral-500);">Growth</div>
+                <div>
+                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
+                  <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
+                </div>
+                <div>
+                  <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
+                    ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
+                  </div>
+                  <div style="font-size: 12px; color: var(--neutral-500);">Growth Rate</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1032,25 +1255,27 @@
         // Show single account view with more detailed breakdown
         const account = accountData[0];
         breakdown.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px; border: 1px solid var(--neutral-200); border-radius: 6px; margin-bottom: 16px; background: var(--neutral-25);">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px; border-radius: 6px; margin-bottom: 16px; background: var(--neutral-25);">
             <div style="flex: 1;">
               <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px; font-size: 18px;">${account.name}</div>
               <div style="font-size: 14px; color: var(--neutral-500);">Primary Account Metrics</div>
             </div>
             <div style="display: flex; align-items: center; gap: 32px;">
-              <div style="text-align: right;">
-                <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
-                <div style="font-size: 12px; color: var(--neutral-500);">Total Revenue</div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
-                <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
-              </div>
-              <div style="text-align: right; min-width: 80px;">
-                <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
-                  ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: right;">
+                <div>
+                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
+                  <div style="font-size: 12px; color: var(--neutral-500);">Total Revenue</div>
                 </div>
-                <div style="font-size: 12px; color: var(--neutral-500);">Growth Rate</div>
+                <div>
+                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
+                  <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
+                </div>
+                <div>
+                  <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
+                    ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
+                  </div>
+                  <div style="font-size: 12px; color: var(--neutral-500);">Growth Rate</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1058,16 +1283,16 @@
             <div style="font-size: 14px; color: var(--neutral-700); margin-bottom: 8px; font-weight: 500;">Account Details</div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; font-size: 13px;">
               <div>
+                <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${Math.round(account.revenue / account.transactions).toLocaleString()}</div>
                 <div style="color: var(--neutral-500);">Average Transaction</div>
-                <div style="font-weight: 600; color: var(--neutral-900);">$${Math.round(account.revenue / account.transactions).toLocaleString()}</div>
               </div>
               <div>
+                <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${Math.round(account.revenue / 30).toLocaleString()}</div>
                 <div style="color: var(--neutral-500);">Revenue per Day</div>
-                <div style="font-weight: 600; color: var(--neutral-900);">$${Math.round(account.revenue / 30).toLocaleString()}</div>
               </div>
               <div>
+                <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${Math.round(account.transactions / 30)} per day</div>
                 <div style="color: var(--neutral-500);">Transaction Volume</div>
-                <div style="font-weight: 600; color: var(--neutral-900);">${Math.round(account.transactions / 30)} per day</div>
               </div>
             </div>
           </div>
@@ -1151,6 +1376,27 @@
 
     // Initialize on DOM content loaded
     initExpandableWorkloads();
+
+    // Update workload active states based on active subitems
+    function updateWorkloadActiveStates() {
+      const workloadContainers = document.querySelectorAll('.workload-item-container');
+      
+      workloadContainers.forEach(container => {
+        const workloadItem = container.querySelector('.workload-item');
+        const activeSubitem = container.querySelector('.workload-subitem.active');
+        
+        if (workloadItem) {
+          if (activeSubitem) {
+            workloadItem.classList.add('has-active-subitem');
+          } else {
+            workloadItem.classList.remove('has-active-subitem');
+          }
+        }
+      });
+    }
+
+    // Initialize workload active states
+    updateWorkloadActiveStates();
    </script>
 
 </body>

@@ -498,6 +498,23 @@ class OrganizationDataManager {
     );
   }
 
+  // Add new organization
+  addOrganization(orgData) {
+    // Check if organization with same name already exists
+    const existingOrg = this.organizations.find(org => org.name === orgData.name);
+    if (existingOrg) {
+      throw new Error(`Organization "${orgData.name}" already exists`);
+    }
+    
+    // Add the new organization
+    this.organizations.push(orgData);
+    
+    // Save to localStorage
+    localStorage.setItem('uxr_organizations_data', JSON.stringify(this.organizations));
+    
+    return orgData;
+  }
+
   // UXR reset functionality
   resetAllData() {
     localStorage.removeItem('uxr_current_organization');
