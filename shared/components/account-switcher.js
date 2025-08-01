@@ -229,21 +229,21 @@ class AccountSwitcher {
                       accountItemHtml = `
                         <button class="account-item all-accounts ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
                           <div class="account-avatar all-accounts-avatar" style="background: var(--neutral-50) !important; background-color: var(--neutral-50) !important; color: #6D7C8C !important;">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.75C0 1.23122 1.23122 0 2.75 0H8C9.51878 0 10.75 1.23122 10.75 2.75V3C10.75 3.41421 10.4142 3.75 10 3.75C9.58579 3.75 9.25 3.41421 9.25 3V2.75C9.25 2.05964 8.69036 1.5 8 1.5H2.75C2.05964 1.5 1.5 2.05964 1.5 2.75V14.25C1.5 14.3881 1.61193 14.5 1.75 14.5H4.25C4.66421 14.5 5 14.8358 5 15.25C5 15.6642 4.66421 16 4.25 16H1.75C0.783502 16 0 15.2165 0 14.25V2.75ZM10.8525 5.864C11.0957 5.712 11.4043 5.712 11.6475 5.864L15.6475 8.364C15.8668 8.50106 16 8.74141 16 9V14.25C16 15.2165 15.2165 16 14.25 16H8.25C7.2835 16 6.5 15.2165 6.5 14.25V9C6.5 8.74141 6.63321 8.50106 6.8525 8.364L10.8525 5.864ZM8 9.41569V14.25C8 14.3881 8.11193 14.5 8.25 14.5H10.5V13C10.5 12.5858 10.8358 12.25 11.25 12.25C11.6642 12.25 12 12.5858 12 13V14.5H14.25C14.3881 14.5 14.5 14.3881 14.5 14.25V9.41569L11.25 7.38444L8 9.41569Z" fill="currentColor"/>
-                              <path fill="currentColor" d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
-                              <path fill="currentColor" d="M3 8C3 7.44772 3.44772 7 4 7C4.55228 7 5 7.44772 5 8C5 8.55228 4.55228 9 4 9C3.44772 9 3 8.55228 3 8Z" fill="currentColor"/>
-                              <path fill="currentColor" d="M6 4.5C6 3.94772 6.44772 3.5 7 3.5C7.55228 3.5 8 3.94772 8 4.5C8 5.05228 7.55228 5.5 7 5.5C6.44772 5.5 6 5.05228 6 4.5Z" fill="currentColor"/>
-                              <path fill="currentColor" d="M3 11.5C3 10.9477 3.44772 10.5 4 10.5C4.55228 10.5 5 10.9477 5 11.5C5 12.0523 4.55228 12.5 4 12.5C3.44772 12.5 3 12.0523 3 11.5Z" fill="currentColor"/>
-                            </svg>
-                          </div>
-                          <div class="account-details">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.75C0 1.23122 1.23122 0 2.75 0H8C9.51878 0 10.75 1.23122 10.75 2.75V3C10.75 3.41421 10.4142 3.75 10 3.75C9.58579 3.75 9.25 3.41421 9.25 3V2.75C9.25 2.05964 8.69036 1.5 8 1.5H2.75C2.05964 1.5 1.5 2.05964 1.5 2.75V14.25C1.5 14.3881 1.61193 14.5 1.75 14.5H4.25C4.66421 14.5 5 14.8358 5 15.25C5 15.6642 4.66421 16 4.25 16H1.75C0.783502 16 0 15.2165 0 14.25V2.75ZM10.8525 5.864C11.0957 5.712 11.4043 5.712 11.6475 5.864L15.6475 8.364C15.8668 8.50106 16 8.74141 16 9V14.25C16 15.2165 15.2165 16 14.25 16H8.25C7.2835 16 6.5 15.2165 6.5 14.25V9C6.5 8.74141 6.63321 8.50106 6.8525 8.364L10.8525 5.864ZM8 9.41569V14.25C8 14.3881 8.11193 14.5 8.25 14.5H10.5V13C10.5 12.5858 10.8358 12.25 11.25 12.25C11.6642 12.25 12 12.5858 12 13V14.5H14.25C14.3881 14.5 14.5 14.3881 14.5 14.25V9.41569L11.25 7.38444L8 9.41569Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M3 4.5C3 3.94772 3.44772 3.5 4 3.5C4.55228 3.5 5 3.94772 5 4.5C5 5.05228 4.55228 5.5 4 5.5C3.44772 5.5 3 5.05228 3 4.5Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M3 8C3 7.44772 3.44772 7 4 7C4.55228 7 5 7.44772 5 8C5 8.55228 4.55228 9 4 9C3.44772 9 3 8.55228 3 8Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M6 4.5C6 3.94772 6.44772 3.5 7 3.5C7.55228 3.5 8 3.94772 8 4.5C8 5.05228 7.55228 5.5 7 5.5C6.44772 5.5 6 5.05228 6 4.5Z" fill="currentColor"/>
+                          <path fill="currentColor" d="M3 11.5C3 10.9477 3.44772 10.5 4 10.5C4.55228 10.5 5 10.9477 5 11.5C5 12.0523 4.55228 12.5 4 12.5C3.44772 12.5 3 12.0523 3 11.5Z" fill="currentColor"/>
+                        </svg>
+                      </div>
+                      <div class="account-details">
                             <span class="account-name">${account.name}</span>
-                          </div>
+                      </div>
                           ${isActive ? '<div class="account-check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/></svg></div>' : ''}
-                        </button>
-                      `;
-                      
+                    </button>
+                  `;
+                  
                       // Add divider after "All accounts" if there are more accounts
                       if (index < sortedAccounts.length - 1) {
                         accountItemHtml += `<div class="account-divider" style="border-bottom: 1px solid var(--color-border-subtle); margin: 8px 16px;"></div>`;
@@ -251,15 +251,15 @@ class AccountSwitcher {
                     } else {
                       accountItemHtml = `
                         <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
-                          <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
-                            <span class="avatar-initials">${accountInitials}</span>
-                          </div>
-                          <div class="account-details">
-                            <span class="account-name">${account.name}</span>
-                          </div>
+                        <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
+                          <span class="avatar-initials">${accountInitials}</span>
+                        </div>
+                        <div class="account-details">
+                          <span class="account-name">${account.name}</span>
+                        </div>
                           ${isActive ? '<div class="account-check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/></svg></div>' : ''}
-                        </button>
-                      `;
+                      </button>
+                    `;
                     }
                     
                     return accountItemHtml;
@@ -299,24 +299,24 @@ class AccountSwitcher {
                         </button>
                       `;
                     } else {
-                      return `
-                        <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
-                          <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
-                            <span class="avatar-initials">${accountInitials}</span>
+                    return `
+                      <button class="account-item ${isActive ? 'active' : ''}" data-account-id="${account.id}" type="button">
+                        <div class="account-avatar" data-color="${accountAvatarColor}" style="background-color: ${accountAvatarColor} !important;">
+                          <span class="avatar-initials">${accountInitials}</span>
+                        </div>
+                        <div class="account-details">
+                          <span class="account-name">${account.name}</span>
+                        </div>
+                        ${isActive ? `
+                          <div class="account-check">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/>
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/>
+                            </svg>
                           </div>
-                          <div class="account-details">
-                            <span class="account-name">${account.name}</span>
-                          </div>
-                          ${isActive ? `
-                            <div class="account-check">
-                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2803 5.21967C12.5732 5.51256 12.5732 5.98744 12.2803 6.28033L7.53033 11.0303C7.23744 11.3232 6.76256 11.3232 6.46967 11.0303L3.96967 8.53033C3.67678 8.23744 3.67678 7.76256 3.96967 7.46967C4.26256 7.17678 4.73744 7.17678 5.03033 7.46967L7 9.43934L11.2197 5.21967C11.5126 4.92678 11.9874 4.92678 12.2803 5.21967Z" fill="currentColor"/>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.5C11.5903 14.5 14.5 11.5903 14.5 7.99999C14.5 4.40834 11.6 1.5 8 1.5C4.4097 1.5 1.5 4.40969 1.5 7.99999C1.5 11.5903 4.4097 14.5 8 14.5ZM8 16C12.4187 16 16 12.4187 16 7.99999C16 3.58126 12.4297 0 8 0C3.58127 0 0 3.58126 0 7.99999C0 12.4187 3.58127 16 8 16Z" fill="currentColor"/>
-                              </svg>
-                            </div>
-                          ` : ''}
-                        </button>
-                      `;
+                        ` : ''}
+                      </button>
+                    `;
                     }
                   }).join('');
                 }
@@ -1696,17 +1696,17 @@ class AccountSwitcher {
       // Clear search when dropdown closes
       if (!this.originalClose) {
         this.originalClose = this.close.bind(this);
-        this.close = () => {
-          if (searchInput) {
-            searchInput.value = '';
-            // Reset all items to visible
-            const allItems = this.container.querySelectorAll('.account-item');
-            allItems.forEach(item => {
-              item.classList.remove('filtered-hidden');
-            });
-          }
+      this.close = () => {
+        if (searchInput) {
+          searchInput.value = '';
+          // Reset all items to visible
+          const allItems = this.container.querySelectorAll('.account-item');
+          allItems.forEach(item => {
+            item.classList.remove('filtered-hidden');
+          });
+        }
           this.originalClose();
-        };
+      };
       }
     }
     
@@ -1963,7 +1963,7 @@ class AccountSwitcher {
         showDelay: 0,
         content: this.generateSandboxContent()
       });
-        }
+    }
   }
   
   // Method to re-render just the dropdown content with updated sorting
@@ -2059,7 +2059,7 @@ class AccountSwitcher {
       
       // For aggregate accounts, keep the original type, for regular accounts set parent org name
       if (!selectedAccount.isAggregate) {
-        accountWithParent.type = this.getParentOrganizationName();
+      accountWithParent.type = this.getParentOrganizationName();
       }
       
       // Update the current account immediately for smooth transition

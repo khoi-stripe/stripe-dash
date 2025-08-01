@@ -1,6 +1,11 @@
 /**
  * UXR Prototype Control Panel
  * Floating panel for managing prototype data and settings
+ * 
+ * NOTE: This component uses custom modal implementation. 
+ * For new modals, consider using the global Modal component:
+ * @see shared/components/modal.js
+ * @see shared/components/modal-example.html
  */
 
 class PrototypeControlPanel {
@@ -540,6 +545,24 @@ class PrototypeControlPanel {
         border-color: var(--critical-700);
       }
       
+      /* Success Button - Green */
+      .btn-success {
+        background: var(--green-600) !important;
+        color: white !important;
+        border: 1px solid var(--green-600) !important;
+        transition: all 0.15s ease;
+      }
+      
+      .btn-success:hover {
+        background: var(--green-700) !important;
+        border-color: var(--green-700) !important;
+      }
+      
+      .btn-success:disabled {
+        opacity: 1 !important;
+        cursor: default !important;
+      }
+      
 
     `;
     
@@ -587,6 +610,9 @@ class PrototypeControlPanel {
     
     // Update organization selector when opening
     this.updateOrganizationSelector();
+    
+    // Reset upload button state
+    this.resetUploadButton();
     
     // Initialize module states (ensure they start expanded)
     this.initializeModuleStates();
@@ -642,11 +668,12 @@ class PrototypeControlPanel {
       
       await window.OrgDataManager.loadFromSpreadsheet(csvContent);
       
-      this.showStatus('✅ CSV data loaded successfully! Page will refresh...', 'success');
+      this.showStatus('✅ CSV data loaded successfully!', 'success');
+      this.showUploadSuccess();
+      this.updateOrganizationSelector();
       
-      setTimeout(() => {
-        location.reload();
-      }, 1500);
+      // Clear the file input
+      document.getElementById('panel-csv-input').value = '';
       
     } catch (error) {
       this.showStatus(`❌ Error loading CSV: ${error.message}`, 'error');
@@ -666,6 +693,38 @@ class PrototypeControlPanel {
     window.URL.revokeObjectURL(url);
     
     this.showStatus('📝 Sample CSV downloaded!', 'success');
+  }
+
+  showUploadSuccess() {
+    const uploadButton = document.querySelector('.upload-buttons .btn-secondary');
+    if (!uploadButton) return;
+
+    // Store original content
+    const originalContent = uploadButton.innerHTML;
+    
+    // Update button to success state
+    uploadButton.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px;">
+        <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Uploaded Successfully
+    `;
+    uploadButton.classList.add('btn-success');
+    uploadButton.disabled = true;
+
+    // Reset after 3 seconds
+    setTimeout(() => {
+      this.resetUploadButton();
+    }, 3000);
+  }
+
+  resetUploadButton() {
+    const uploadButton = document.querySelector('.upload-buttons .btn-secondary');
+    if (!uploadButton) return;
+
+    uploadButton.innerHTML = 'Upload CSV File';
+    uploadButton.classList.remove('btn-success');
+    uploadButton.disabled = false;
   }
 
   generateOrganization() {

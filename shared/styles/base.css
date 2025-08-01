@@ -187,3 +187,6 @@ svg {
 .workload-item .nav-item-icon svg {
   color: currentColor;
 } 
+
+/* Import global modal styles */
+@import 'modal.css'; 

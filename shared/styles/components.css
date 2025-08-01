@@ -571,7 +571,7 @@
   border-radius: 8px;
   background: #FFF;
   box-shadow: 0px 15px 35px 0px rgba(48, 49, 61, 0.08), 0px 5px 15px 0px rgba(0, 0, 0, 0.12);
-  padding: 8px;
+  padding: 16px;
   min-width: 284px;
   z-index: 1001;
   opacity: 0;
@@ -657,4 +657,18 @@ button.popover-open,
 /* Account switcher trigger specific styling */
 .account-switcher-trigger.popover-open {
   background-color: var(--neutral-50) !important;
+}
+
+.workload-item:hover,
+.workload-item .nav-item-label:hover,
+.workload-item .nav-item-label,
+.nav-item:hover,
+.nav-item .nav-item-label:hover,
+.nav-item .nav-item-label {
+  text-decoration: none !important;
+}
+
+.workload-subitem,
+.workload-subitem.active {
+  text-decoration: none !important;
 }
