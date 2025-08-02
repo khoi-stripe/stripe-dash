@@ -282,9 +282,7 @@ class AccountGroupsFilter {
           this.currentGroup = group;
           this.renderAccounts(group);
           
-          // Update trigger text and reset custom mode
-          this.isCustomMode = false;
-          this.updateTriggerLabel(group);
+          // Note: Don't update trigger label here - only update on apply
         }
       });
     });
