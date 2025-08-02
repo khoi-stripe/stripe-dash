@@ -1193,10 +1193,9 @@
                 </button>
                 
                 <!-- Popover (hidden by default) -->
-                <div class="account-groups-popover" id="reportsPopover" style="display: none; width: 480px; position: fixed; z-index: 1000;">
-                  <div class="popover-content">
-                    <!-- Left section - Groups -->
-                    <div class="groups-section">
+                <div class="account-groups-popover" id="reportsPopover" style="display: none; width: 532px; position: fixed; z-index: 1000;">
+                  <!-- Column 1 - Groups -->
+                  <div class="groups-section">
                       <div class="groups-header">Account groups</div>
                       <button class="group-item active" data-group="all">All accounts</button>
                       <button class="group-item" data-group="connected">Connected accounts</button>
@@ -1204,25 +1203,34 @@
                       <button class="group-item" data-group="standard">Standard accounts</button>
                       <button class="group-item" data-group="custom">Custom accounts</button>
                     </div>
-                    
-                    <!-- Right section - Accounts -->
-                    <div class="accounts-section">
+                  
+                  <!-- Column 2 - Accounts Section -->
+                  <div class="accounts-section">
                       <div class="search-container">
+                        <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                          <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                         <input type="text" class="search-input" placeholder="Search accounts..." id="reportsSearchInput">
                       </div>
                       
-                      <div class="accounts-list" id="reportsAccountsList">
-                        <!-- Accounts will be dynamically populated by JavaScript -->
+                      <!-- Pinned Select All Row -->
+                      <div class="select-all-container" id="reportsSelectAllContainer">
+                        <!-- Select all will be dynamically populated by JavaScript -->
                       </div>
-                    </div>
-                  </div>
-                  
-                  <!-- Footer -->
-                  <div class="popover-footer">
-                    <span class="selection-count" id="reportsSelectionCount">20 selected</span>
-                    <div class="footer-buttons">
-                      <button class="btn-cancel" id="reportsCancelButton">Cancel</button>
-                      <button class="btn-apply" id="reportsApplyButton">Apply</button>
+                      
+                      <div class="accounts-list" id="reportsAccountsList">
+                        <!-- Individual accounts will be dynamically populated by JavaScript -->
+                      </div>
+                      
+                      <!-- Footer inside accounts-section (Column 2) -->
+                      <div class="popover-footer">
+                        <span class="selection-count" id="reportsSelectionCount">20 selected</span>
+                        <div class="footer-buttons">
+                          <button class="btn-cancel" id="reportsCancelButton">Cancel</button>
+                          <button class="btn-apply" id="reportsApplyButton">Apply</button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1442,10 +1450,11 @@
       }
 
       function renderReportsAccounts(groupKey) {
+          const selectAllContainer = document.getElementById('reportsSelectAllContainer');
           const accountsList = document.getElementById('reportsAccountsList');
           const accounts = reportsAccountGroups[groupKey] || [];
           
-          // Create select all + accounts HTML
+          // Create select all HTML (pinned at top)
           const selectAllHtml = `
               <div class="select-all-item">
                   <div class="checkbox-container">
@@ -1457,6 +1466,7 @@
               </div>
           `;
           
+          // Create accounts HTML (scrollable)
           const accountsHtml = accounts.map(account => `
               <div class="account-item">
                   <div class="checkbox-container">
@@ -1469,7 +1479,8 @@
               </div>
           `).join('');
 
-          accountsList.innerHTML = selectAllHtml + accountsHtml;
+          selectAllContainer.innerHTML = selectAllHtml;
+          accountsList.innerHTML = accountsHtml;
 
           // Reattach event listeners for new elements
           attachReportsCheckboxListeners();
@@ -1502,7 +1513,7 @@
       }
 
       function attachReportsCheckboxListeners() {
-          // Add change listeners to checkboxes
+          // Add change listeners to checkboxes (only in scrollable accounts list)
           document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]').forEach(checkbox => {
               checkbox.addEventListener('change', function() {
                   updateReportsSelectionCount();
@@ -1510,7 +1521,7 @@
               });
           });
           
-          // Make entire account row clickable
+          // Make entire account row clickable (only in scrollable accounts list)
           document.querySelectorAll('#reportsAccountsList .account-item').forEach(accountItem => {
               accountItem.addEventListener('click', function(e) {
                   if (e.target.type === 'checkbox') return;
@@ -1619,14 +1630,11 @@
           const popover = document.getElementById('reportsPopover');
           const trigger = document.querySelector('#account-groups-filter .account-groups-trigger');
           
-          if (!popover || !trigger) {
-              console.log('Missing popover or trigger element');
-              return;
-          }
+          if (!popover || !trigger) return;
           
           // Get trigger position and dimensions
           const triggerRect = trigger.getBoundingClientRect();
-          const popoverWidth = 480; // Fixed width from CSS
+          const popoverWidth = 532; // Fixed width from CSS (532×360px specification)
           const popoverHeight = 360; // Approximate height
           const gap = 4; // 4px gap below trigger
           const viewportPadding = 16; // 16px padding from viewport edges
@@ -1639,39 +1647,25 @@
           let left = triggerRect.left + (triggerRect.width / 2) - (popoverWidth / 2);
           let top = triggerRect.bottom + gap;
           
-          console.log('Initial position calculations:', {
-              triggerRect,
-              viewportWidth,
-              viewportHeight,
-              initialLeft: left,
-              initialTop: top
-          });
-          
           // Adjust horizontal position to stay within viewport bounds
           if (left < viewportPadding) {
               // Too far left, move right
               left = viewportPadding;
-              console.log('Adjusted left - too far left, moved to:', left);
           } else if (left + popoverWidth > viewportWidth - viewportPadding) {
               // Too far right, move left
               left = viewportWidth - popoverWidth - viewportPadding;
-              console.log('Adjusted left - too far right, moved to:', left);
           }
           
           // Adjust vertical position if it would go below viewport
           if (top + popoverHeight > viewportHeight - viewportPadding) {
               // Show above trigger instead
               top = triggerRect.top - popoverHeight - gap;
-              console.log('Adjusted top - not enough space below, moved above trigger to:', top);
               
               // If still not enough space above, position at top of viewport
               if (top < viewportPadding) {
                   top = viewportPadding;
-                  console.log('Adjusted top - not enough space above either, moved to viewport top:', top);
               }
           }
-          
-          console.log('Final position:', { left, top });
           
           // Apply the calculated position
           popover.style.left = left + 'px';

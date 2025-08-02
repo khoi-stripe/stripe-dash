@@ -54,17 +54,19 @@
   background: #FFF;
   box-shadow: 0 15px 35px 0 rgba(48, 49, 61, 0.08), 0 5px 15px 0 rgba(0, 0, 0, 0.12);
   overflow: hidden;
+  height: 360px; /* Fixed total height */
+  width: 532px; /* Fixed total width */
+  display: flex !important;
+  flex-direction: row !important; /* Two-column layout */
 }
 
-.popover-content {
-  display: flex;
-  height: 360px;
-}
+/* Removed popover-content wrapper - now using direct two-column layout */
 
-/* Left section - Groups */
+/* Column 1 - Groups (Full height) */
 .groups-section {
-  width: 200px;
-  flex-shrink: 0; /* Prevent shrinking */
+  width: 200px !important;
+  height: 360px; /* Full popover height */
+  flex-shrink: 0 !important; /* Prevent shrinking */
   background: white;
   overflow-y: auto;
   position: relative;
@@ -112,62 +114,79 @@
   color: var(--brand-600);
 }
 
-/* Right section - Accounts */
+/* Column 2 - Accounts Section (Full height with Search + Select All + List + Footer) */
 .accounts-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  flex: 1 !important;
+  height: 360px; /* Full popover height */
+  width: 332px; /* Remaining width after 200px groups section */
+  display: flex !important;
+  flex-direction: column !important;
   background: white;
+  overflow: hidden; /* Contain scrolling to accounts-list */
 }
 
 .search-container {
   padding: 16px 8px 8px 8px;
   position: relative;
+  flex-shrink: 0; /* Fixed height element */
 }
 
-.search-container::before {
-  content: '';
+.search-icon {
   position: absolute;
-  left: 16px;
-  top: calc(16px + 16px);
+  left: 16px; /* 8px container padding + 8px icon offset */
+  top: calc(16px + 14px); /* 16px container top padding + 14px (half of 28px input height) */
   transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23C4CAD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21L16.65 16.65"/></svg>') no-repeat center;
-  background-size: contain;
+  width: 12px;
+  height: 12px;
+  color: var(--color-text-muted);
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-icon svg {
+  width: 12px;
+  height: 12px;
+  color: currentColor;
 }
 
 .search-input {
   width: 100%;
-  height: 32px;
-  padding: 6px 12px 6px 28px;
-  border: 1px solid var(--neutral-200);
-  border-radius: 6px;
+  height: 28px;
+  padding: 4px 8px 4px 24px;
   background: white;
+  border: 1px solid var(--neutral-100);
+  border-radius: 8px;
   font-family: var(--font-family-ui);
   font-size: var(--font-size-14);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-20);
-  color: var(--neutral-900);
+  color: var(--color-text);
   box-sizing: border-box;
+  transition: var(--transition-default);
 }
 
 .search-input::placeholder {
-  color: var(--neutral-400);
+  color: var(--color-text-muted);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--brand-300);
-  box-shadow: 0 0 0 3px var(--brand-100);
+  background: var(--neutral-50);
+}
+
+.select-all-container {
+  padding: 0 8px;
+  flex-shrink: 0; /* Fixed height element */
+  background: white;
+  border-bottom: 1px solid var(--neutral-50); /* Visual separator from scrollable accounts */
 }
 
 .accounts-list {
-  flex: 1;
+  flex: 1; /* This is the flexible element that fills remaining space */
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 8px;
+  padding: 0 8px 8px 8px; /* Add bottom padding for spacing above footer */
+  min-height: 0; /* Allow flex item to shrink below content size */
   
   /* Custom scrollbar styling - match account switcher */
   scrollbar-width: thin; /* Firefox */
@@ -261,6 +280,15 @@
   background: var(--neutral-25);
 }
 
+.select-all-item .checkbox-container {
+  width: 22px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .select-all-item input[type="checkbox"] {
   width: 14px;
   height: 14px;
@@ -306,6 +334,14 @@
   height: 2px;
   background: white;
   border-radius: 1px;
+}
+
+.select-all-item .content-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  flex: 1;
 }
 
 .select-all-item label {
@@ -364,8 +400,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 12px 8px;
   background: white;
+  flex-shrink: 0; /* Fixed height element */
+  border-top: 1px solid var(--neutral-50); /* Add subtle border to separate from accounts */
 }
 
 .selection-count {
@@ -380,13 +418,14 @@
 }
 
 .btn-cancel, .btn-apply {
-  padding: 4px 8px;
+  padding: 6px 12px;
   border-radius: 6px;
   font-size: var(--font-size-12);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-16);
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap; /* Prevent button text from wrapping */
 }
 
 .btn-cancel {

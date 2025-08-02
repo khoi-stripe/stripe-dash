@@ -58,10 +58,9 @@
             </button>
             
             <!-- Popover (open by default for testing) -->
-            <div class="account-groups-popover" id="popover" style="display: block; margin-top: 8px; width: 480px;">
-                <div class="popover-content">
-                    <!-- Left section - Groups -->
-                    <div class="groups-section">
+            <div class="account-groups-popover" id="popover" style="display: block; margin-top: 8px; width: 532px;">
+                <!-- Column 1 - Groups -->
+                <div class="groups-section">
                         <div class="groups-header">Account groups</div>
                         <button class="group-item active">All accounts</button>
                         <button class="group-item">Connected accounts</button>
@@ -69,17 +68,27 @@
                         <button class="group-item">Standard accounts</button>
                         <button class="group-item">Custom accounts</button>
                     </div>
-                    
-                    <!-- Right section - Accounts -->
-                    <div class="accounts-section">
+                
+                <!-- Column 2 - Accounts Section -->
+                <div class="accounts-section">
                         <div class="search-container">
+                            <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                             <input type="text" class="search-input" placeholder="Search accounts">
                         </div>
                         
-                        <div class="accounts-list">
-                            <!-- Select all and accounts will be dynamically populated by JavaScript -->
+                        <!-- Pinned Select All Row -->
+                        <div class="select-all-container" id="selectAllContainer">
+                            <!-- Select all will be dynamically populated by JavaScript -->
                         </div>
                         
+                        <div class="accounts-list" id="accountsList">
+                            <!-- Individual accounts will be dynamically populated by JavaScript -->
+                        </div>
+                        
+                        <!-- Footer inside accounts-section (Column 2) -->
                         <div class="popover-footer">
                             <span class="selection-count">3 selected</span>
                             <div class="footer-buttons">
@@ -175,10 +184,11 @@
         }
 
         function renderAccounts(groupKey) {
-            const accountsList = document.querySelector('.accounts-list');
+            const selectAllContainer = document.getElementById('selectAllContainer');
+            const accountsList = document.getElementById('accountsList');
             const accounts = accountGroups[groupKey] || [];
             
-            // Create select all checkbox
+            // Create select all checkbox (pinned at top)
             const selectAllHTML = `
                 <div class="select-all-item">
                     <div class="checkbox-container">
@@ -190,7 +200,7 @@
                 </div>
             `;
             
-            // Create account items
+            // Create account items (scrollable)
             const accountsHTML = accounts.map(account => `
                 <div class="account-item">
                     <div class="checkbox-container">
@@ -203,8 +213,9 @@
                 </div>
             `).join('');
 
-            // Combine and set innerHTML
-            accountsList.innerHTML = selectAllHTML + accountsHTML;
+            // Set innerHTML separately
+            selectAllContainer.innerHTML = selectAllHTML;
+            accountsList.innerHTML = accountsHTML;
 
             // Reattach event listeners
             attachCheckboxListeners();
@@ -220,16 +231,16 @@
         }
 
         function attachCheckboxListeners() {
-            // Add change listeners to checkboxes
-            document.querySelectorAll('.account-item input[type="checkbox"]').forEach(checkbox => {
+            // Add change listeners to checkboxes (only in scrollable accounts list)
+            document.querySelectorAll('#accountsList .account-item input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     updateSelectionCount();
                     updateSelectAllState();
                 });
             });
             
-            // Make entire account row clickable
-            document.querySelectorAll('.account-item').forEach(accountItem => {
+            // Make entire account row clickable (only in scrollable accounts list)
+            document.querySelectorAll('#accountsList .account-item').forEach(accountItem => {
                 accountItem.addEventListener('click', function(e) {
                     // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
                     if (e.target.type === 'checkbox') {
@@ -248,7 +259,7 @@
         }
 
         function filterAccountsBySearch(term) {
-            document.querySelectorAll('.account-item').forEach(item => {
+            document.querySelectorAll('#accountsList .account-item').forEach(item => {
                 const label = item.querySelector('label').textContent.toLowerCase();
                 item.style.display = label.includes(term.toLowerCase()) ? 'flex' : 'none';
             });
@@ -283,15 +294,15 @@
         
         // Update selection count
         function updateSelectionCount() {
-            const checked = document.querySelectorAll('.account-item input[type="checkbox"]:checked').length;
+            const checked = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]:checked').length;
             document.querySelector('.selection-count').textContent = `${checked} selected`;
         }
 
         // Update select all checkbox state based on individual checkboxes
         function updateSelectAllState() {
             const selectAllCheckbox = document.getElementById('select-all');
-            const accountCheckboxes = document.querySelectorAll('.account-item input[type="checkbox"]');
-            const checkedCount = document.querySelectorAll('.account-item input[type="checkbox"]:checked').length;
+            const accountCheckboxes = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]');
+            const checkedCount = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]:checked').length;
             
             if (checkedCount === 0) {
                 selectAllCheckbox.checked = false;
@@ -308,7 +319,7 @@
         // Handle select all checkbox click
         function handleSelectAll() {
             const selectAllCheckbox = document.getElementById('select-all');
-            const accountCheckboxes = document.querySelectorAll('.account-item input[type="checkbox"]');
+            const accountCheckboxes = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]');
             
             accountCheckboxes.forEach(checkbox => {
                 checkbox.checked = selectAllCheckbox.checked;
