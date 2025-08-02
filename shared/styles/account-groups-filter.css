@@ -56,8 +56,12 @@
   overflow: hidden;
   height: 360px; /* Fixed total height */
   width: 532px; /* Fixed total width */
-  display: flex !important;
-  flex-direction: row !important; /* Two-column layout */
+  display: flex;
+  flex-direction: row; /* Two-column layout */
+  position: absolute;
+  z-index: 1000;
+  text-align: left; /* Override any inherited text alignment */
+  /* top, left, margin-top will be set by JavaScript for smart positioning */
 }
 
 /* Removed popover-content wrapper - now using direct two-column layout */
@@ -68,10 +72,11 @@
   height: 360px; /* Full popover height */
   flex-shrink: 0 !important; /* Prevent shrinking */
   background: white;
-  border-right: 1px solid var(--neutral-50);
+  border-right: 1px solid var(--neutral-100);
   overflow-y: auto;
   position: relative;
   z-index: 1;
+  text-align: left; /* Override any inherited text alignment */
 }
 
 .groups-header {
@@ -124,19 +129,20 @@
   flex-direction: column !important;
   background: white;
   overflow: hidden; /* Contain scrolling to accounts-list */
+  text-align: left; /* Override any inherited text alignment */
 }
 
-.search-container {
+.filter-search-container {
   padding: 16px 8px 8px 8px;
   position: relative;
   flex-shrink: 0; /* Fixed height element */
+  text-align: left; /* Ensure search field is always left-aligned */
 }
 
-.search-icon {
+.filter-search-icon {
   position: absolute;
   left: 16px; /* 8px container padding + 8px icon offset */
-  top: calc(16px + 14px); /* 16px container top padding + 14px (half of 28px input height) */
-  transform: translateY(-50%);
+  top: 24px; /* 16px container top padding + 4px input padding + 4px center adjustment */
   width: 12px;
   height: 12px;
   color: var(--color-text-muted);
@@ -144,18 +150,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 2;
 }
 
-.search-icon svg {
+.filter-search-icon svg {
   width: 12px;
   height: 12px;
   color: currentColor;
 }
 
-.search-input {
+.filter-search-input {
   width: 100%;
   height: 28px;
-  padding: 4px 8px 4px 24px;
+  padding: 4px 8px 4px 28px; /* Increased left padding for icon */
   background: white;
   border: 1px solid var(--neutral-100);
   border-radius: 8px;
@@ -166,11 +173,11 @@
   transition: var(--transition-default);
 }
 
-.search-input::placeholder {
+.filter-search-input::placeholder {
   color: var(--color-text-muted);
 }
 
-.search-input:focus {
+.filter-search-input:focus {
   outline: none;
   background: var(--neutral-50);
 }
@@ -218,48 +225,60 @@
   background: rgba(0, 0, 0, 0.25);
 }
 
-.account-item {
-  display: flex;
-  align-items: stretch;
-  height: 36px;
-  width: 100%;
+.account-groups-popover .account-item {
+  display: flex !important;
+  align-items: center !important; /* Changed from stretch to center to match select-all alignment */
+  height: 36px !important;
+  width: 100% !important;
   cursor: pointer;
   transition: background 0.15s ease;
   user-select: none; /* Prevent text selection when clicking */
+  position: relative !important; /* Allow absolute positioning of checkbox */
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.account-item:hover {
-  background: var(--neutral-25);
-  border-radius: 6px;
+.account-groups-popover .account-item:hover {
+  background: var(--neutral-25) !important;
+  border-radius: 6px !important;
 }
 
-.checkbox-container {
-  width: 22px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.account-groups-popover .checkbox-container {
+  width: 22px !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  position: absolute !important;
+  left: 8px !important; /* Fixed position from left edge */
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.account-item input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--neutral-300);
-  border-radius: 4px;
+.account-groups-popover .account-item input[type="checkbox"] {
+  width: 14px !important;
+  height: 14px !important;
+  border: 1px solid var(--neutral-300) !important;
+  border-radius: 4px !important;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
-.account-item input[type="checkbox"]:checked {
+.account-groups-popover .account-item input[type="checkbox"]:checked {
   background: var(--brand-600) !important;
   border-color: var(--brand-600) !important;
   position: relative;
 }
 
-.account-item input[type="checkbox"]:checked::after {
+.account-groups-popover .account-item input[type="checkbox"]:checked::after {
   content: '';
   position: absolute;
   left: 4px;
@@ -271,48 +290,48 @@
   transform: rotate(45deg);
 }
 
-.select-all-item {
-  display: flex;
-  align-items: stretch;
-  height: 36px;
-  width: 100%;
+.account-groups-popover .select-all-item {
+  display: flex !important;
+  align-items: center !important; /* Changed from stretch to center for consistent alignment */
+  height: 36px !important;
+  width: 100% !important;
   cursor: pointer;
   transition: background 0.15s ease;
   user-select: none; /* Prevent text selection when clicking */
+  position: relative !important; /* Allow absolute positioning of checkbox */
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.select-all-item:hover {
-  background: var(--neutral-25);
-  border-radius: 6px;
+.account-groups-popover .select-all-item:hover {
+  background: var(--neutral-25) !important;
+  border-radius: 6px !important;
 }
 
-.select-all-item .checkbox-container {
-  width: 22px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+/* Remove duplicate - use shared .checkbox-container style */
 
-.select-all-item input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--neutral-300);
-  border-radius: 4px;
+.account-groups-popover .select-all-item input[type="checkbox"] {
+  width: 14px !important;
+  height: 14px !important;
+  border: 1px solid var(--neutral-300) !important;
+  border-radius: 4px !important;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
-.select-all-item input[type="checkbox"]:checked {
+.account-groups-popover .select-all-item input[type="checkbox"]:checked {
   background: var(--brand-600) !important;
   border-color: var(--brand-600) !important;
   position: relative;
 }
 
-.select-all-item input[type="checkbox"]:checked::after {
+.account-groups-popover .select-all-item input[type="checkbox"]:checked::after {
   content: '';
   position: absolute;
   left: 4px;
@@ -324,13 +343,13 @@
   transform: rotate(45deg);
 }
 
-.select-all-item input[type="checkbox"]:indeterminate {
+.account-groups-popover .select-all-item input[type="checkbox"]:indeterminate {
   background: var(--brand-600) !important;
   border-color: var(--brand-600) !important;
   position: relative;
 }
 
-.select-all-item input[type="checkbox"]:indeterminate::after {
+.account-groups-popover .select-all-item input[type="checkbox"]:indeterminate::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -342,13 +361,14 @@
   border-radius: 1px;
 }
 
-.select-all-item .content-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px;
-  flex: 1;
-  justify-content: space-between;
+.account-groups-popover .select-all-item .account-filter-content {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 6px !important;
+  margin-left: 30px !important; /* Space for checkbox: 8px position + 22px width */
+  flex: 1 !important;
+  box-sizing: border-box !important;
 }
 
 .select-all-item label {
@@ -361,19 +381,16 @@
   cursor: pointer;
 }
 
-.select-all-count {
-  font-size: var(--font-size-12);
-  font-weight: var(--font-weight-regular);
-  color: var(--neutral-600);
-  margin-left: auto;
-}
 
-.content-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px;
-  flex: 1;
+
+.account-groups-popover .account-item .account-filter-content {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 6px !important;
+  margin-left: 30px !important; /* Space for checkbox: 8px position + 22px width */
+  flex: 1 !important;
+  box-sizing: border-box !important;
 }
 
 .account-icon {
@@ -401,9 +418,11 @@
 
 .account-item label {
   flex: 1;
+  font-family: var(--font-family-ui);
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-20);
+  letter-spacing: -0.005em;
   color: var(--neutral-700);
   cursor: pointer;
 }

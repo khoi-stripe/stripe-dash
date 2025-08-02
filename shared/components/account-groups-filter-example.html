@@ -35,48 +35,56 @@
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+        .demo-section h3 {
+            color: var(--neutral-900);
+            font-weight: var(--font-weight-semibold);
+        }
     </style>
 </head>
 <body>
     <div class="preview-container">
         <div class="preview-header">
-            <h1>Account groups</h1>
-            <p>Interactive component for filtering and selecting account groups</p>
+            <h1>Account Groups Filter Component</h1>
+            <p>Interactive component for filtering and selecting account groups - demonstrated in different page positions</p>
         </div>
         
         <div class="demo-section">
-            <h3 style="margin-top: 0;">Component Demo</h3>
+            <h3 style="margin-top: 0;">Default Position</h3>
             
+            <!-- Filter Container -->
+            <div style="position: relative;">
             <!-- Trigger Button -->
-            <button class="account-groups-trigger open" onclick="togglePopover()">
+            <button class="account-groups-trigger" id="filterTrigger">
                 <span class="trigger-show">Show</span>
                 <span class="trigger-separator">|</span>
-                <span class="trigger-option" id="triggerOption">All accounts</span>
+                <span class="trigger-option" id="filterOption">All accounts</span>
                 <svg class="trigger-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M2.16699 4.375C2.39082 4.15117 2.75918 4.15117 2.98301 4.375L6 7.39199L9.01699 4.375C9.24082 4.15117 9.60918 4.15117 9.83301 4.375C10.0568 4.59883 10.0568 4.96719 9.83301 5.19102L6.40801 8.61602C6.18418 8.83984 5.81582 8.83984 5.59199 8.61602L2.16699 5.19102C1.94316 4.96719 1.94316 4.59883 2.16699 4.375Z" fill="currentColor"/>
                 </svg>
             </button>
             
             <!-- Popover (open by default for testing) -->
-            <div class="account-groups-popover" id="popover" style="display: block; margin-top: 8px; width: 532px;">
+            <div class="account-groups-popover" id="popover" style="display: none;">
                 <!-- Column 1 - Groups -->
                 <div class="groups-section">
                         <div class="groups-header">Account groups</div>
-                        <button class="group-item active">All accounts</button>
-                        <button class="group-item">Connected accounts</button>
-                        <button class="group-item">Express accounts</button>
-                        <button class="group-item">Standard accounts</button>
-                        <button class="group-item">Custom accounts</button>
+                        <button class="group-item active" data-group="all">All accounts</button>
+                        <button class="group-item" data-group="connected">Connected accounts</button>
+                        <button class="group-item" data-group="express">Express accounts</button>
+                        <button class="group-item" data-group="standard">Standard accounts</button>
+                        <button class="group-item" data-group="custom">Custom accounts</button>
                     </div>
                 
                 <!-- Column 2 - Accounts Section -->
                 <div class="accounts-section">
-                        <div class="search-container">
-                            <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-                                <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <input type="text" class="search-input" placeholder="Search accounts">
+                        <div class="filter-search-container">
+                            <div class="filter-search-icon">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <input type="text" class="filter-search-input" id="searchInput" placeholder="Search accounts">
                         </div>
                         
                         <!-- Pinned Select All Row -->
@@ -91,8 +99,114 @@
                         <!-- Footer inside accounts-section (Column 2) -->
                         <div class="popover-footer">
                             <div class="footer-buttons">
-                                <button class="btn-cancel" onclick="togglePopover()">Cancel</button>
-                                <button class="btn-apply" onclick="applySelection()">Apply</button>
+                                <button class="btn-cancel" onclick="exampleFilter.close()">Cancel</button>
+                                <button class="btn-apply" onclick="exampleFilter.applySelection()">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instance 2: Centered Position -->
+        <div class="demo-section" style="text-align: center; margin: 80px 0;">
+            <h3 style="margin-top: 0;">Centered Position</h3>
+            <div style="position: relative; display: inline-block;">
+                <button class="account-groups-trigger" id="centeredFilterTrigger">
+                    <span class="trigger-show">Show</span>
+                    <span class="trigger-separator">|</span>
+                    <span class="trigger-option" id="centeredFilterOption">All accounts</span>
+                    <svg class="trigger-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2.16699 4.375C2.39082 4.15117 2.75918 4.15117 2.98301 4.375L6 7.39199L9.01699 4.375C9.24082 4.15117 9.60918 4.15117 9.83301 4.375C10.0568 4.59883 10.0568 4.96719 9.83301 5.19102L6.40801 8.61602C6.18418 8.83984 5.81582 8.83984 5.59199 8.61602L2.16699 5.19102C1.94316 4.96719 1.94316 4.59883 2.16699 4.375Z" fill="currentColor"/>
+                    </svg>
+                </button>
+                
+                <div class="account-groups-popover" id="centeredPopover" style="display: none;">
+                    <div class="groups-section">
+                        <div class="groups-header">Account groups</div>
+                        <button class="group-item active" data-group="all">All accounts</button>
+                        <button class="group-item" data-group="connected">Connected accounts</button>
+                        <button class="group-item" data-group="express">Express accounts</button>
+                        <button class="group-item" data-group="standard">Standard accounts</button>
+                        <button class="group-item" data-group="custom">Custom accounts</button>
+                    </div>
+                    
+                    <div class="accounts-section">
+                        <div class="filter-search-container">
+                            <div class="filter-search-icon">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <input type="text" class="filter-search-input" id="centeredSearchInput" placeholder="Search accounts">
+                        </div>
+                        
+                        <div class="select-all-container" id="centeredSelectAllContainer">
+                            <!-- Select all will be dynamically populated by JavaScript -->
+                        </div>
+                        
+                        <div class="accounts-list" id="centeredAccountsList">
+                            <!-- Individual accounts will be dynamically populated by JavaScript -->
+                        </div>
+                        
+                        <div class="popover-footer">
+                            <div class="footer-buttons">
+                                <button class="btn-cancel" onclick="centeredFilter.close()">Cancel</button>
+                                <button class="btn-apply" onclick="centeredFilter.applySelection()">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instance 3: Right Aligned Position -->
+        <div class="demo-section" style="margin: 80px 0; text-align: right;">
+            <h3 style="margin-top: 0;">Right Aligned Position</h3>
+            <div style="position: relative; display: inline-block;">
+                <button class="account-groups-trigger" id="rightFilterTrigger">
+                    <span class="trigger-show">Show</span>
+                    <span class="trigger-separator">|</span>
+                    <span class="trigger-option" id="rightFilterOption">All accounts</span>
+                    <svg class="trigger-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2.16699 4.375C2.39082 4.15117 2.75918 4.15117 2.98301 4.375L6 7.39199L9.01699 4.375C9.24082 4.15117 9.60918 4.15117 9.83301 4.375C10.0568 4.59883 10.0568 4.96719 9.83301 5.19102L6.40801 8.61602C6.18418 8.83984 5.81582 8.83984 5.59199 8.61602L2.16699 5.19102C1.94316 4.96719 1.94316 4.59883 2.16699 4.375Z" fill="currentColor"/>
+                    </svg>
+                </button>
+                
+                <div class="account-groups-popover" id="rightPopover" style="display: none;">
+                    <div class="groups-section">
+                        <div class="groups-header">Account groups</div>
+                        <button class="group-item active" data-group="all">All accounts</button>
+                        <button class="group-item" data-group="connected">Connected accounts</button>
+                        <button class="group-item" data-group="express">Express accounts</button>
+                        <button class="group-item" data-group="standard">Standard accounts</button>
+                        <button class="group-item" data-group="custom">Custom accounts</button>
+                    </div>
+                    
+                    <div class="accounts-section">
+                        <div class="filter-search-container">
+                            <div class="filter-search-icon">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <input type="text" class="filter-search-input" id="rightSearchInput" placeholder="Search accounts">
+                        </div>
+                        
+                        <div class="select-all-container" id="rightSelectAllContainer">
+                            <!-- Select all will be dynamically populated by JavaScript -->
+                        </div>
+                        
+                        <div class="accounts-list" id="rightAccountsList">
+                            <!-- Individual accounts will be dynamically populated by JavaScript -->
+                        </div>
+                        
+                        <div class="popover-footer">
+                            <div class="footer-buttons">
+                                <button class="btn-cancel" onclick="rightFilter.close()">Cancel</button>
+                                <button class="btn-apply" onclick="rightFilter.applySelection()">Apply</button>
                             </div>
                         </div>
                     </div>
@@ -101,305 +215,102 @@
         </div>
     </div>
 
+    <!-- Include global component -->
+    <script src="./account-groups-filter.js"></script>
+    
     <script>
-        // Account data organized by groups (expanded for scrolling)
-        const accountGroups = {
-            'all': [
-                { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
-                { name: 'Convict Conditioning', initials: 'CC', color: 'green', checked: true },
-                { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
-                { name: 'TechFlow Solutions', initials: 'TS', color: 'green', checked: true },
-                { name: 'Design Studio Pro', initials: 'DS', color: 'blue', checked: true },
-                { name: 'E-commerce Plus', initials: 'EP', color: 'green', checked: true },
-                { name: 'Global Logistics', initials: 'GL', color: 'blue', checked: true },
-                { name: 'Creative Agency', initials: 'CA', color: 'green', checked: true },
-                { name: 'Maritime Corp', initials: 'MC', color: 'blue', checked: true },
-                { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
-                { name: 'Precision Engineering', initials: 'PE', color: 'blue', checked: true },
-                { name: 'Urban Solutions', initials: 'US', color: 'green', checked: true },
-                { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true },
-                { name: 'Green Energy Co', initials: 'GE', color: 'green', checked: true },
-                { name: 'Medical Technologies', initials: 'MT', color: 'blue', checked: true },
-                { name: 'Financial Services', initials: 'FS', color: 'green', checked: true },
-                { name: 'Construction Group', initials: 'CG', color: 'blue', checked: true },
-                { name: 'Media Network', initials: 'MN', color: 'green', checked: true },
-                { name: 'Transportation Inc', initials: 'TI', color: 'blue', checked: true },
-                { name: 'Entertainment LLC', initials: 'EL', color: 'green', checked: true }
-            ],
-            'connected': [
-                { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
-                { name: 'TechFlow Solutions', initials: 'TS', color: 'green', checked: true },
-                { name: 'Global Logistics', initials: 'GL', color: 'blue', checked: true },
-                { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true },
-                { name: 'Financial Services', initials: 'FS', color: 'green', checked: true },
-                { name: 'Media Network', initials: 'MN', color: 'green', checked: true },
-                { name: 'Transportation Inc', initials: 'TI', color: 'blue', checked: true },
-                { name: 'Entertainment LLC', initials: 'EL', color: 'green', checked: true }
-            ],
-            'express': [
-                { name: 'Convict Conditioning', initials: 'CC', color: 'green', checked: true },
-                { name: 'Design Studio Pro', initials: 'DS', color: 'blue', checked: true },
-                { name: 'Creative Agency', initials: 'CA', color: 'green', checked: true },
-                { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
-                { name: 'Urban Solutions', initials: 'US', color: 'green', checked: true },
-                { name: 'Green Energy Co', initials: 'GE', color: 'green', checked: true },
-                { name: 'Construction Group', initials: 'CG', color: 'blue', checked: true }
-            ],
-            'standard': [
-                { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
-                { name: 'E-commerce Plus', initials: 'EP', color: 'green', checked: true },
-                { name: 'Maritime Corp', initials: 'MC', color: 'blue', checked: true },
-                { name: 'Precision Engineering', initials: 'PE', color: 'blue', checked: true },
-                { name: 'Medical Technologies', initials: 'MT', color: 'blue', checked: true }
-            ],
-            'custom': [
-                { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
-                { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
-                { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
-                { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true }
+        // Sample organization data for standalone example
+        const sampleOrganizationData = {
+            name: "Example Corporation",
+            accounts: [
+                { id: "acc_1", name: "Main Business Account", type: "Standard", color: "blue" },
+                { id: "acc_2", name: "E-commerce Platform", type: "Connected", color: "green" },
+                { id: "acc_3", name: "Mobile App Division", type: "Express", color: "blue" },
+                { id: "acc_4", name: "Creative Services", type: "Express", color: "green" },
+                { id: "acc_5", name: "Digital Marketing Hub", type: "Connected", color: "blue" },
+                { id: "acc_6", name: "Customer Support Portal", type: "Standard", color: "green" },
+                { id: "acc_7", name: "Analytics & Insights", type: "Connected", color: "blue" },
+                { id: "acc_8", name: "Content Management", type: "Express", color: "green" },
+                { id: "acc_9", name: "Payment Processing", type: "Standard", color: "blue" },
+                { id: "acc_10", name: "Subscription Services", type: "Connected", color: "green" },
+                { id: "acc_11", name: "API Gateway", type: "Standard", color: "blue" },
+                { id: "acc_12", name: "Developer Tools", type: "Express", color: "green" },
+                { id: "acc_13", name: "Security & Compliance", type: "Standard", color: "blue" },
+                { id: "acc_14", name: "International Markets", type: "Connected", color: "green" },
+                { id: "acc_15", name: "Partner Integrations", type: "Express", color: "blue" }
             ]
         };
 
-        let currentGroup = 'all';
-        let searchTerm = '';
-
-        function togglePopover() {
-            const popover = document.getElementById('popover');
-            const trigger = document.querySelector('.account-groups-trigger');
-            const isOpen = popover.style.display === 'block';
+        // Initialize the global component
+        function generateAccountGroups() {
+            const allAccounts = sampleOrganizationData.accounts;
             
-            if (isOpen) {
-                popover.style.display = 'none';
-                trigger.classList.remove('open');
-            } else {
-                popover.style.display = 'block';
-                trigger.classList.add('open');
-            }
+            // Convert to filter format
+            const accountData = allAccounts.map((acc, index) => ({
+                name: acc.name,
+                initials: generateInitials(acc.name),
+                color: acc.color || (index % 2 === 0 ? 'blue' : 'green'),
+                checked: true,
+                id: acc.id,
+                type: acc.type || 'Account'
+            }));
+
+            const groupedData = {
+                all: accountData,
+                connected: accountData.filter(acc => acc.type === 'Connected'),
+                express: accountData.filter(acc => acc.type === 'Express'),
+                standard: accountData.filter(acc => acc.type === 'Standard'),
+                custom: accountData.filter(acc => acc.type === 'Custom')
+            };
+
+            return groupedData;
+        }
+
+        function generateInitials(name) {
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
         }
         
-        function applySelection() {
-            alert('Selection applied!');
-            togglePopover();
-        }
-
-        function renderAccounts(groupKey) {
-            const selectAllContainer = document.getElementById('selectAllContainer');
-            const accountsList = document.getElementById('accountsList');
-            const accounts = accountGroups[groupKey] || [];
-            
-            // Create select all checkbox (pinned at top)
-            const selectAllHTML = `
-                <div class="select-all-item">
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="select-all" checked>
-                    </div>
-                    <div class="content-container">
-                        <label for="select-all">Select all</label>
-                        <span class="select-all-count" id="selectionCount">${accounts.length} selected</span>
-                    </div>
-                </div>
-            `;
-            
-            // Create account items (scrollable)
-            const accountsHTML = accounts.map(account => `
-                <div class="account-item">
-                    <div class="checkbox-container">
-                        <input type="checkbox" ${account.checked ? 'checked' : ''}>
-                    </div>
-                    <div class="content-container">
-                        <div class="account-icon ${account.color}">${account.initials}</div>
-                        <label>${account.name}</label>
-                    </div>
-                </div>
-            `).join('');
-
-            // Set innerHTML separately
-            selectAllContainer.innerHTML = selectAllHTML;
-            accountsList.innerHTML = accountsHTML;
-
-            // Reattach event listeners
-            attachCheckboxListeners();
-            attachSelectAllListener();
-            
-            // Apply search filter if active
-            if (searchTerm) {
-                filterAccountsBySearch(searchTerm);
-            }
-            
-            updateSelectionCount();
-            updateSelectAllState();
-        }
-
-        function attachCheckboxListeners() {
-            // Add change listeners to checkboxes (only in scrollable accounts list)
-            document.querySelectorAll('#accountsList .account-item input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    updateSelectionCount();
-                    updateSelectAllState();
-                });
-            });
-            
-            // Make entire account row clickable (only in scrollable accounts list)
-            document.querySelectorAll('#accountsList .account-item').forEach(accountItem => {
-                accountItem.addEventListener('click', function(e) {
-                    // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
-                    if (e.target.type === 'checkbox') {
-                        return;
-                    }
-                    
-                    // Find the checkbox in this row and toggle it
-                    const checkbox = accountItem.querySelector('input[type="checkbox"]');
-                    if (checkbox) {
-                        checkbox.checked = !checkbox.checked;
-                        // Trigger the change event to update counts
-                        checkbox.dispatchEvent(new Event('change'));
-                    }
-                });
-            });
-        }
-
-        function filterAccountsBySearch(term) {
-            document.querySelectorAll('#accountsList .account-item').forEach(item => {
-                const label = item.querySelector('label').textContent.toLowerCase();
-                item.style.display = label.includes(term.toLowerCase()) ? 'flex' : 'none';
-            });
-        }
+        // Make filters globally accessible for onclick handlers
+        let exampleFilter, centeredFilter, rightFilter;
         
-        // Group selection functionality
-        document.querySelectorAll('.group-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.group-item').forEach(g => g.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Determine which group was clicked
-                const groupText = this.textContent.toLowerCase();
-                if (groupText.includes('all')) currentGroup = 'all';
-                else if (groupText.includes('connected')) currentGroup = 'connected';
-                else if (groupText.includes('express')) currentGroup = 'express';
-                else if (groupText.includes('standard')) currentGroup = 'standard';
-                else if (groupText.includes('custom')) currentGroup = 'custom';
-                
-                // Update trigger text with selected group
-                document.getElementById('triggerOption').textContent = this.textContent.trim();
-                
-                renderAccounts(currentGroup);
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Instance 1: Default position
+            exampleFilter = new AccountGroupsFilter({
+                triggerId: 'filterTrigger',
+                popoverId: 'popover',
+                searchInputId: 'searchInput',
+                selectAllContainerId: 'selectAllContainer',
+                accountsListId: 'accountsList',
+                triggerOptionId: 'filterOption',
+                namespace: 'example',
+                generateAccountGroups: generateAccountGroups
+            });
+
+            // Instance 2: Centered position
+            centeredFilter = new AccountGroupsFilter({
+                triggerId: 'centeredFilterTrigger',
+                popoverId: 'centeredPopover',
+                searchInputId: 'centeredSearchInput',
+                selectAllContainerId: 'centeredSelectAllContainer',
+                accountsListId: 'centeredAccountsList',
+                triggerOptionId: 'centeredFilterOption',
+                namespace: 'centered',
+                generateAccountGroups: generateAccountGroups
+            });
+
+            // Instance 3: Right aligned position
+            rightFilter = new AccountGroupsFilter({
+                triggerId: 'rightFilterTrigger',
+                popoverId: 'rightPopover',
+                searchInputId: 'rightSearchInput',
+                selectAllContainerId: 'rightSelectAllContainer',
+                accountsListId: 'rightAccountsList',
+                triggerOptionId: 'rightFilterOption',
+                namespace: 'right',
+                generateAccountGroups: generateAccountGroups
             });
         });
-        
-        // Search functionality
-        document.querySelector('.search-input').addEventListener('input', function(e) {
-            searchTerm = e.target.value;
-            filterAccountsBySearch(searchTerm);
-        });
-        
-        // Update selection count
-        function updateSelectionCount() {
-            const checked = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]:checked').length;
-            const selectionCountElement = document.getElementById('selectionCount');
-            if (selectionCountElement) {
-                selectionCountElement.textContent = `${checked} selected`;
-            }
-        }
-
-        // Update select all checkbox state based on individual checkboxes
-        function updateSelectAllState() {
-            const selectAllCheckbox = document.getElementById('select-all');
-            const accountCheckboxes = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]');
-            const checkedCount = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]:checked').length;
-            
-            if (checkedCount === 0) {
-                selectAllCheckbox.checked = false;
-                selectAllCheckbox.indeterminate = false;
-            } else if (checkedCount === accountCheckboxes.length) {
-                selectAllCheckbox.checked = true;
-                selectAllCheckbox.indeterminate = false;
-            } else {
-                selectAllCheckbox.checked = false;
-                selectAllCheckbox.indeterminate = true;
-            }
-        }
-
-        // Handle select all checkbox click
-        function handleSelectAll() {
-            const selectAllCheckbox = document.getElementById('select-all');
-            const accountCheckboxes = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]');
-            
-            accountCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
-            });
-            
-            updateSelectionCount();
-            selectAllCheckbox.indeterminate = false;
-        }
-
-        // Attach select all event listener
-        function attachSelectAllListener() {
-            const selectAllCheckbox = document.getElementById('select-all');
-            if (selectAllCheckbox) {
-                selectAllCheckbox.addEventListener('change', handleSelectAll);
-            }
-            
-            // Make entire select all row clickable
-            const selectAllItem = document.querySelector('.select-all-item');
-            if (selectAllItem) {
-                selectAllItem.addEventListener('click', function(e) {
-                    // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
-                    if (e.target.type === 'checkbox') {
-                        return;
-                    }
-                    
-                    // Find the checkbox and toggle it
-                    const checkbox = selectAllItem.querySelector('input[type="checkbox"]');
-                    if (checkbox) {
-                        checkbox.checked = !checkbox.checked;
-                        // Trigger the change event to handle select all logic
-                        checkbox.dispatchEvent(new Event('change'));
-                    }
-                });
-            }
-        }
-
-        // Initialize component
-        function initializeComponent() {
-            // Render accounts for default group
-            renderAccounts('all');
-            
-            // Ensure popover is open on page load
-            const popover = document.getElementById('popover');
-            const trigger = document.querySelector('.account-groups-trigger');
-            
-            if (popover && trigger) {
-                popover.style.display = 'block';
-                trigger.classList.add('open');
-            }
-            
-            // Initialize scroll effect
-            addScrollEffect();
-        }
-
-        // Add scroll effect for accounts list
-        function addScrollEffect() {
-            const accountsList = document.getElementById('accountsList');
-            let scrollTimeout;
-
-            if (accountsList) {
-                accountsList.addEventListener('scroll', function() {
-                    // Add scrolling class
-                    this.classList.add('scrolling');
-                    
-                    // Clear previous timeout
-                    clearTimeout(scrollTimeout);
-                    
-                    // Set timeout to remove scrolling class when scrolling stops
-                    scrollTimeout = setTimeout(() => {
-                        this.classList.remove('scrolling');
-                    }, 300); // 300ms delay after scrolling stops
-                });
-            }
-        }
-
-        // Initialize component when page loads
-        initializeComponent();
     </script>
 </body>
-</html> 
+</html>

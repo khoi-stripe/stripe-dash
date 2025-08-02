@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../shared/styles/typography.css">
   <link rel="stylesheet" href="../../shared/styles/components.css">
   <link rel="stylesheet" href="../../shared/styles/color-utilities.css">
+  <link rel="stylesheet" href="../../shared/styles/dashboard-search.css">
   <link rel="stylesheet" href="../../shared/styles/account-groups-filter.css">
   
   <style>
@@ -200,54 +201,7 @@
        cursor: pointer;
      }
 
-     /* Search Bar */
-     .search-container {
-       position: relative;
-       width: 360px;
-     }
 
-     .search-input {
-       width: 100%;
-       height: 36px;
-       padding: 8px 8px 8px 32px;
-       background: var(--neutral-50);
-       border: none;
-       border-radius: 8px;
-       font-family: var(--font-family-ui);
-       font-size: var(--font-size-14);
-       color: var(--color-text);
-       box-sizing: border-box;
-       transition: var(--transition-default);
-     }
-
-     .search-input:focus {
-       outline: none;
-       background: var(--neutral-50);
-     }
-
-     .search-input::placeholder {
-       color: var(--color-text-muted);
-     }
-
-     .search-icon {
-       position: absolute;
-       left: 8px;
-       top: 50%;
-       transform: translateY(-50%);
-       width: 12px;
-       height: 12px;
-       color: var(--color-text-muted);
-       pointer-events: none;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-     }
-
-     .search-icon svg {
-       width: 12px;
-       height: 12px;
-       color: currentColor;
-     }
 
      /* Main Navigation */
      .main-nav {
@@ -1135,14 +1089,14 @@
      <div class="content-panel" id="contentPanel">
        <!-- Content Header -->
        <div class="content-header">
-         <!-- Search Bar -->
-         <div class="search-container">
-                       <div class="search-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5788 11.8163C9.57969 12.5599 8.34124 13 7 13C3.68629 13 1 10.3137 1 7C1 3.68629 3.68629 1 7 1C10.3137 1 13 3.68629 13 7C13 8.34124 12.5599 9.57969 11.8163 10.5788L15.2437 14.0063C15.5854 14.348 15.5854 14.902 15.2437 15.2437C14.902 15.5854 14.348 15.5854 14.0063 15.2437L10.5788 11.8163ZM11.25 7C11.25 9.34721 9.34721 11.25 7 11.25C4.65279 11.25 2.75 9.34721 2.75 7C2.75 4.65279 4.65279 2.75 7 2.75C9.34721 2.75 11.25 4.65279 11.25 7Z" fill="currentColor"/>
-              </svg>
-            </div>
-           <input type="text" class="search-input" placeholder="Search…">
+         <!-- Dashboard Search -->
+         <div class="dashboard-search-container">
+           <div class="dashboard-search-icon">
+             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5788 11.8163C9.57969 12.5599 8.34124 13 7 13C3.68629 13 1 10.3137 1 7C1 3.68629 3.68629 1 7 1C10.3137 1 13 3.68629 13 7C13 8.34124 12.5599 9.57969 11.8163 10.5788L15.2437 14.0063C15.5854 14.348 15.5854 14.902 15.2437 15.2437C14.902 15.5854 14.348 15.5854 14.0063 15.2437L10.5788 11.8163ZM11.25 7C11.25 9.34721 9.34721 11.25 7 11.25C4.65279 11.25 2.75 9.34721 2.75 7C2.75 4.65279 4.65279 2.75 7 2.75C9.34721 2.75 11.25 4.65279 11.25 7Z" fill="currentColor"/>
+             </svg>
+           </div>
+           <input type="text" class="dashboard-search-input" placeholder="Search…">
          </div>
          
          <!-- Header Actions -->
@@ -1180,6 +1134,59 @@
                 <p id="reports-description" style="font-size: 14px; color: var(--neutral-600); margin: 0; line-height: 1.5;">
                   View financial data and analytics. Use the account group filter to see how data changes based on selected account groups.
                 </p>
+              </div>
+              
+              <!-- Account Groups Filter (only shown when viewing "All accounts") -->
+              <div class="account-groups-filter-container" style="margin-top: 8px; position: relative; display: none;">
+                <button class="account-groups-trigger" id="reportsFilterTrigger">
+                  <span class="trigger-show">Show</span>
+                  <span class="trigger-separator">|</span>
+                  <span class="trigger-option" id="reportsFilterOption">All accounts</span>
+                  <svg class="trigger-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.16699 4.375C2.39082 4.15117 2.75918 4.15117 2.98301 4.375L6 7.39199L9.01699 4.375C9.24082 4.15117 9.60918 4.15117 9.83301 4.375C10.0568 4.59883 10.0568 4.96719 9.83301 5.19102L6.40801 8.61602C6.18418 8.83984 5.81582 8.83984 5.59199 8.61602L2.16699 5.19102C1.94316 4.96719 1.94316 4.59883 2.16699 4.375Z" fill="currentColor"/>
+                  </svg>
+                </button>
+                
+                <!-- Popover -->
+                <div class="account-groups-popover" id="reportsFilterPopover" style="display: none;">
+                  <!-- Column 1 - Groups -->
+                  <div class="groups-section">
+                    <div class="groups-header">Account groups</div>
+                    <button class="group-item active" data-group="all">All accounts</button>
+                    <button class="group-item" data-group="connected">Connected accounts</button>
+                    <button class="group-item" data-group="express">Express accounts</button>
+                    <button class="group-item" data-group="standard">Standard accounts</button>
+                    <button class="group-item" data-group="custom">Custom accounts</button>
+                  </div>
+                
+                  <!-- Column 2 - Accounts Section -->
+                  <div class="accounts-section">
+                    <div class="filter-search-container">
+                      <svg class="filter-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <input type="text" class="filter-search-input" placeholder="Search accounts" id="reportsSearchInput">
+                    </div>
+                    
+                    <!-- Pinned Select All Row -->
+                    <div class="select-all-container" id="reportsSelectAllContainer">
+                      <!-- Select all will be dynamically populated by JavaScript -->
+                    </div>
+                    
+                    <div class="accounts-list" id="reportsAccountsList">
+                      <!-- Individual accounts will be dynamically populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Footer inside accounts-section (Column 2) -->
+                    <div class="popover-footer">
+                      <div class="footer-buttons">
+                        <button class="btn-cancel" onclick="window.reportsFilter?.close()">Cancel</button>
+                        <button class="btn-apply" onclick="window.reportsFilter?.applySelection()">Apply</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -1258,36 +1265,37 @@
 
   <!-- Include account switcher component -->
   <script src="../../shared/components/account-switcher.js"></script>
-      <!-- Account Groups Filter component included inline -->
+  <!-- Include account groups filter global component -->
+  <script src="../../shared/components/account-groups-filter.js"></script>
   
   <!-- UXR Data Management -->
   <script src="./data/organizations.js"></script>
   <script src="./components/group-creation-modal.js"></script>
   <script src="./components/prototype-control-panel.js"></script>
 
-         <script type="module">
-    // Initialize UXR functionality
-          document.addEventListener('DOMContentLoaded', async function() {
-        // Wait for OrgDataManager to be ready
-        await window.OrgDataManager.waitForReady();
-        
-        // Initialize account switcher with SUB-ACCOUNT data
-        const switcherData = window.OrgDataManager.getAccountSwitcherData();
-        const navAccountSwitcher = new AccountSwitcher(
-        document.getElementById('nav-account-switcher'),
-        {
-          currentAccount: switcherData.currentAccount,
-          accounts: switcherData.accounts,
-          variant: '2-line',
-          onAccountChange: (account) => {
-            console.log('Sub-account switched to:', account.name);
-            // Use setTimeout to ensure DOM manipulation doesn't interfere with account switcher closing
-            setTimeout(() => {
-              switchToSubAccount(account.id);
-            }, 100);
-          }
-        }
-      );
+                 <script>
+   // Initialize UXR functionality
+         document.addEventListener('DOMContentLoaded', async function() {
+       // Wait for OrgDataManager to be ready
+       await window.OrgDataManager.waitForReady();
+       
+       // Initialize account switcher with SUB-ACCOUNT data
+       const switcherData = window.OrgDataManager.getAccountSwitcherData();
+       const navAccountSwitcher = new AccountSwitcher(
+       document.getElementById('nav-account-switcher'),
+       {
+         currentAccount: switcherData.currentAccount,
+         accounts: switcherData.accounts,
+         variant: '2-line',
+         onAccountChange: (account) => {
+           console.log('Sub-account switched to:', account.name);
+           // Use setTimeout to ensure DOM manipulation doesn't interfere with account switcher closing
+           setTimeout(() => {
+             switchToSubAccount(account.id);
+           }, 100);
+         }
+       }
+     );
 
 
 
@@ -1624,6 +1632,876 @@
 
     // Initialize workload active states
     updateWorkloadActiveStates();
+
+    // Account Groups Filter Functionality
+    // ===================================
+    
+
+    
+    // Generate account groups from current organization data
+    function generateAccountGroups() {
+      // Check if orgManager is available
+      if (typeof orgManager === 'undefined' || !orgManager) {
+        console.warn('orgManager not available, using fallback data');
+        return getFallbackAccountGroups();
+      }
+
+      try {
+        const allAccounts = orgManager.getAllSubAccounts();
+        console.log('Loaded accounts from orgManager:', allAccounts);
+        
+        if (!allAccounts || allAccounts.length === 0) {
+          console.warn('No accounts found in orgManager, using fallback data');
+          return getFallbackAccountGroups();
+        }
+        
+        // Filter out aggregate views and convert to filter format
+        const accountData = allAccounts
+          .filter(acc => !acc.isAggregate)
+          .map((acc, index) => ({
+            name: acc.name,
+            initials: generateInitials(acc.name),
+            color: convertHexToColorClass(acc.color) || (index % 2 === 0 ? 'blue' : 'green'),
+            backgroundColor: acc.color, // Store the original hex color for inline styles
+            checked: true,
+            id: acc.id,
+            type: acc.type || 'Account'
+          }));
+
+        console.log('Generated account data:', `${accountData.length} accounts loaded`);
+
+        // Create groups based on account type/characteristics with fallback to ensure no empty groups
+        const groups = {};
+        
+        // All accounts group (always populated)
+        groups['all'] = accountData;
+        
+        // Connected accounts - tech/digital related
+        const connectedAccounts = accountData.filter(acc => 
+          acc.type === 'Connected' || 
+          acc.name.toLowerCase().includes('tech') || 
+          acc.name.toLowerCase().includes('digital') ||
+          acc.name.toLowerCase().includes('api') ||
+          acc.name.toLowerCase().includes('app') ||
+          acc.name.toLowerCase().includes('platform')
+        );
+        
+        // Express accounts - creative/energy/quick setup
+        const expressAccounts = accountData.filter(acc => 
+          acc.type === 'Express' || 
+          acc.name.toLowerCase().includes('creative') || 
+          acc.name.toLowerCase().includes('energy') ||
+          acc.name.toLowerCase().includes('mobile') ||
+          acc.name.toLowerCase().includes('web')
+        );
+        
+        // Standard accounts - traditional/banking/commerce
+        const standardAccounts = accountData.filter(acc => 
+          acc.type === 'Standard' || 
+          acc.name.toLowerCase().includes('banking') || 
+          acc.name.toLowerCase().includes('commerce') ||
+          acc.name.toLowerCase().includes('payment') ||
+          acc.name.toLowerCase().includes('investment')
+        );
+        
+        // Custom accounts - development/environment related
+        const customAccounts = accountData.filter(acc =>
+          acc.name.toLowerCase().includes('development') ||
+          acc.name.toLowerCase().includes('staging') ||
+          acc.name.toLowerCase().includes('production') ||
+          acc.name.toLowerCase().includes('environment')
+        );
+        
+        // Ensure each group has at least one account by using fallback distribution
+        if (connectedAccounts.length === 0) {
+          // Fallback: assign accounts with even indices
+          groups['connected'] = accountData.filter((_, index) => index % 3 === 0);
+        } else {
+          groups['connected'] = connectedAccounts;
+        }
+        
+        if (expressAccounts.length === 0) {
+          // Fallback: assign accounts with indices divisible by 3, offset by 1
+          groups['express'] = accountData.filter((_, index) => index % 3 === 1);
+        } else {
+          groups['express'] = expressAccounts;
+        }
+        
+        if (standardAccounts.length === 0) {
+          // Fallback: assign accounts with indices divisible by 3, offset by 2
+          groups['standard'] = accountData.filter((_, index) => index % 3 === 2);
+        } else {
+          groups['standard'] = standardAccounts;
+        }
+        
+        if (customAccounts.length === 0) {
+          // Fallback: assign first half of accounts
+          groups['custom'] = accountData.slice(0, Math.ceil(accountData.length / 2));
+        } else {
+          groups['custom'] = customAccounts;
+        }
+        
+        // Final safety check - ensure no group is empty
+        Object.keys(groups).forEach(groupKey => {
+          if (groups[groupKey].length === 0 && groupKey !== 'all') {
+            // Emergency fallback: give it at least one account
+            const accountIndex = Object.keys(groups).indexOf(groupKey) % accountData.length;
+            groups[groupKey] = [accountData[accountIndex]];
+          }
+        });
+        
+        console.log('Group distribution:', Object.entries(groups).map(([key, accounts]) => 
+          `${key}: ${accounts.length} accounts`
+        ));
+
+        return groups;
+      } catch (error) {
+        console.error('Error generating account groups:', error);
+        return getFallbackAccountGroups();
+      }
+    }
+
+    // Fallback account groups in case orgManager is not available
+    function getFallbackAccountGroups() {
+      const fallbackAccounts = [
+        { name: 'Mobile App', initials: 'MA', color: 'blue', checked: true },
+        { name: 'Web Platform', initials: 'WP', color: 'green', checked: true },
+        { name: 'API Services', initials: 'AS', color: 'blue', checked: true },
+        { name: 'Analytics Dashboard', initials: 'AD', color: 'green', checked: true },
+        { name: 'Payment Processing', initials: 'PP', color: 'blue', checked: true },
+        { name: 'Personal Banking', initials: 'PB', color: 'green', checked: true }
+      ];
+      
+      return {
+        'all': fallbackAccounts,
+        'connected': [
+          fallbackAccounts[0], // Mobile App
+          fallbackAccounts[1], // Web Platform  
+          fallbackAccounts[2]  // API Services
+        ],
+        'express': [
+          fallbackAccounts[1], // Web Platform
+          fallbackAccounts[3]  // Analytics Dashboard
+        ],
+        'standard': [
+          fallbackAccounts[4], // Payment Processing
+          fallbackAccounts[5]  // Personal Banking
+        ],
+        'custom': [
+          fallbackAccounts[0], // Mobile App
+          fallbackAccounts[3], // Analytics Dashboard
+          fallbackAccounts[4]  // Payment Processing
+        ]
+      };
+    }
+
+    // Helper function to generate initials from account name
+    function generateInitials(name) {
+      return name
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase())
+        .join('')
+        .substring(0, 2);
+    }
+
+    // Helper function to convert hex colors to CSS class names
+    function convertHexToColorClass(hexColor) {
+      if (!hexColor || !hexColor.startsWith('#')) {
+        return null;
+      }
+      
+      // Map common hex colors to existing CSS classes
+      const colorMap = {
+        '#06B6D4': 'blue',   // cyan-500
+        '#84CC16': 'green',  // lime-500  
+        '#F97316': 'blue',   // orange-500
+        '#6366F1': 'green',  // indigo-500
+        '#14B8A6': 'blue',   // teal-500
+        '#F87171': 'green',  // red-400
+        '#A78BFA': 'blue',   // violet-400
+        '#34D399': 'green',  // emerald-400
+        '#FBBF24': 'blue',   // amber-400
+      };
+      
+      return colorMap[hexColor] || 'blue'; // fallback to blue
+    }
+
+
+
+    
+
+    /*function positionReportsPopover() {
+      const trigger = document.getElementById('reportsFilterTrigger');
+      const popover = document.getElementById('reportsFilterPopover');
+      
+      if (!trigger || !popover) {
+        return;
+      }
+      
+      // Get dimensions and positions
+      const triggerRect = trigger.getBoundingClientRect();
+      const popoverWidth = 532;
+      const popoverHeight = 360;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const margin = 16; // Minimum margin from viewport edges
+      
+      // Calculate initial position (below trigger, left-aligned)
+      let left = 0; // Start relative to container
+      let top = triggerRect.height + 8; // 8px below trigger
+      
+      // Check if popover would go off the right edge of viewport
+      const triggerLeftInViewport = triggerRect.left;
+      if (triggerLeftInViewport + popoverWidth > viewportWidth - margin) {
+        // Align popover to the right edge of trigger instead
+        left = triggerRect.width - popoverWidth;
+      }
+      
+      // Ensure popover doesn't go off the left edge
+      if (triggerLeftInViewport + left < margin) {
+        left = margin - triggerLeftInViewport;
+      }
+      
+      // Check if popover would go off the bottom of viewport
+      if (triggerRect.bottom + popoverHeight + 8 > viewportHeight - margin) {
+        // Position above trigger instead
+        top = -popoverHeight - 8;
+      }
+      
+      // Ensure popover doesn't go off the top
+      if (triggerRect.top + top < margin) {
+        top = margin - triggerRect.top;
+      }
+      
+      // Apply positioning
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+    }
+    
+    function applyReportsSelection() {
+      console.log('Reports selection applied!');
+      toggleReportsPopover();
+    }
+
+    function renderReportsAccounts(groupKey) {
+      const selectAllContainer = document.getElementById('reportsSelectAllContainer');
+      const accountsList = document.getElementById('reportsAccountsList');
+      const accounts = reportsAccountGroups[groupKey] || [];
+      
+      if (!selectAllContainer || !accountsList) {
+        return;
+      }
+      
+      // Create select all checkbox (pinned at top)
+      const selectAllHTML = `
+        <div class="select-all-item">
+          <div class="checkbox-container">
+            <input type="checkbox" id="reportsSelectAll" checked>
+          </div>
+          <div class="account-filter-content">
+            <label for="reportsSelectAll">Select all</label>
+            <span class="select-all-count" id="reportsSelectionCount">${accounts.length} selected</span>
+          </div>
+        </div>
+      `;
+      
+      // Create account items (scrollable)
+      const accountsHTML = accounts.map(account => `
+        <div class="account-item">
+          <div class="checkbox-container">
+            <input type="checkbox" ${account.checked ? 'checked' : ''}>
+          </div>
+          <div class="account-filter-content">
+            <div class="account-icon ${account.color}">${account.initials}</div>
+            <label>${account.name}</label>
+          </div>
+        </div>
+      `).join('');
+
+      // Set innerHTML separately
+      selectAllContainer.innerHTML = selectAllHTML;
+      accountsList.innerHTML = accountsHTML;
+
+      // Reattach event listeners
+      attachReportsCheckboxListeners();
+      attachReportsSelectAllListener();
+      
+      // Apply search filter if active
+      if (reportsSearchTerm) {
+        filterReportsAccountsBySearch(reportsSearchTerm);
+      }
+      
+      updateReportsSelectionCount();
+      updateReportsSelectAllState();
+    }
+
+    function attachReportsCheckboxListeners() {
+      // Add change listeners to checkboxes (only in scrollable accounts list)
+      document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          updateReportsSelectionCount();
+          updateReportsSelectAllState();
+        });
+      });
+      
+      // Make entire account row clickable (only in scrollable accounts list)
+      document.querySelectorAll('#reportsAccountsList .account-item').forEach(accountItem => {
+        accountItem.addEventListener('click', function(e) {
+          // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
+          if (e.target.type === 'checkbox') {
+            return;
+          }
+          
+          // Find the checkbox in this row and toggle it
+          const checkbox = accountItem.querySelector('input[type="checkbox"]');
+          if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            // Trigger the change event to update counts
+            checkbox.dispatchEvent(new Event('change'));
+          }
+        });
+      });
+    }
+
+    function filterReportsAccountsBySearch(term) {
+      document.querySelectorAll('#reportsAccountsList .account-item').forEach(item => {
+        const label = item.querySelector('label').textContent.toLowerCase();
+        item.style.display = label.includes(term.toLowerCase()) ? 'flex' : 'none';
+      });
+    }
+
+    function updateReportsSelectionCount() {
+      const checked = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]:checked').length;
+      const selectionCountElement = document.getElementById('reportsSelectionCount');
+      if (selectionCountElement) {
+        selectionCountElement.textContent = `${checked} selected`;
+      }
+    }
+
+    function updateReportsSelectAllState() {
+      const selectAllCheckbox = document.getElementById('reportsSelectAll');
+      const accountCheckboxes = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]');
+      const checkedCount = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]:checked').length;
+      
+      if (!selectAllCheckbox || !accountCheckboxes.length) return;
+      
+      if (checkedCount === 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+      } else if (checkedCount === accountCheckboxes.length) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+      } else {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = true;
+      }
+    }
+
+    function handleReportsSelectAll() {
+      const selectAllCheckbox = document.getElementById('reportsSelectAll');
+      const accountCheckboxes = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]');
+      
+      if (!selectAllCheckbox || !accountCheckboxes.length) return;
+      
+      accountCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+      
+      updateReportsSelectionCount();
+      selectAllCheckbox.indeterminate = false;
+    }
+
+    function attachReportsSelectAllListener() {
+      const selectAllCheckbox = document.getElementById('reportsSelectAll');
+      if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', handleReportsSelectAll);
+      }
+      
+      // Make entire select all row clickable
+      const selectAllItem = document.querySelector('#reportsSelectAllContainer .select-all-item');
+      if (selectAllItem) {
+        selectAllItem.addEventListener('click', function(e) {
+          // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
+          if (e.target.type === 'checkbox') {
+            return;
+          }
+          
+          // Find the checkbox and toggle it
+          const checkbox = selectAllItem.querySelector('input[type="checkbox"]');
+          if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            // Trigger the change event to handle select all logic
+            checkbox.dispatchEvent(new Event('change'));
+          }
+        });
+      }
+    }
+
+    function addReportsScrollEffect() {
+      const accountsList = document.getElementById('reportsAccountsList');
+      let scrollTimeout;
+
+      if (accountsList) {
+        accountsList.addEventListener('scroll', function() {
+          // Add scrolling class
+          this.classList.add('scrolling');
+          
+          // Clear previous timeout
+          clearTimeout(scrollTimeout);
+          
+          // Set timeout to remove scrolling class when scrolling stops
+          scrollTimeout = setTimeout(() => {
+            this.classList.remove('scrolling');
+          }, 300); // 300ms delay after scrolling stops
+        });
+      }
+    }
+
+    function initializeReportsFilter() {
+      // Render accounts for default group
+      renderReportsAccounts('all');
+      
+      // Initialize scroll effect
+      addReportsScrollEffect();
+      
+      // Ensure popover is closed initially and trigger is in correct state
+      const initPopover = document.getElementById('reportsFilterPopover');
+      const initTrigger = document.getElementById('reportsFilterTrigger');
+      
+      if (initPopover && initTrigger) {
+        initPopover.style.display = 'none';
+        initTrigger.classList.remove('open');
+      }
+      
+      // Attach event listeners
+      const trigger = document.getElementById('reportsFilterTrigger');
+      const cancelBtn = document.querySelector('#reportsFilterPopover .btn-cancel');
+      const applyBtn = document.querySelector('#reportsFilterPopover .btn-apply');
+      const searchInput = document.getElementById('reportsSearchInput');
+      
+      if (trigger) {
+        trigger.addEventListener('click', toggleReportsPopover);
+      }
+      
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', toggleReportsPopover);
+      }
+      
+      if (applyBtn) {
+        applyBtn.addEventListener('click', applyReportsSelection);
+      }
+      
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          reportsSearchTerm = this.value;
+          filterReportsAccountsBySearch(reportsSearchTerm);
+        });
+      }
+      
+      // Group selection functionality
+      document.querySelectorAll('#reportsFilterPopover .group-item').forEach(item => {
+        item.addEventListener('click', function() {
+          document.querySelectorAll('#reportsFilterPopover .group-item').forEach(g => g.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Determine which group was clicked
+          const groupKey = this.getAttribute('data-group');
+          reportsCurrentGroup = groupKey;
+          
+          // Update trigger label
+          const triggerOption = document.getElementById('reportsFilterOption');
+          if (triggerOption) {
+            const groupLabels = {
+              'all': 'All accounts',
+              'connected': 'Connected accounts',
+              'express': 'Express accounts',
+              'standard': 'Standard accounts',
+              'custom': 'Custom accounts'
+            };
+            triggerOption.textContent = groupLabels[groupKey] || 'All accounts';
+          }
+          
+          // Clear search when switching groups
+          if (searchInput) {
+            searchInput.value = '';
+            reportsSearchTerm = '';
+          }
+          
+          // Re-render accounts for new group
+          renderReportsAccounts(groupKey);
+        });
+      });
+      
+      // Close popover when clicking outside
+      document.addEventListener('click', function(e) {
+        const popover = document.getElementById('reportsFilterPopover');
+        const trigger = document.getElementById('reportsFilterTrigger');
+        
+        if (popover && trigger && popover.style.display === 'flex') {
+          if (!popover.contains(e.target) && !trigger.contains(e.target)) {
+            toggleReportsPopover();
+          }
+        }
+      });
+      
+      // Reposition popover on window resize and scroll
+      window.addEventListener('resize', function() {
+        const popover = document.getElementById('reportsFilterPopover');
+        if (popover && popover.style.display === 'flex') {
+          positionReportsPopover();
+        }
+      });
+      
+      window.addEventListener('scroll', function() {
+        const popover = document.getElementById('reportsFilterPopover');
+        if (popover && popover.style.display === 'flex') {
+          positionReportsPopover();
+        }
+      });
+    }*/
+
+    // Ensure orgManager is available (alias for OrgDataManager)
+    window.orgManager = window.OrgDataManager;
+
+    // Check if filter should be visible based on current account
+    function shouldShowAccountGroupsFilter() {
+      if (!window.orgManager) {
+        return false; // No org manager, don't show filter
+      }
+      
+      const currentSubAccount = window.orgManager.getCurrentSubAccount();
+      
+      // Only show filter when viewing "All accounts" (aggregate view)
+      return currentSubAccount && currentSubAccount.isAggregate;
+    }
+
+    // Cache for consistent financial data
+    let accountFinancialDataCache = null;
+
+    // Generate sample financial data for each account (with persistence)
+    function generateAccountFinancialData() {
+      if (accountFinancialDataCache) {
+        return accountFinancialDataCache;
+      }
+      
+      const accountDataMap = new Map();
+      
+      if (window.orgManager) {
+        const accounts = window.orgManager.getAllSubAccounts();
+        
+        accounts.forEach((account, index) => {
+          // Use account ID to seed random data for consistency
+          const seed = account.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+          const seededRandom1 = (seed * 9301 + 49297) % 233280 / 233280;
+          const seededRandom2 = ((seed + 1) * 9301 + 49297) % 233280 / 233280;
+          const seededRandom3 = ((seed + 2) * 9301 + 49297) % 233280 / 233280;
+          const seededRandom4 = ((seed + 3) * 9301 + 49297) % 233280 / 233280;
+          
+          // Generate consistent financial data for each account
+          const baseRevenue = Math.floor(seededRandom1 * 50000) + 10000; // $10k-$60k base
+          const baseTransactions = Math.floor(seededRandom2 * 800) + 200; // 200-1000 transactions
+          
+          accountDataMap.set(account.id, {
+            name: account.name,
+            revenue: baseRevenue,
+            transactions: baseTransactions,
+            revenueGrowth: ((seededRandom3 * 40) - 10).toFixed(1), // -10% to +30%
+            transactionGrowth: ((seededRandom4 * 30) - 5).toFixed(1) // -5% to +25%
+          });
+        });
+      }
+      
+      // Fallback data if no org manager
+      if (accountDataMap.size === 0) {
+        const fallbackAccounts = [
+          { id: 'mobile-app', name: 'Mobile App' },
+          { id: 'web-platform', name: 'Web Platform' },
+          { id: 'api-services', name: 'API Services' },
+          { id: 'analytics', name: 'Analytics Dashboard' },
+          { id: 'payments', name: 'Payment Processing' }
+        ];
+        
+        fallbackAccounts.forEach((account, index) => {
+          // Use index to create consistent seeded data
+          const seed = index * 1000;
+          const seededRandom1 = (seed * 9301 + 49297) % 233280 / 233280;
+          const seededRandom2 = ((seed + 1) * 9301 + 49297) % 233280 / 233280;
+          const seededRandom3 = ((seed + 2) * 9301 + 49297) % 233280 / 233280;
+          const seededRandom4 = ((seed + 3) * 9301 + 49297) % 233280 / 233280;
+          
+          const baseRevenue = Math.floor(seededRandom1 * 50000) + 10000;
+          const baseTransactions = Math.floor(seededRandom2 * 800) + 200;
+          
+          accountDataMap.set(account.id, {
+            name: account.name,
+            revenue: baseRevenue,
+            transactions: baseTransactions,
+            revenueGrowth: ((seededRandom3 * 40) - 10).toFixed(1),
+            transactionGrowth: ((seededRandom4 * 30) - 5).toFixed(1)
+          });
+        });
+      }
+      
+      // Cache the result
+      accountFinancialDataCache = accountDataMap;
+      return accountDataMap;
+    }
+
+    // Filter content based on selected accounts
+    function filterReportsContent(selectedAccountIds = null) {
+      const accountDataMap = generateAccountFinancialData();
+      let filteredData = Array.from(accountDataMap.values());
+      let filterMessage = '';
+      
+      if (selectedAccountIds && selectedAccountIds.length > 0) {
+        // Filter to only selected accounts
+        filteredData = selectedAccountIds
+          .map(id => accountDataMap.get(id))
+          .filter(data => data); // Remove any undefined values
+        
+        filterMessage = `Data filtered by ${selectedAccountIds.length} selected account${selectedAccountIds.length === 1 ? '' : 's'}`;
+      }
+      
+      // Calculate totals
+      const totalRevenue = filteredData.reduce((sum, account) => sum + account.revenue, 0);
+      const totalTransactions = filteredData.reduce((sum, account) => sum + account.transactions, 0);
+      const activeAccountsCount = filteredData.length;
+      
+      // Calculate average growth rates
+      const avgRevenueGrowth = filteredData.length > 0 
+        ? (filteredData.reduce((sum, account) => sum + parseFloat(account.revenueGrowth), 0) / filteredData.length).toFixed(1)
+        : 0;
+      const avgTransactionGrowth = filteredData.length > 0 
+        ? (filteredData.reduce((sum, account) => sum + parseFloat(account.transactionGrowth), 0) / filteredData.length).toFixed(1)
+        : 0;
+      
+      // Update metrics cards
+      updateMetricCard('total-revenue', `$${totalRevenue.toLocaleString()}`, avgRevenueGrowth);
+      updateMetricCard('total-transactions', totalTransactions.toLocaleString(), avgTransactionGrowth);
+      updateActiveAccountsCard(activeAccountsCount, selectedAccountIds ? 'Filtered' : 'All');
+      
+      // Update account breakdown
+      updateAccountBreakdown(filteredData);
+      
+      // Show/hide filter message
+      updateFilterMessage(filterMessage);
+    }
+    
+    function updateMetricCard(elementId, value, growth) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.textContent = value;
+      }
+      
+      // Update growth badge if it exists
+      const card = element?.closest('.metric-card');
+      const badge = card?.querySelector('.metric-badge');
+      if (badge && growth !== undefined) {
+        const growthNum = parseFloat(growth);
+        badge.textContent = `${growthNum >= 0 ? '+' : ''}${growth}%`;
+        
+        // Update badge style based on growth
+        badge.className = 'metric-badge';
+        if (growthNum > 5) {
+          badge.classList.add('metric-badge--positive');
+        } else if (growthNum < -2) {
+          badge.classList.add('metric-badge--neutral');
+        } else {
+          badge.classList.add('metric-badge--info');
+        }
+      }
+    }
+    
+    function updateActiveAccountsCard(count, filterType) {
+      const element = document.getElementById('active-accounts');
+      const badgeElement = document.getElementById('filtered-accounts-count');
+      
+      if (element) {
+        element.textContent = count.toString();
+      }
+      
+      if (badgeElement) {
+        badgeElement.textContent = filterType;
+      }
+    }
+    
+    function updateAccountBreakdown(accountsData) {
+      const container = document.getElementById('account-breakdown');
+      if (!container) return;
+      
+      if (accountsData.length === 0) {
+        container.innerHTML = '<p style="color: var(--neutral-500); font-style: italic;">No accounts selected</p>';
+        return;
+      }
+      
+      const breakdownHTML = accountsData.map(account => {
+        const revenueGrowth = parseFloat(account.revenueGrowth);
+        const transactionGrowth = parseFloat(account.transactionGrowth);
+        
+        return `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--neutral-100);">
+            <div>
+              <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px;">${account.name}</div>
+              <div style="font-size: 12px; color: var(--neutral-500);">${account.transactions.toLocaleString()} transactions</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px;">$${account.revenue.toLocaleString()}</div>
+              <div style="font-size: 12px; color: ${revenueGrowth >= 0 ? 'var(--success-600)' : 'var(--danger-600)'};">
+                ${revenueGrowth >= 0 ? '+' : ''}${account.revenueGrowth}%
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      container.innerHTML = breakdownHTML;
+    }
+    
+    function updateFilterMessage(message) {
+      const messageElement = document.getElementById('filter-message');
+      const messageText = document.getElementById('filter-message-text');
+      
+      if (messageElement && messageText) {
+        if (message) {
+          messageText.textContent = message;
+          messageElement.style.display = 'block';
+        } else {
+          messageElement.style.display = 'none';
+        }
+      }
+    }
+
+    // Initialize reports filter using global component
+    async function initializeReportsFilter() {
+      // Wait for OrgDataManager to be ready
+      if (window.OrgDataManager) {
+        await window.OrgDataManager.waitForReady();
+      }
+
+      const filterContainer = document.querySelector('.account-groups-filter-container');
+      
+      // Check if filter should be visible
+      if (shouldShowAccountGroupsFilter()) {
+        if (filterContainer) {
+          filterContainer.style.display = 'block';
+        }
+        
+        const reportsFilter = new AccountGroupsFilter({
+          triggerId: 'reportsFilterTrigger',
+          popoverId: 'reportsFilterPopover',
+          searchInputId: 'reportsSearchInput',
+          selectAllContainerId: 'reportsSelectAllContainer',
+          accountsListId: 'reportsAccountsList',
+          triggerOptionId: 'reportsFilterOption',
+          namespace: 'reports',
+          generateAccountGroups: generateAccountGroups
+        });
+        
+        // Make filter globally accessible for button handlers
+        window.reportsFilter = reportsFilter;
+        
+        // Override the apply method to filter content
+        reportsFilter.applySelection = function() {
+          // Get selected account IDs
+          const selectedAccountIds = [];
+          document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]:checked').forEach(checkbox => {
+            const accountItem = checkbox.closest('.account-item');
+            const accountLabel = accountItem.querySelector('label');
+            if (accountLabel) {
+              // Find matching account by name
+              const accountName = accountLabel.textContent;
+              if (window.orgManager) {
+                const accounts = window.orgManager.getAllSubAccounts();
+                const matchingAccount = accounts.find(acc => acc.name === accountName);
+                if (matchingAccount) {
+                  selectedAccountIds.push(matchingAccount.id);
+                }
+              } else {
+                // Fallback: create ID from name
+                selectedAccountIds.push(accountName.toLowerCase().replace(/\s+/g, '-'));
+              }
+            }
+          });
+          
+          // Filter content based on selection
+          filterReportsContent(selectedAccountIds.length > 0 ? selectedAccountIds : null);
+          
+          // Close the popover
+          this.togglePopover();
+          
+          console.log('Applied filter with accounts:', selectedAccountIds);
+        };
+        
+        // Override the close method to reset content to show all accounts
+        reportsFilter.close = function() {
+          const popover = document.getElementById(this.options.popoverId);
+          const trigger = document.getElementById(this.options.triggerId);
+          
+          if (popover && trigger) {
+            popover.style.display = 'none';
+            trigger.classList.remove('open');
+          }
+          
+          // Reset to show all accounts when cancelled
+          filterReportsContent();
+          console.log('Filter cancelled - showing all accounts');
+        };
+        
+        // Initialize with all accounts (no filter)
+        filterReportsContent();
+        
+      } else {
+        // Hide the filter when viewing individual accounts
+        if (filterContainer) {
+          filterContainer.style.display = 'none';
+        }
+        
+        // Show unfiltered data when filter is hidden
+        filterReportsContent();
+      }
+    }
+
+    // Monitor account switches to show/hide filter and refresh content
+    function monitorAccountSwitches() {
+      let currentSubAccount = null;
+      
+      setInterval(() => {
+        if (window.orgManager) {
+          const newSubAccount = window.orgManager.getCurrentSubAccount();
+          
+          // Check if account has changed
+          if (newSubAccount && (!currentSubAccount || currentSubAccount.id !== newSubAccount.id)) {
+            currentSubAccount = newSubAccount;
+            
+            const filterContainer = document.querySelector('.account-groups-filter-container');
+            if (filterContainer) {
+              if (shouldShowAccountGroupsFilter()) {
+                filterContainer.style.display = 'block';
+                console.log('Account Groups Filter: Shown (viewing All accounts)');
+              } else {
+                filterContainer.style.display = 'none';
+                console.log('Account Groups Filter: Hidden (viewing individual account)');
+              }
+            }
+            
+            // Refresh content when account changes
+            filterReportsContent();
+            console.log('Content refreshed for account switch:', newSubAccount.name);
+          }
+        }
+      }, 500); // Check every 500ms for account changes
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        initializeReportsFilter().catch(console.error);
+        monitorAccountSwitches();
+      });
+    } else {
+      // DOM is already loaded
+      initializeReportsFilter().catch(console.error);
+      monitorAccountSwitches();
+    }
 
    </script>
 

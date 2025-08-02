@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../shared/styles/typography.css">
   <link rel="stylesheet" href="../../shared/styles/components.css">
   <link rel="stylesheet" href="../../shared/styles/color-utilities.css">
+  <link rel="stylesheet" href="../../shared/styles/dashboard-search.css">
   
   <style>
     body {
@@ -199,54 +200,7 @@
        cursor: pointer;
      }
 
-     /* Search Bar */
-     .search-container {
-       position: relative;
-       width: 360px;
-     }
 
-     .search-input {
-       width: 100%;
-       height: 36px;
-       padding: 8px 8px 8px 32px;
-       background: var(--neutral-50);
-       border: none;
-       border-radius: 8px;
-       font-family: var(--font-family-ui);
-       font-size: var(--font-size-14);
-       color: var(--color-text);
-       box-sizing: border-box;
-       transition: var(--transition-default);
-     }
-
-     .search-input:focus {
-       outline: none;
-       background: var(--neutral-50);
-     }
-
-     .search-input::placeholder {
-       color: var(--color-text-muted);
-     }
-
-     .search-icon {
-       position: absolute;
-       left: 8px;
-       top: 50%;
-       transform: translateY(-50%);
-       width: 12px;
-       height: 12px;
-       color: var(--color-text-muted);
-       pointer-events: none;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-     }
-
-     .search-icon svg {
-       width: 12px;
-       height: 12px;
-       color: currentColor;
-     }
 
      /* Main Navigation */
      .main-nav {
@@ -853,14 +807,14 @@ document.addEventListener('DOMContentLoaded', function() {
      <div class="content-panel" id="contentPanel">
        <!-- Content Header -->
        <div class="content-header">
-         <!-- Search Bar -->
-         <div class="search-container">
-                       <div class="search-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5788 11.8163C9.57969 12.5599 8.34124 13 7 13C3.68629 13 1 10.3137 1 7C1 3.68629 3.68629 1 7 1C10.3137 1 13 3.68629 13 7C13 8.34124 12.5599 9.57969 11.8163 10.5788L15.2437 14.0063C15.5854 14.348 15.5854 14.902 15.2437 15.2437C14.902 15.5854 14.348 15.5854 14.0063 15.2437L10.5788 11.8163ZM11.25 7C11.25 9.34721 9.34721 11.25 7 11.25C4.65279 11.25 2.75 9.34721 2.75 7C2.75 4.65279 4.65279 2.75 7 2.75C9.34721 2.75 11.25 4.65279 11.25 7Z" fill="currentColor"/>
-              </svg>
-            </div>
-           <input type="text" class="search-input" placeholder="Search…">
+         <!-- Dashboard Search -->
+         <div class="dashboard-search-container">
+           <div class="dashboard-search-icon">
+             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5788 11.8163C9.57969 12.5599 8.34124 13 7 13C3.68629 13 1 10.3137 1 7C1 3.68629 3.68629 1 7 1C10.3137 1 13 3.68629 13 7C13 8.34124 12.5599 9.57969 11.8163 10.5788L15.2437 14.0063C15.5854 14.348 15.5854 14.902 15.2437 15.2437C14.902 15.5854 14.348 15.5854 14.0063 15.2437L10.5788 11.8163ZM11.25 7C11.25 9.34721 9.34721 11.25 7 11.25C4.65279 11.25 2.75 9.34721 2.75 7C2.75 4.65279 4.65279 2.75 7 2.75C9.34721 2.75 11.25 4.65279 11.25 7Z" fill="currentColor"/>
+             </svg>
+           </div>
+           <input type="text" class="dashboard-search-input" placeholder="Search…">
          </div>
          
          <!-- Header Actions -->
