@@ -2426,6 +2426,9 @@
           // Filter content based on selection
           filterReportsContent(selectedAccountIds.length > 0 ? selectedAccountIds : null);
           
+          // Update trigger label based on current selection state
+          this.updateTriggerBasedOnSelection();
+          
           // Close the popover
           this.togglePopover();
           

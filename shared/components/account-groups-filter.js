@@ -21,7 +21,9 @@ class AccountGroupsFilter {
     this.currentGroup = 'all';
     this.searchTerm = '';
     this.accountGroups = {};
+    this.isCustomMode = false; // Track if user has made manual changes to account selection
     this.isRepositioning = false; // Prevent cascade repositioning
+    this.committedSelection = null; // Store committed selection state for cancel functionality
     this.triggerDimensions = null; // Store trigger size for consistent positioning
     this.alignmentMode = 'center'; // 'left', 'center', or 'right' - determines which edge to align to
     this.alignmentLocked = false; // Whether alignment mode has been determined
@@ -38,7 +40,9 @@ class AccountGroupsFilter {
     }
     
     this.attachEventListeners();
+    this.currentGroup = 'all';
     this.renderAccounts('all');
+    this.updateTriggerLabel('all');
     this.addScrollEffect();
   }
   
@@ -182,6 +186,8 @@ class AccountGroupsFilter {
       this.alignmentMode = 'center';
       this.alignmentLocked = false;
     } else {
+      // Capture current selection state before opening
+      this.captureCommittedSelection();
       popover.style.display = 'flex';
       trigger.classList.add('open');
       // Calculate fresh position when opening
@@ -273,26 +279,12 @@ class AccountGroupsFilter {
         
         const group = item.getAttribute('data-group');
         if (group) {
+          this.currentGroup = group;
           this.renderAccounts(group);
           
-          // Update trigger text
-          const triggerOption = document.getElementById(this.options.triggerOptionId);
-          if (triggerOption) {
-            const groupNames = {
-              'all': 'All accounts',
-              'connected': 'Connected accounts',
-              'express': 'Express accounts',
-              'standard': 'Standard accounts',
-              'custom': 'Custom accounts'
-            };
-            triggerOption.textContent = groupNames[group] || 'All accounts';
-            
-            // Recalculate position based on new trigger size but keep same alignment mode
-            const popover = document.getElementById(this.options.popoverId);
-            if (popover && popover.style.display === 'flex') {
-              this.positionPopover(false); // Don't force recalculation of alignment mode
-            }
-          }
+          // Update trigger text and reset custom mode
+          this.isCustomMode = false;
+          this.updateTriggerLabel(group);
         }
       });
     });
@@ -339,8 +331,7 @@ class AccountGroupsFilter {
     // Add change listeners to checkboxes (only in scrollable accounts list)
     document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]`).forEach(checkbox => {
       checkbox.addEventListener('change', () => {
-        this.updateSelectionCount();
-        this.updateSelectAllState();
+        this.handleAccountCheckboxChange();
       });
     });
     
@@ -369,7 +360,7 @@ class AccountGroupsFilter {
         document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]`).forEach(checkbox => {
           checkbox.checked = isChecked;
         });
-        this.updateSelectionCount();
+        this.handleSelectAllChange();
       });
     }
     
@@ -433,10 +424,10 @@ class AccountGroupsFilter {
     }
   }
   
-  addScrollEffect() {
+    addScrollEffect() {
     const accountsList = document.getElementById(this.options.accountsListId);
     let scrollTimeout;
-    
+
     if (accountsList) {
       accountsList.addEventListener('scroll', function() {
         // Add scrolling class
@@ -453,20 +444,131 @@ class AccountGroupsFilter {
     }
   }
   
+  // Handle individual account checkbox changes
+  handleAccountCheckboxChange() {
+    this.updateSelectionCount();
+    this.updateSelectAllState();
+    
+    // Note: Don't update trigger label here - only update on apply
+  }
+  
+  // Handle select all checkbox changes
+  handleSelectAllChange() {
+    this.updateSelectionCount();
+    
+    // Note: Don't update trigger label here - only update on apply
+  }
+  
+  // Update the trigger label text
+  updateTriggerLabel(groupKey) {
+    const triggerOption = document.getElementById(this.options.triggerOptionId);
+    
+
+    
+    if (triggerOption) {
+      const groupNames = {
+        'all': 'All accounts',
+        'connected': 'Connected accounts',
+        'express': 'Express accounts',
+        'standard': 'Standard accounts',
+        'custom': 'Custom accounts',
+        'Custom': 'Custom'
+      };
+      
+      if (this.isCustomMode) {
+        // Calculate selected accounts count
+        const selectedCount = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`).length;
+        // Use innerHTML to allow styled count
+        triggerOption.innerHTML = `Custom <span style="color: var(--neutral-500);">(${selectedCount})</span>`;
+      } else {
+        const labelText = groupNames[groupKey] || 'All accounts';
+        triggerOption.textContent = labelText;
+      }
+      
+      // Recalculate position based on new trigger size but keep same alignment mode
+      const popover = document.getElementById(this.options.popoverId);
+      if (popover && popover.style.display === 'flex') {
+        this.positionPopover(false); // Don't force recalculation of alignment mode
+      }
+    }
+  }
+  
   // Public method to apply selection (can be overridden)
   applySelection() {
+    // Update trigger label based on current selection state
+    this.updateTriggerBasedOnSelection();
     this.togglePopover();
     // Override this method in implementations for custom behavior
   }
   
+  // Update trigger label based on current selection
+  updateTriggerBasedOnSelection() {
+    const allCheckboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]`);
+    const checkedCheckboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`);
+    const checkedCount = checkedCheckboxes.length;
+    const totalCount = allCheckboxes.length;
+    
+
+    
+    // If all visible accounts are selected, keep the current group name
+    // Otherwise, show custom selection
+    if (checkedCount === totalCount && checkedCount > 0) {
+      // All accounts in current view are selected - keep current group label
+      this.isCustomMode = false;
+      this.updateTriggerLabel(this.currentGroup);
+    } else {
+      // Partial selection or no selection - switch to custom
+      this.isCustomMode = true;
+      this.updateTriggerLabel('custom');
+    }
+  }
+  
+  // Capture the current selection state (for cancel functionality)
+  captureCommittedSelection() {
+    const checkboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]`);
+    this.committedSelection = [];
+    
+    checkboxes.forEach((checkbox, index) => {
+      this.committedSelection.push({
+        index: index,
+        checked: checkbox.checked
+      });
+    });
+  }
+  
+  // Restore the committed selection state (when canceling)
+  restoreCommittedSelection() {
+    if (!this.committedSelection) return;
+    
+    const checkboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]`);
+    
+    this.committedSelection.forEach((item) => {
+      if (checkboxes[item.index]) {
+        checkboxes[item.index].checked = item.checked;
+      }
+    });
+    
+    // Update the visual state
+    this.updateSelectionCount();
+    this.updateSelectAllState();
+  }
+  
   // Public method to close the popover
   close() {
+    // Restore the original selection when canceling
+    this.restoreCommittedSelection();
+    
     const popover = document.getElementById(this.options.popoverId);
     const trigger = document.getElementById(this.options.triggerId);
     
     if (popover && trigger) {
       popover.style.display = 'none';
       trigger.classList.remove('open');
+      
+      // Clear stored position data when closing
+      this.triggerDimensions = null;
+      this.alignmentMode = 'center';
+      this.alignmentLocked = false;
     }
   }
 } 
