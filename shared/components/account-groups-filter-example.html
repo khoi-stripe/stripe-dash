@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Groups Filter - Preview</title>
+    <link rel="stylesheet" href="../styles/variables.css">
+    <link rel="stylesheet" href="../styles/base.css">
+    <link rel="stylesheet" href="../styles/account-groups-filter.css">
+    <style>
+        body {
+            padding: 40px;
+            background: var(--neutral-25);
+        }
+        .preview-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .preview-header {
+            margin-bottom: 32px;
+        }
+        .preview-header h1 {
+            font-size: var(--font-size-24);
+            font-weight: var(--font-weight-semibold);
+            color: var(--neutral-900);
+            margin: 0 0 8px 0;
+        }
+        .preview-header p {
+            color: var(--neutral-600);
+            margin: 0;
+        }
+        .demo-section {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <div class="preview-header">
+            <h1>Account groups</h1>
+            <p>Interactive component for filtering and selecting account groups</p>
+        </div>
+        
+        <div class="demo-section">
+            <h3 style="margin-top: 0;">Component Demo</h3>
+            
+            <!-- Trigger Button -->
+            <button class="account-groups-trigger" onclick="togglePopover()">
+                <span class="trigger-show">Show</span>
+                <span class="trigger-separator">|</span>
+                <span class="trigger-option" id="triggerOption">All accounts</span>
+                <svg class="trigger-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.16699 4.375C2.39082 4.15117 2.75918 4.15117 2.98301 4.375L6 7.39199L9.01699 4.375C9.24082 4.15117 9.60918 4.15117 9.83301 4.375C10.0568 4.59883 10.0568 4.96719 9.83301 5.19102L6.40801 8.61602C6.18418 8.83984 5.81582 8.83984 5.59199 8.61602L2.16699 5.19102C1.94316 4.96719 1.94316 4.59883 2.16699 4.375Z" fill="currentColor"/>
+                </svg>
+            </button>
+            
+            <!-- Popover (open by default for testing) -->
+            <div class="account-groups-popover" id="popover" style="display: block; margin-top: 8px; width: 480px;">
+                <div class="popover-content">
+                    <!-- Left section - Groups -->
+                    <div class="groups-section">
+                        <div class="groups-header">Account groups</div>
+                        <button class="group-item active">All accounts</button>
+                        <button class="group-item">Connected accounts</button>
+                        <button class="group-item">Express accounts</button>
+                        <button class="group-item">Standard accounts</button>
+                        <button class="group-item">Custom accounts</button>
+                    </div>
+                    
+                    <!-- Right section - Accounts -->
+                    <div class="accounts-section">
+                        <div class="search-container">
+                            <input type="text" class="search-input" placeholder="Search accounts">
+                        </div>
+                        
+                        <div class="accounts-list">
+                            <!-- Select all and accounts will be dynamically populated by JavaScript -->
+                        </div>
+                        
+                        <div class="popover-footer">
+                            <span class="selection-count">3 selected</span>
+                            <div class="footer-buttons">
+                                <button class="btn-cancel" onclick="togglePopover()">Cancel</button>
+                                <button class="btn-apply" onclick="applySelection()">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Account data organized by groups (expanded for scrolling)
+        const accountGroups = {
+            'all': [
+                { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
+                { name: 'Convict Conditioning', initials: 'CC', color: 'green', checked: true },
+                { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
+                { name: 'TechFlow Solutions', initials: 'TS', color: 'green', checked: true },
+                { name: 'Design Studio Pro', initials: 'DS', color: 'blue', checked: true },
+                { name: 'E-commerce Plus', initials: 'EP', color: 'green', checked: true },
+                { name: 'Global Logistics', initials: 'GL', color: 'blue', checked: true },
+                { name: 'Creative Agency', initials: 'CA', color: 'green', checked: true },
+                { name: 'Maritime Corp', initials: 'MC', color: 'blue', checked: true },
+                { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
+                { name: 'Precision Engineering', initials: 'PE', color: 'blue', checked: true },
+                { name: 'Urban Solutions', initials: 'US', color: 'green', checked: true },
+                { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true },
+                { name: 'Green Energy Co', initials: 'GE', color: 'green', checked: true },
+                { name: 'Medical Technologies', initials: 'MT', color: 'blue', checked: true },
+                { name: 'Financial Services', initials: 'FS', color: 'green', checked: true },
+                { name: 'Construction Group', initials: 'CG', color: 'blue', checked: true },
+                { name: 'Media Network', initials: 'MN', color: 'green', checked: true },
+                { name: 'Transportation Inc', initials: 'TI', color: 'blue', checked: true },
+                { name: 'Entertainment LLC', initials: 'EL', color: 'green', checked: true }
+            ],
+            'connected': [
+                { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
+                { name: 'TechFlow Solutions', initials: 'TS', color: 'green', checked: true },
+                { name: 'Global Logistics', initials: 'GL', color: 'blue', checked: true },
+                { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true },
+                { name: 'Financial Services', initials: 'FS', color: 'green', checked: true },
+                { name: 'Media Network', initials: 'MN', color: 'green', checked: true },
+                { name: 'Transportation Inc', initials: 'TI', color: 'blue', checked: true },
+                { name: 'Entertainment LLC', initials: 'EL', color: 'green', checked: true }
+            ],
+            'express': [
+                { name: 'Convict Conditioning', initials: 'CC', color: 'green', checked: true },
+                { name: 'Design Studio Pro', initials: 'DS', color: 'blue', checked: true },
+                { name: 'Creative Agency', initials: 'CA', color: 'green', checked: true },
+                { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
+                { name: 'Urban Solutions', initials: 'US', color: 'green', checked: true },
+                { name: 'Green Energy Co', initials: 'GE', color: 'green', checked: true },
+                { name: 'Construction Group', initials: 'CG', color: 'blue', checked: true }
+            ],
+            'standard': [
+                { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
+                { name: 'E-commerce Plus', initials: 'EP', color: 'green', checked: true },
+                { name: 'Maritime Corp', initials: 'MC', color: 'blue', checked: true },
+                { name: 'Precision Engineering', initials: 'PE', color: 'blue', checked: true },
+                { name: 'Medical Technologies', initials: 'MT', color: 'blue', checked: true }
+            ],
+            'custom': [
+                { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
+                { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
+                { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
+                { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true }
+            ]
+        };
+
+        let currentGroup = 'all';
+        let searchTerm = '';
+
+        function togglePopover() {
+            const popover = document.getElementById('popover');
+            const trigger = document.querySelector('.account-groups-trigger');
+            const isOpen = popover.style.display === 'block';
+            
+            if (isOpen) {
+                popover.style.display = 'none';
+                trigger.classList.remove('open');
+            } else {
+                popover.style.display = 'block';
+                trigger.classList.add('open');
+            }
+        }
+        
+        function applySelection() {
+            alert('Selection applied!');
+            togglePopover();
+        }
+
+        function renderAccounts(groupKey) {
+            const accountsList = document.querySelector('.accounts-list');
+            const accounts = accountGroups[groupKey] || [];
+            
+            // Create select all checkbox
+            const selectAllHTML = `
+                <div class="select-all-item">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="select-all" checked>
+                    </div>
+                    <div class="content-container">
+                        <label for="select-all">Select all</label>
+                    </div>
+                </div>
+            `;
+            
+            // Create account items
+            const accountsHTML = accounts.map(account => `
+                <div class="account-item">
+                    <div class="checkbox-container">
+                        <input type="checkbox" ${account.checked ? 'checked' : ''}>
+                    </div>
+                    <div class="content-container">
+                        <div class="account-icon ${account.color}">${account.initials}</div>
+                        <label>${account.name}</label>
+                    </div>
+                </div>
+            `).join('');
+
+            // Combine and set innerHTML
+            accountsList.innerHTML = selectAllHTML + accountsHTML;
+
+            // Reattach event listeners
+            attachCheckboxListeners();
+            attachSelectAllListener();
+            
+            // Apply search filter if active
+            if (searchTerm) {
+                filterAccountsBySearch(searchTerm);
+            }
+            
+            updateSelectionCount();
+            updateSelectAllState();
+        }
+
+        function attachCheckboxListeners() {
+            // Add change listeners to checkboxes
+            document.querySelectorAll('.account-item input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateSelectionCount();
+                    updateSelectAllState();
+                });
+            });
+            
+            // Make entire account row clickable
+            document.querySelectorAll('.account-item').forEach(accountItem => {
+                accountItem.addEventListener('click', function(e) {
+                    // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
+                    if (e.target.type === 'checkbox') {
+                        return;
+                    }
+                    
+                    // Find the checkbox in this row and toggle it
+                    const checkbox = accountItem.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        // Trigger the change event to update counts
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+        }
+
+        function filterAccountsBySearch(term) {
+            document.querySelectorAll('.account-item').forEach(item => {
+                const label = item.querySelector('label').textContent.toLowerCase();
+                item.style.display = label.includes(term.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
+        
+        // Group selection functionality
+        document.querySelectorAll('.group-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.group-item').forEach(g => g.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Determine which group was clicked
+                const groupText = this.textContent.toLowerCase();
+                if (groupText.includes('all')) currentGroup = 'all';
+                else if (groupText.includes('connected')) currentGroup = 'connected';
+                else if (groupText.includes('express')) currentGroup = 'express';
+                else if (groupText.includes('standard')) currentGroup = 'standard';
+                else if (groupText.includes('custom')) currentGroup = 'custom';
+                
+                // Update trigger text with selected group
+                document.getElementById('triggerOption').textContent = this.textContent.trim();
+                
+                renderAccounts(currentGroup);
+            });
+        });
+        
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            searchTerm = e.target.value;
+            filterAccountsBySearch(searchTerm);
+        });
+        
+        // Update selection count
+        function updateSelectionCount() {
+            const checked = document.querySelectorAll('.account-item input[type="checkbox"]:checked').length;
+            document.querySelector('.selection-count').textContent = `${checked} selected`;
+        }
+
+        // Update select all checkbox state based on individual checkboxes
+        function updateSelectAllState() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const accountCheckboxes = document.querySelectorAll('.account-item input[type="checkbox"]');
+            const checkedCount = document.querySelectorAll('.account-item input[type="checkbox"]:checked').length;
+            
+            if (checkedCount === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCount === accountCheckboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        }
+
+        // Handle select all checkbox click
+        function handleSelectAll() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const accountCheckboxes = document.querySelectorAll('.account-item input[type="checkbox"]');
+            
+            accountCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            
+            updateSelectionCount();
+            selectAllCheckbox.indeterminate = false;
+        }
+
+        // Attach select all event listener
+        function attachSelectAllListener() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', handleSelectAll);
+            }
+            
+            // Make entire select all row clickable
+            const selectAllItem = document.querySelector('.select-all-item');
+            if (selectAllItem) {
+                selectAllItem.addEventListener('click', function(e) {
+                    // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
+                    if (e.target.type === 'checkbox') {
+                        return;
+                    }
+                    
+                    // Find the checkbox and toggle it
+                    const checkbox = selectAllItem.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        // Trigger the change event to handle select all logic
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+        }
+
+        // Initialize with all accounts
+        renderAccounts('all');
+    </script>
+</body>
+</html> 

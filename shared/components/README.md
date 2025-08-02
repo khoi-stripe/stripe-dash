@@ -16,6 +16,11 @@ This directory contains reusable UI components used across the dashboard prototy
 ### UI Components
 - **`popover.js`** - Tooltip and popover functionality
 
+### **Account Groups Filter Component** 🆕
+- **`account-groups-filter.js`** - Popover-based filter for account groups and individual accounts
+- **`account-groups-filter.css`** - Component styles (included in base.css)
+- **`account-groups-filter-example.html`** - Comprehensive usage examples and documentation
+
 ### **Modal Component** 🆕
 - **`modal.js`** - Reusable modal dialog component with extensive features
 - **`modal.css`** - Global modal styles (included in base.css)
@@ -101,6 +106,61 @@ The modal styles are automatically included via `base.css`. To use:
    ```
 
 The modal component is designed to replace custom modal implementations (like the prototype control panel) with a consistent, feature-rich solution.
+
+## Account Groups Filter Component Usage
+
+The Account Groups Filter provides a polished popover interface for selecting account groups and individual accounts. It follows the exact specifications from the design with proper dimensions and spacing.
+
+### Basic Usage
+```javascript
+const filter = new AccountGroupsFilter(
+  document.getElementById('filter-container'),
+  {
+    placeholder: 'Account Groups',
+    onSelectionChange: (selection) => {
+      console.log('Selected groups:', selection.selectedGroups);
+      console.log('Selected accounts:', selection.selectedAccounts);
+    }
+  }
+);
+```
+
+### Key Features
+- **🎯 Design Compliant** - Follows exact redline specifications (532×360px popover)
+- **🔍 Search Interface** - Built-in search with result count badge
+- **📋 Dual Selection** - Choose entire groups or individual accounts within groups  
+- **✅ Visual Feedback** - Checkboxes, hover states, and selection indicators
+- **🎨 Account Icons** - Color-coded account icons (blue for Deliveries, green for Rides)
+- **⌨️ Accessibility** - Keyboard navigation and proper focus management
+- **🔧 Programmatic Control** - External API for getting/setting selections
+
+### Options
+```javascript
+{
+  placeholder: 'Account Groups',           // Button text when no selection
+  selectedGroups: ['deliveries'],         // Initially selected groups
+  selectedAccounts: ['acme-ca'],          // Initially selected accounts  
+  onSelectionChange: (selection) => {}    // Callback when selection changes
+}
+```
+
+### API Methods
+```javascript
+// Get current selection
+const selection = filter.getSelection();
+
+// Set selections programmatically
+filter.setSelectedGroups(['deliveries', 'rides']);
+filter.setSelectedAccounts(['acme-ca', 'acme-uk']);
+
+// Control popover
+filter.open();
+filter.close();
+```
+
+### Example Files
+- **`account-groups-filter-example.html`** - Live examples with various configurations
+- Run locally to see interactive demonstrations
 
 ## Future Components
 

@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../shared/styles/typography.css">
   <link rel="stylesheet" href="../../shared/styles/components.css">
   <link rel="stylesheet" href="../../shared/styles/color-utilities.css">
+  <link rel="stylesheet" href="../../shared/styles/account-groups-filter.css">
   
   <style>
     body {
@@ -1173,10 +1174,60 @@
       <div class="content-body">
         <div class="reports-container">
          <div class="reports-header">
-            <h2 id="reports-title" class="text-heading-xlarge" style="color: var(--neutral-900); margin: 0 0 8px 0;">Financial Reports</h2>
-            <p id="reports-description" style="font-size: 14px; color: var(--neutral-600); margin: 0; line-height: 1.5;">
-              View financial data and analytics. Use the account group filter to see how data changes based on selected account groups.
-            </p>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;">
+              <div>
+                <h2 id="reports-title" class="text-heading-xlarge" style="color: var(--neutral-900); margin: 0 0 8px 0;">Financial Reports</h2>
+                <p id="reports-description" style="font-size: 14px; color: var(--neutral-600); margin: 0; line-height: 1.5;">
+                  View financial data and analytics. Use the account group filter to see how data changes based on selected account groups.
+                </p>
+              </div>
+              <div id="account-groups-filter" style="margin-top: 4px;">
+                <!-- Account Groups Filter Component -->
+                <button class="account-groups-trigger" id="reportsTriggerButton">
+                  <span class="trigger-show">Show</span>
+                  <span class="trigger-separator">|</span>
+                  <span class="trigger-option" id="reportsTriggerOption">All accounts</span>
+                  <svg class="trigger-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.16699 4.375C2.39082 4.15117 2.75918 4.15117 2.98301 4.375L6 7.39199L9.01699 4.375C9.24082 4.15117 9.60918 4.15117 9.83301 4.375C10.0568 4.59883 10.0568 4.96719 9.83301 5.19102L6.40801 8.61602C6.18418 8.83984 5.81582 8.83984 5.59199 8.61602L2.16699 5.19102C1.94316 4.96719 1.94316 4.59883 2.16699 4.375Z" fill="currentColor"/>
+                  </svg>
+                </button>
+                
+                <!-- Popover (hidden by default) -->
+                <div class="account-groups-popover" id="reportsPopover" style="display: none; width: 480px; position: fixed; z-index: 1000;">
+                  <div class="popover-content">
+                    <!-- Left section - Groups -->
+                    <div class="groups-section">
+                      <div class="groups-header">Account groups</div>
+                      <button class="group-item active" data-group="all">All accounts</button>
+                      <button class="group-item" data-group="connected">Connected accounts</button>
+                      <button class="group-item" data-group="express">Express accounts</button>
+                      <button class="group-item" data-group="standard">Standard accounts</button>
+                      <button class="group-item" data-group="custom">Custom accounts</button>
+                    </div>
+                    
+                    <!-- Right section - Accounts -->
+                    <div class="accounts-section">
+                      <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search accounts..." id="reportsSearchInput">
+                      </div>
+                      
+                      <div class="accounts-list" id="reportsAccountsList">
+                        <!-- Accounts will be dynamically populated by JavaScript -->
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Footer -->
+                  <div class="popover-footer">
+                    <span class="selection-count" id="reportsSelectionCount">20 selected</span>
+                    <div class="footer-buttons">
+                      <button class="btn-cancel" id="reportsCancelButton">Cancel</button>
+                      <button class="btn-apply" id="reportsApplyButton">Apply</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Sample Financial Reports Grid -->
@@ -1252,6 +1303,7 @@
 
   <!-- Include account switcher component -->
   <script src="../../shared/components/account-switcher.js"></script>
+      <!-- Account Groups Filter component included inline -->
   
   <!-- UXR Data Management -->
   <script src="./data/organizations.js"></script>
@@ -1286,6 +1338,379 @@
 
       // Set up navigation panel collapse (matching dash-chrome)
       setupNavCollapse();
+      
+      // ========================================
+      // Account Groups Filter JavaScript
+      // ========================================
+
+      let reportsCurrentGroup = 'all';
+      let reportsSearchTerm = '';
+
+      // Account data organized by groups (for financial reports)
+      const reportsAccountGroups = {
+          'all': [
+              { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
+              { name: 'Convict Conditioning', initials: 'CC', color: 'green', checked: true },
+              { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
+              { name: 'TechFlow Solutions', initials: 'TS', color: 'green', checked: true },
+              { name: 'Design Studio Pro', initials: 'DS', color: 'blue', checked: true },
+              { name: 'E-commerce Plus', initials: 'EP', color: 'green', checked: true },
+              { name: 'Global Logistics', initials: 'GL', color: 'blue', checked: true },
+              { name: 'Creative Agency', initials: 'CA', color: 'green', checked: true },
+              { name: 'Maritime Corp', initials: 'MC', color: 'blue', checked: true },
+              { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
+              { name: 'Precision Engineering', initials: 'PE', color: 'blue', checked: true },
+              { name: 'Urban Solutions', initials: 'US', color: 'green', checked: true },
+              { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true },
+              { name: 'Green Energy Co', initials: 'GE', color: 'green', checked: true },
+              { name: 'Medical Technologies', initials: 'MT', color: 'blue', checked: true },
+              { name: 'Financial Services', initials: 'FS', color: 'green', checked: true },
+              { name: 'Construction Group', initials: 'CG', color: 'blue', checked: true },
+              { name: 'Media Network', initials: 'MN', color: 'green', checked: true },
+              { name: 'Transportation Inc', initials: 'TI', color: 'blue', checked: true },
+              { name: 'Entertainment LLC', initials: 'EL', color: 'green', checked: true }
+          ],
+          'connected': [
+              { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
+              { name: 'TechFlow Solutions', initials: 'TS', color: 'green', checked: true },
+              { name: 'Global Logistics', initials: 'GL', color: 'blue', checked: true },
+              { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true },
+              { name: 'Financial Services', initials: 'FS', color: 'green', checked: true },
+              { name: 'Media Network', initials: 'MN', color: 'green', checked: true },
+              { name: 'Transportation Inc', initials: 'TI', color: 'blue', checked: true },
+              { name: 'Entertainment LLC', initials: 'EL', color: 'green', checked: true }
+          ],
+          'express': [
+              { name: 'Convict Conditioning', initials: 'CC', color: 'green', checked: true },
+              { name: 'Design Studio Pro', initials: 'DS', color: 'blue', checked: true },
+              { name: 'Creative Agency', initials: 'CA', color: 'green', checked: true },
+              { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
+              { name: 'Urban Solutions', initials: 'US', color: 'green', checked: true },
+              { name: 'Green Energy Co', initials: 'GE', color: 'green', checked: true },
+              { name: 'Construction Group', initials: 'CG', color: 'blue', checked: true }
+          ],
+          'standard': [
+              { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
+              { name: 'E-commerce Plus', initials: 'EP', color: 'green', checked: true },
+              { name: 'Maritime Corp', initials: 'MC', color: 'blue', checked: true },
+              { name: 'Precision Engineering', initials: 'PE', color: 'blue', checked: true },
+              { name: 'Medical Technologies', initials: 'MT', color: 'blue', checked: true }
+          ],
+          'custom': [
+              { name: 'Rocket Rides', initials: 'RR', color: 'blue', checked: true },
+              { name: 'Healthy Food Inc', initials: 'HF', color: 'blue', checked: true },
+              { name: 'Alpine Adventures', initials: 'AA', color: 'green', checked: true },
+              { name: 'Digital Innovations', initials: 'DI', color: 'blue', checked: true }
+          ]
+      };
+
+      function initializeReportsAccountGroupsFilter() {
+          renderReportsAccounts('all');
+          attachReportsGroupListeners();
+          attachReportsCheckboxListeners();
+          attachReportsSelectAllListener();
+          attachReportsSearchListener();
+          attachReportsButtonListeners();
+      }
+
+      function attachReportsButtonListeners() {
+          // Add event listener for trigger button
+          const triggerButton = document.getElementById('reportsTriggerButton');
+          if (triggerButton) {
+              triggerButton.addEventListener('click', toggleReportsPopover);
+          }
+          
+          // Add event listener for cancel button
+          const cancelButton = document.getElementById('reportsCancelButton');
+          if (cancelButton) {
+              cancelButton.addEventListener('click', toggleReportsPopover);
+          }
+          
+          // Add event listener for apply button
+          const applyButton = document.getElementById('reportsApplyButton');
+          if (applyButton) {
+              applyButton.addEventListener('click', applyReportsSelection);
+          }
+          
+          // Add resize listener to reposition popover if open
+          window.addEventListener('resize', function() {
+              const popover = document.getElementById('reportsPopover');
+              if (popover && popover.style.display === 'block') {
+                  positionReportsPopover();
+              }
+          });
+      }
+
+      function renderReportsAccounts(groupKey) {
+          const accountsList = document.getElementById('reportsAccountsList');
+          const accounts = reportsAccountGroups[groupKey] || [];
+          
+          // Create select all + accounts HTML
+          const selectAllHtml = `
+              <div class="select-all-item">
+                  <div class="checkbox-container">
+                      <input type="checkbox" id="reports-select-all" checked>
+                  </div>
+                  <div class="content-container">
+                      <label for="reports-select-all">Select all</label>
+                  </div>
+              </div>
+          `;
+          
+          const accountsHtml = accounts.map(account => `
+              <div class="account-item">
+                  <div class="checkbox-container">
+                      <input type="checkbox" ${account.checked ? 'checked' : ''}>
+                  </div>
+                  <div class="content-container">
+                      <div class="account-icon ${account.color}">${account.initials}</div>
+                      <label>${account.name}</label>
+                  </div>
+              </div>
+          `).join('');
+
+          accountsList.innerHTML = selectAllHtml + accountsHtml;
+
+          // Reattach event listeners for new elements
+          attachReportsCheckboxListeners();
+          attachReportsSelectAllListener();
+          
+          // Apply search filter if active
+          if (reportsSearchTerm) {
+              filterReportsAccountsBySearch(reportsSearchTerm);
+          }
+          
+          updateReportsSelectionCount();
+          updateReportsSelectAllState();
+      }
+
+      function attachReportsGroupListeners() {
+          document.querySelectorAll('#reportsPopover .group-item').forEach(item => {
+              item.addEventListener('click', function() {
+                  document.querySelectorAll('#reportsPopover .group-item').forEach(g => g.classList.remove('active'));
+                  this.classList.add('active');
+                  
+                  // Get group from data attribute
+                  reportsCurrentGroup = this.getAttribute('data-group');
+                  
+                  // Update trigger text with selected group
+                  document.getElementById('reportsTriggerOption').textContent = this.textContent.trim();
+                  
+                  renderReportsAccounts(reportsCurrentGroup);
+              });
+          });
+      }
+
+      function attachReportsCheckboxListeners() {
+          // Add change listeners to checkboxes
+          document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]').forEach(checkbox => {
+              checkbox.addEventListener('change', function() {
+                  updateReportsSelectionCount();
+                  updateReportsSelectAllState();
+              });
+          });
+          
+          // Make entire account row clickable
+          document.querySelectorAll('#reportsAccountsList .account-item').forEach(accountItem => {
+              accountItem.addEventListener('click', function(e) {
+                  if (e.target.type === 'checkbox') return;
+                  
+                  const checkbox = accountItem.querySelector('input[type="checkbox"]');
+                  if (checkbox) {
+                      checkbox.checked = !checkbox.checked;
+                      checkbox.dispatchEvent(new Event('change'));
+                  }
+              });
+          });
+      }
+
+      function attachReportsSelectAllListener() {
+          const selectAllCheckbox = document.getElementById('reports-select-all');
+          if (selectAllCheckbox) {
+              selectAllCheckbox.addEventListener('change', handleReportsSelectAll);
+          }
+          
+          // Make entire select all row clickable
+          const selectAllItem = document.querySelector('#reportsAccountsList .select-all-item');
+          if (selectAllItem) {
+              selectAllItem.addEventListener('click', function(e) {
+                  if (e.target.type === 'checkbox') return;
+                  
+                  const checkbox = selectAllItem.querySelector('input[type="checkbox"]');
+                  if (checkbox) {
+                      checkbox.checked = !checkbox.checked;
+                      checkbox.dispatchEvent(new Event('change'));
+                  }
+              });
+          }
+      }
+
+      function attachReportsSearchListener() {
+          const searchInput = document.getElementById('reportsSearchInput');
+          if (searchInput) {
+              searchInput.addEventListener('input', function(e) {
+                  reportsSearchTerm = e.target.value;
+                  filterReportsAccountsBySearch(reportsSearchTerm);
+              });
+          }
+      }
+
+      function handleReportsSelectAll() {
+          const selectAllCheckbox = document.getElementById('reports-select-all');
+          const accountCheckboxes = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]');
+          
+          accountCheckboxes.forEach(checkbox => {
+              checkbox.checked = selectAllCheckbox.checked;
+          });
+          
+          updateReportsSelectionCount();
+          selectAllCheckbox.indeterminate = false;
+      }
+
+      function updateReportsSelectionCount() {
+          const checked = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]:checked').length;
+          document.getElementById('reportsSelectionCount').textContent = `${checked} selected`;
+      }
+
+      function updateReportsSelectAllState() {
+          const selectAllCheckbox = document.getElementById('reports-select-all');
+          const accountCheckboxes = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]');
+          const checkedBoxes = document.querySelectorAll('#reportsAccountsList .account-item input[type="checkbox"]:checked');
+          
+          if (!selectAllCheckbox) return;
+          
+          if (checkedBoxes.length === 0) {
+              selectAllCheckbox.checked = false;
+              selectAllCheckbox.indeterminate = false;
+          } else if (checkedBoxes.length === accountCheckboxes.length) {
+              selectAllCheckbox.checked = true;
+              selectAllCheckbox.indeterminate = false;
+          } else {
+              selectAllCheckbox.checked = false;
+              selectAllCheckbox.indeterminate = true;
+          }
+      }
+
+      function filterReportsAccountsBySearch(term) {
+          const accountItems = document.querySelectorAll('#reportsAccountsList .account-item');
+          accountItems.forEach(item => {
+              const label = item.querySelector('label').textContent.toLowerCase();
+              item.style.display = label.includes(term.toLowerCase()) ? 'flex' : 'none';
+          });
+      }
+
+      function toggleReportsPopover() {
+          const popover = document.getElementById('reportsPopover');
+          const trigger = document.querySelector('#account-groups-filter .account-groups-trigger');
+          const isOpen = popover.style.display === 'block';
+          
+          if (isOpen) {
+              popover.style.display = 'none';
+              trigger.classList.remove('open');
+          } else {
+              // Position the popover before showing it
+              positionReportsPopover();
+              popover.style.display = 'block';
+              trigger.classList.add('open');
+          }
+      }
+
+      function positionReportsPopover() {
+          const popover = document.getElementById('reportsPopover');
+          const trigger = document.querySelector('#account-groups-filter .account-groups-trigger');
+          
+          if (!popover || !trigger) {
+              console.log('Missing popover or trigger element');
+              return;
+          }
+          
+          // Get trigger position and dimensions
+          const triggerRect = trigger.getBoundingClientRect();
+          const popoverWidth = 480; // Fixed width from CSS
+          const popoverHeight = 360; // Approximate height
+          const gap = 4; // 4px gap below trigger
+          const viewportPadding = 16; // 16px padding from viewport edges
+          
+          // Get viewport dimensions
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+          
+          // Calculate default position (centered below trigger)
+          let left = triggerRect.left + (triggerRect.width / 2) - (popoverWidth / 2);
+          let top = triggerRect.bottom + gap;
+          
+          console.log('Initial position calculations:', {
+              triggerRect,
+              viewportWidth,
+              viewportHeight,
+              initialLeft: left,
+              initialTop: top
+          });
+          
+          // Adjust horizontal position to stay within viewport bounds
+          if (left < viewportPadding) {
+              // Too far left, move right
+              left = viewportPadding;
+              console.log('Adjusted left - too far left, moved to:', left);
+          } else if (left + popoverWidth > viewportWidth - viewportPadding) {
+              // Too far right, move left
+              left = viewportWidth - popoverWidth - viewportPadding;
+              console.log('Adjusted left - too far right, moved to:', left);
+          }
+          
+          // Adjust vertical position if it would go below viewport
+          if (top + popoverHeight > viewportHeight - viewportPadding) {
+              // Show above trigger instead
+              top = triggerRect.top - popoverHeight - gap;
+              console.log('Adjusted top - not enough space below, moved above trigger to:', top);
+              
+              // If still not enough space above, position at top of viewport
+              if (top < viewportPadding) {
+                  top = viewportPadding;
+                  console.log('Adjusted top - not enough space above either, moved to viewport top:', top);
+              }
+          }
+          
+          console.log('Final position:', { left, top });
+          
+          // Apply the calculated position
+          popover.style.left = left + 'px';
+          popover.style.top = top + 'px';
+      }
+
+      function applyReportsSelection() {
+          // Get selected accounts
+          const selectedAccounts = [];
+          const accountItems = document.querySelectorAll('#reportsAccountsList .account-item');
+          
+          accountItems.forEach(item => {
+              const checkbox = item.querySelector('input[type="checkbox"]');
+              const label = item.querySelector('label');
+              if (checkbox && checkbox.checked && label) {
+                  selectedAccounts.push(label.textContent.trim());
+              }
+          });
+          
+          console.log('Applied account groups filter:', {
+              group: reportsCurrentGroup,
+              selectedAccounts: selectedAccounts,
+              count: selectedAccounts.length
+          });
+          
+          // Update the existing filter functionality
+          if (selectedAccounts.length > 0) {
+              updateActiveFilters([{
+                  name: document.querySelector('#reportsPopover .group-item.active').textContent.trim(),
+                  accounts: selectedAccounts
+              }]);
+          }
+          
+          // Close popover
+          toggleReportsPopover();
+      }
+      
+      // Initialize account groups filter
+      initializeReportsAccountGroupsFilter();
       
       // Initialize financial reports
       loadFinancialReports();
@@ -1448,28 +1873,24 @@
       if (isAggregateView) {
         // Show all accounts in organization view
         breakdown.innerHTML = accountData.map(account => `
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px; border-radius: 6px; margin-bottom: 16px; background: var(--neutral-25);">
-            <div style="flex: 1;">
+          <div style="display: grid; grid-template-columns: 1fr 120px 120px 120px; gap: 24px; align-items: center; padding: 24px; border-radius: 6px; margin-bottom: 16px; background: var(--neutral-25);">
+            <div>
               <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px; font-size: 18px;">${account.name}</div>
               <div style="font-size: 14px; color: var(--neutral-500);">Primary Account Metrics</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 32px;">
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: right;">
-                <div>
-                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
-                  <div style="font-size: 12px; color: var(--neutral-500);">Total Revenue</div>
-                </div>
-                <div>
-                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
-                  <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
-                </div>
-                <div>
-                  <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
-                    ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
-                  </div>
-                  <div style="font-size: 12px; color: var(--neutral-500);">Growth Rate</div>
-                </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
+              <div style="font-size: 12px; color: var(--neutral-500); margin-top: 2px;">Total Revenue</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
+              <div style="font-size: 12px; color: var(--neutral-500); margin-top: 2px;">Transactions</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
+                ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
               </div>
+              <div style="font-size: 12px; color: var(--neutral-500); margin-top: 2px;">Growth Rate</div>
             </div>
           </div>
         `).join('');
@@ -1477,28 +1898,24 @@
         // Show single account view with more detailed breakdown
         const account = accountData[0];
         breakdown.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px; border-radius: 6px; margin-bottom: 16px; background: var(--neutral-25);">
-            <div style="flex: 1;">
+          <div style="display: grid; grid-template-columns: 1fr 120px 120px 120px; gap: 24px; align-items: center; padding: 24px; border-radius: 6px; background: var(--neutral-25);">
+            <div>
               <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px; font-size: 18px;">${account.name}</div>
               <div style="font-size: 14px; color: var(--neutral-500);">Primary Account Metrics</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 32px;">
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: right;">
-                <div>
-                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
-                  <div style="font-size: 12px; color: var(--neutral-500);">Total Revenue</div>
-                </div>
-                <div>
-                  <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
-                  <div style="font-size: 12px; color: var(--neutral-500);">Transactions</div>
-                </div>
-                <div>
-                  <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
-                    ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
-                  </div>
-                  <div style="font-size: 12px; color: var(--neutral-500);">Growth Rate</div>
-                </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">$${account.revenue.toLocaleString()}</div>
+              <div style="font-size: 12px; color: var(--neutral-500); margin-top: 2px;">Total Revenue</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; color: var(--neutral-900); font-size: 20px;">${account.transactions.toLocaleString()}</div>
+              <div style="font-size: 12px; color: var(--neutral-500); margin-top: 2px;">Transactions</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600; font-size: 20px; color: ${parseFloat(account.growth) >= 0 ? 'var(--green-600)' : 'var(--red-600)'};">
+                ${parseFloat(account.growth) >= 0 ? '+' : ''}${account.growth}%
               </div>
+              <div style="font-size: 12px; color: var(--neutral-500); margin-top: 2px;">Growth Rate</div>
             </div>
           </div>
           <div style="padding: 16px; background: var(--neutral-50); border-radius: 6px; margin-top: 16px;">
@@ -1623,6 +2040,7 @@
 
     // Initialize workload active states
     updateWorkloadActiveStates();
+
    </script>
 
 </body>

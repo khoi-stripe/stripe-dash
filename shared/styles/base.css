@@ -189,4 +189,7 @@ svg {
 } 
 
 /* Import global modal styles */
-@import 'modal.css'; 
+@import 'modal.css';
+
+/* Import account groups filter styles */
+@import 'account-groups-filter.css'; 

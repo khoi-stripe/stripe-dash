@@ -98,6 +98,146 @@
        transition: none !important;
      }
      
+     /* Fix avatar positioning - prevent clipping */
+     #nav-account-switcher .account-avatar {
+       flex-shrink: 0;
+       margin-right: 8px;
+     }
+     
+     /* Fix checkmark alignment and avatar clipping in dropdown */
+     #nav-account-switcher .account-item {
+       display: flex !important;
+       align-items: center !important;
+       gap: 8px !important;
+       padding: 8px 12px !important;
+       width: 100% !important;
+       text-align: left !important;
+       border: none !important;
+       background: none !important;
+       cursor: pointer !important;
+       position: relative !important;
+     }
+     
+     #nav-account-switcher .account-item:hover {
+       background-color: var(--neutral-50) !important;
+     }
+     
+     #nav-account-switcher .account-item .account-avatar {
+       flex-shrink: 0 !important;
+       margin-right: 0 !important;
+     }
+     
+     #nav-account-switcher .account-item .account-details {
+       flex: 1 !important;
+       min-width: 0 !important;
+       overflow: hidden !important;
+     }
+     
+     /* Fix checkmark positioning - handle it as a sibling element */
+     #nav-account-switcher .account-check {
+       position: absolute !important;
+       right: 12px !important;
+       top: 50% !important;
+       transform: translateY(-50%) !important;
+       display: flex !important;
+       align-items: center !important;
+       justify-content: center !important;
+       width: 16px !important;
+       height: 16px !important;
+       pointer-events: none !important;
+       z-index: 10 !important;
+     }
+     
+     /* Ensure the button has space for the checkmark */
+     #nav-account-switcher .account-item.active {
+       padding-right: 36px !important;
+     }
+     
+     /* Ensure proper alignment in account switcher trigger */
+     #nav-account-switcher .account-switcher-trigger {
+       display: flex !important;
+       align-items: center !important;
+       gap: 8px !important;
+       padding: 4px 6px !important;
+     }
+     
+     #nav-account-switcher .account-switcher-trigger .account-avatar {
+       flex-shrink: 0 !important;
+       margin-right: 0 !important;
+     }
+     
+     #nav-account-switcher .account-switcher-trigger .account-details {
+       flex: 1 !important;
+       min-width: 0 !important;
+       overflow: hidden !important;
+     }
+     
+     /* Fix dropdown container to prevent avatar clipping */
+     #nav-account-switcher .account-dropdown {
+       overflow: visible !important;
+     }
+     
+     #nav-account-switcher .account-items-container {
+       overflow: visible !important;
+       padding: 4px 0 !important;
+     }
+     
+     /* Fix Account Panel checkmarks and avatars */
+     .account-panel .account-item {
+       position: relative !important;
+       display: flex !important;
+       align-items: center !important;
+       gap: 8px !important;
+     }
+     
+     .account-panel .account-item .nav-item-icon {
+       flex-shrink: 0 !important;
+     }
+     
+     .account-panel .account-item .nav-item-icon .account-avatar {
+       flex-shrink: 0 !important;
+     }
+     
+     .account-panel .account-item .nav-item-label {
+       flex: 1 !important;
+       min-width: 0 !important;
+       overflow: hidden !important;
+       text-overflow: ellipsis !important;
+       white-space: nowrap !important;
+     }
+     
+     /* Fix Account Panel checkmark positioning */
+     .account-panel .account-check {
+       position: absolute !important;
+       right: 8px !important;
+       top: 50% !important;
+       transform: translateY(-50%) !important;
+       display: flex !important;
+       align-items: center !important;
+       justify-content: center !important;
+       width: 16px !important;
+       height: 16px !important;
+       color: var(--brand-600) !important;
+       pointer-events: none !important;
+       z-index: 10 !important;
+     }
+     
+     /* Ensure Account Panel active items have space for checkmark */
+     .account-panel .account-item.active {
+       padding-right: 32px !important;
+     }
+     
+     /* Fix avatar clipping in Account Panel */
+     .account-panel .nav-item-icon {
+       width: 29px !important; /* Increase from 24px to accommodate 2.5px border on each side */
+       overflow: visible !important;
+     }
+     
+     /* Ensure the avatar itself is still centered within the larger container */
+     .account-panel .account-avatar {
+       margin: 0 auto !important;
+     }
+     
      /* Nav item tooltips for collapsed state */
      .workload-item {
        position: relative;
@@ -1739,80 +1879,59 @@
   </div>
 
   <!-- Include shared components -->
-  <script src="../../shared/components/account-switcher.js"></script>
   <script src="../../shared/components/popover.js"></script>
 
-  <script type="module">
-    // Initialize account switcher with hierarchical structure
-    const navAccountSwitcher = new AccountSwitcher(
-      document.getElementById('nav-account-switcher'),
-      {
-        currentAccount: { id: 'all-accounts', name: 'All accounts', type: 'Acme, Inc.', isAllAccounts: true },
+  <!-- Include account switcher component -->
+  <script src="../../shared/components/account-switcher.js"></script>
+  
+  <script>
+    // Initialize Account Switcher functionality
+    window.addEventListener('load', function() {
+      // Sample data with aggregate view
+      const accountData = {
+        currentAccount: { id: "all_accounts", name: "Acme Corp", type: "organization", isAggregate: true },
         accounts: [
-          { id: 'acme-eats-us', name: 'Acme Eats US', type: 'United States' },
-          { id: 'acme-eats-ca', name: 'Acme Eats CA', type: 'Canada' },
-          { id: 'acme-eats-uk', name: 'Acme Eats UK', type: 'United Kingdom' },
-          { id: 'acme-eats-au', name: 'Acme Eats AU', type: 'Australia' },
-          { id: 'acme-rides-us', name: 'Acme Rides US', type: 'United States' },
-          { id: 'acme-rides-ca', name: 'Acme Rides CA', type: 'Canada' },
-          { id: 'acme-rides-uk', name: 'Acme Rides UK', type: 'United Kingdom' },
-          { id: 'acme-deliveries-us', name: 'Acme Deliveries US', type: 'United States' },
-          { id: 'acme-deliveries-uk', name: 'Acme Deliveries UK', type: 'United Kingdom' },
-          { id: 'acme-deliveries-eu', name: 'Acme Deliveries EU', type: 'European Union' },
-          { id: 'acme-financial', name: 'Acme Financial', type: 'Global' },
-          { id: 'acme-logistics', name: 'Acme Logistics', type: 'Global' }
-        ],
-        variant: '2-line',
-        onAccountChange: (selectedAccount) => {
-          console.log('🔄 Sub-account selected from nav dropdown:', selectedAccount);
-          
-          if (selectedAccount.isAllAccounts) {
-            // Handle "All accounts" aggregate view
-            console.log('📊 Showing aggregate view for all accounts');
-            
-            // Update content panel using the centralized function
-            window.updateContentPanel(selectedAccount);
-            
-            return;
+          { id: "all_accounts", name: "Acme Corp", type: "organization", isAggregate: true, color: "#3B82F6" },
+          { id: "acc_checking", name: "Checking Account", type: "account", color: "#10B981" },
+          { id: "acc_savings", name: "Business Savings", type: "account", color: "#8B5CF6" },
+          { id: "acc_treasury", name: "Treasury Account", type: "account", color: "#F59E0B" },
+          { id: "acc_operations", name: "Operations Fund", type: "account", color: "#EF4444" }
+        ]
+      };
+
+      // Initialize account switcher
+      const navAccountSwitcher = new AccountSwitcher(
+        document.getElementById('nav-account-switcher'),
+        {
+          currentAccount: accountData.currentAccount,
+          accounts: accountData.accounts,
+          variant: '2-line',
+          onAccountChange: (account) => {
+            console.log('Account switched to:', account.name);
+            // You can add account switching logic here
           }
-          
-          // Handle regular sub-account switching within the current organization
-          currentSubAccount = selectedAccount.id;
-          window.currentSubAccount = currentSubAccount;
-          
-          // Update the content panel to show the new sub-account
-          window.updateContentPanel(window.accounts[window.currentAccount]);
-          
-          console.log('✅ Sub-account switch complete:', selectedAccount.name);
         }
-      }
-    );
+      );
 
-
-    
-    // Store globally for access by updateNavAccountSwitcher function
-    window.navAccountSwitcherInstance = navAccountSwitcher;
-    
-    // Manage hamburger button visibility when account switcher opens/closes
-    const accountSwitcherContainer = document.querySelector('.account-switcher-container');
-    
-    // Override the open method to add container class
-    const originalOpen = navAccountSwitcher.open.bind(navAccountSwitcher);
-    navAccountSwitcher.open = function() {
-      originalOpen();
-      accountSwitcherContainer.classList.add('account-switcher-open');
-    };
-    
-    // Override the close method to remove container class
-    const originalClose = navAccountSwitcher.close.bind(navAccountSwitcher);
-    navAccountSwitcher.close = function() {
-      originalClose();
-      accountSwitcherContainer.classList.remove('account-switcher-open');
-    };
-    
-    // Initialize
-    console.log('🚀 Dash Chrome ready!');
+      // Handle account switcher container styling
+      const accountSwitcherContainer = document.querySelector('.account-switcher-container');
+      
+      // Override the open method to add container class
+      const originalOpen = navAccountSwitcher.open.bind(navAccountSwitcher);
+      navAccountSwitcher.open = function() {
+        originalOpen();
+        accountSwitcherContainer.classList.add('account-switcher-open');
+      };
+      
+      // Override the close method to remove container class
+      const originalClose = navAccountSwitcher.close.bind(navAccountSwitcher);
+      navAccountSwitcher.close = function() {
+        originalClose();
+        accountSwitcherContainer.classList.remove('account-switcher-open');
+      };
+    });
   </script>
+
     </div> <!-- Close app-container -->
   </body>
 </html> 
