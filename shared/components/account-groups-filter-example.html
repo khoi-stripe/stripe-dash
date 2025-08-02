@@ -48,7 +48,7 @@
             <h3 style="margin-top: 0;">Component Demo</h3>
             
             <!-- Trigger Button -->
-            <button class="account-groups-trigger" onclick="togglePopover()">
+            <button class="account-groups-trigger open" onclick="togglePopover()">
                 <span class="trigger-show">Show</span>
                 <span class="trigger-separator">|</span>
                 <span class="trigger-option" id="triggerOption">All accounts</span>
@@ -90,7 +90,6 @@
                         
                         <!-- Footer inside accounts-section (Column 2) -->
                         <div class="popover-footer">
-                            <span class="selection-count">3 selected</span>
                             <div class="footer-buttons">
                                 <button class="btn-cancel" onclick="togglePopover()">Cancel</button>
                                 <button class="btn-apply" onclick="applySelection()">Apply</button>
@@ -196,6 +195,7 @@
                     </div>
                     <div class="content-container">
                         <label for="select-all">Select all</label>
+                        <span class="select-all-count" id="selectionCount">${accounts.length} selected</span>
                     </div>
                 </div>
             `;
@@ -295,7 +295,10 @@
         // Update selection count
         function updateSelectionCount() {
             const checked = document.querySelectorAll('#accountsList .account-item input[type="checkbox"]:checked').length;
-            document.querySelector('.selection-count').textContent = `${checked} selected`;
+            const selectionCountElement = document.getElementById('selectionCount');
+            if (selectionCountElement) {
+                selectionCountElement.textContent = `${checked} selected`;
+            }
         }
 
         // Update select all checkbox state based on individual checkboxes
@@ -356,8 +359,47 @@
             }
         }
 
-        // Initialize with all accounts
-        renderAccounts('all');
+        // Initialize component
+        function initializeComponent() {
+            // Render accounts for default group
+            renderAccounts('all');
+            
+            // Ensure popover is open on page load
+            const popover = document.getElementById('popover');
+            const trigger = document.querySelector('.account-groups-trigger');
+            
+            if (popover && trigger) {
+                popover.style.display = 'block';
+                trigger.classList.add('open');
+            }
+            
+            // Initialize scroll effect
+            addScrollEffect();
+        }
+
+        // Add scroll effect for accounts list
+        function addScrollEffect() {
+            const accountsList = document.getElementById('accountsList');
+            let scrollTimeout;
+
+            if (accountsList) {
+                accountsList.addEventListener('scroll', function() {
+                    // Add scrolling class
+                    this.classList.add('scrolling');
+                    
+                    // Clear previous timeout
+                    clearTimeout(scrollTimeout);
+                    
+                    // Set timeout to remove scrolling class when scrolling stops
+                    scrollTimeout = setTimeout(() => {
+                        this.classList.remove('scrolling');
+                    }, 300); // 300ms delay after scrolling stops
+                });
+            }
+        }
+
+        // Initialize component when page loads
+        initializeComponent();
     </script>
 </body>
 </html> 

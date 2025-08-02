@@ -68,6 +68,7 @@
   height: 360px; /* Full popover height */
   flex-shrink: 0 !important; /* Prevent shrinking */
   background: white;
+  border-right: 1px solid var(--neutral-50);
   overflow-y: auto;
   position: relative;
   z-index: 1;
@@ -178,7 +179,6 @@
   padding: 0 8px;
   flex-shrink: 0; /* Fixed height element */
   background: white;
-  border-bottom: 1px solid var(--neutral-50); /* Visual separator from scrollable accounts */
 }
 
 .accounts-list {
@@ -187,10 +187,16 @@
   overflow-x: hidden;
   padding: 0 8px 8px 8px; /* Add bottom padding for spacing above footer */
   min-height: 0; /* Allow flex item to shrink below content size */
+  background: white;
+  transition: background-color 0.4s ease;
   
   /* Custom scrollbar styling - match account switcher */
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent; /* Firefox */
+}
+
+.accounts-list.scrolling {
+  background: var(--neutral-25);
 }
 
 /* Webkit scrollbar styling (Chrome, Safari, Edge) - match account switcher */
@@ -219,12 +225,12 @@
   width: 100%;
   cursor: pointer;
   transition: background 0.15s ease;
-  border-bottom: 1px solid var(--neutral-50);
   user-select: none; /* Prevent text selection when clicking */
 }
 
 .account-item:hover {
   background: var(--neutral-25);
+  border-radius: 6px;
 }
 
 .checkbox-container {
@@ -272,12 +278,12 @@
   width: 100%;
   cursor: pointer;
   transition: background 0.15s ease;
-  border-bottom: 1px solid var(--neutral-50);
   user-select: none; /* Prevent text selection when clicking */
 }
 
 .select-all-item:hover {
   background: var(--neutral-25);
+  border-radius: 6px;
 }
 
 .select-all-item .checkbox-container {
@@ -342,10 +348,10 @@
   gap: 6px;
   padding: 8px;
   flex: 1;
+  justify-content: space-between;
 }
 
 .select-all-item label {
-  flex: 1;
   font-family: var(--font-family-ui);
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-regular);
@@ -353,6 +359,13 @@
   letter-spacing: -0.005em;
   color: var(--neutral-700);
   cursor: pointer;
+}
+
+.select-all-count {
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-regular);
+  color: var(--neutral-600);
+  margin-left: auto;
 }
 
 .content-container {
@@ -399,18 +412,13 @@
 .popover-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 12px 8px;
   background: white;
   flex-shrink: 0; /* Fixed height element */
-  border-top: 1px solid var(--neutral-50); /* Add subtle border to separate from accounts */
 }
 
-.selection-count {
-  font-size: var(--font-size-12);
-  font-weight: var(--font-weight-regular);
-  color: var(--neutral-600);
-}
+
 
 .footer-buttons {
   display: flex;
