@@ -25,7 +25,7 @@ class AccountGroupsFilter {
     this.isRepositioning = false; // Prevent cascade repositioning
     this.committedSelection = null; // Store committed selection state for cancel functionality
     this.triggerDimensions = null; // Store trigger size for consistent positioning
-    this.alignmentMode = 'center'; // 'left', 'center', or 'right' - determines which edge to align to
+    this.alignmentMode = 'left'; // 'left' or 'right' - determines which edge to align to
     this.alignmentLocked = false; // Whether alignment mode has been determined
     
     this.init();
@@ -75,26 +75,18 @@ class AccountGroupsFilter {
     const viewportWidth = window.innerWidth;
     const margin = 16;
     
-    // Calculate center position
-    const triggerCenterX = this.triggerDimensions.width / 2;
-    const popoverCenterX = popoverWidth / 2;
-    const centeredLeft = triggerCenterX - popoverCenterX;
-    
-    // Check viewport boundaries for centered position
+    // Check if right-aligned popover would go off right edge
     const triggerLeftInViewport = triggerRect.left;
-    const centeredPopoverLeft = triggerLeftInViewport + centeredLeft;
-    const centeredPopoverRight = centeredPopoverLeft + popoverWidth;
+    const rightAlignedLeft = triggerLeftInViewport + this.triggerDimensions.width - popoverWidth;
+    const rightAlignedRight = rightAlignedLeft + popoverWidth;
     
-    // Determine alignment based on viewport constraints
-    if (centeredPopoverRight > viewportWidth - margin) {
-      // Would go off right edge - align right
-      this.alignmentMode = 'right';
-    } else if (centeredPopoverLeft < margin) {
-      // Would go off left edge - align left
+    // Determine alignment: prefer right, fallback to left
+    if (rightAlignedRight > viewportWidth - margin || rightAlignedLeft < margin) {
+      // Right alignment would go off edge - use left alignment
       this.alignmentMode = 'left';
     } else {
-      // Fits centered
-      this.alignmentMode = 'center';
+      // Right alignment fits - use right alignment
+      this.alignmentMode = 'right';
     }
   }
   
@@ -136,13 +128,8 @@ class AccountGroupsFilter {
         left = 0; // Left-align to trigger
         break;
       case 'right':
-        left = currentTriggerWidth - popoverWidth; // Right-align to current trigger width
-        break;
-      case 'center':
       default:
-        const triggerCenterX = currentTriggerWidth / 2;
-        const popoverCenterX = popoverWidth / 2;
-        left = triggerCenterX - popoverCenterX; // Center on current trigger
+        left = currentTriggerWidth - popoverWidth; // Right-align to current trigger width
         break;
     }
     
@@ -183,7 +170,7 @@ class AccountGroupsFilter {
       trigger.classList.remove('open');
       // Clear stored position data when closing
       this.triggerDimensions = null;
-      this.alignmentMode = 'center';
+      this.alignmentMode = 'left';
       this.alignmentLocked = false;
     } else {
       // Capture current selection state before opening
@@ -565,7 +552,7 @@ class AccountGroupsFilter {
       
       // Clear stored position data when closing
       this.triggerDimensions = null;
-      this.alignmentMode = 'center';
+      this.alignmentMode = 'left';
       this.alignmentLocked = false;
     }
   }
