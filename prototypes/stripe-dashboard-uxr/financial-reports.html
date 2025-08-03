@@ -2445,13 +2445,30 @@
             trigger.classList.remove('open');
           }
           
-          // Reset to show all accounts when cancelled
-          filterReportsContent();
-          console.log('Filter cancelled - showing all accounts');
+          // Reset to show appropriate data based on current account context
+          const currentSubAccount = window.orgManager?.getCurrentSubAccount();
+          if (currentSubAccount && !currentSubAccount.isAggregate) {
+            // Show data for current individual account
+            filterReportsContent([currentSubAccount.id]);
+            console.log('Filter cancelled - showing current account:', currentSubAccount.name);
+          } else {
+            // Show all accounts for aggregate view
+            filterReportsContent();
+            console.log('Filter cancelled - showing all accounts');
+          }
         };
         
-        // Initialize with all accounts (no filter)
-        filterReportsContent();
+        // Initialize with appropriate data based on current account context
+        const currentSubAccount = window.orgManager?.getCurrentSubAccount();
+        if (currentSubAccount && !currentSubAccount.isAggregate) {
+          // Show data for current individual account
+          filterReportsContent([currentSubAccount.id]);
+          console.log('Initialized filter - showing current account:', currentSubAccount.name);
+        } else {
+          // Show all accounts for aggregate view
+          filterReportsContent();
+          console.log('Initialized filter - showing all accounts');
+        }
         
       } else {
         // Hide the filter when viewing individual accounts
@@ -2459,8 +2476,15 @@
           filterContainer.style.display = 'none';
         }
         
-        // Show unfiltered data when filter is hidden
-        filterReportsContent();
+        // Show data for current individual account when filter is hidden
+        const currentSubAccount = window.orgManager?.getCurrentSubAccount();
+        if (currentSubAccount && !currentSubAccount.isAggregate) {
+          filterReportsContent([currentSubAccount.id]);
+          console.log('Filter hidden - showing current account:', currentSubAccount.name);
+        } else {
+          filterReportsContent();
+          console.log('Filter hidden - showing all accounts');
+        }
       }
     }
 
@@ -2488,8 +2512,15 @@
             }
             
             // Refresh content when account changes
-            filterReportsContent();
-            console.log('Content refreshed for account switch:', newSubAccount.name);
+            if (newSubAccount.isAggregate) {
+              // Show all accounts when viewing "All accounts" aggregate view
+              filterReportsContent();
+              console.log('Content refreshed for account switch to All accounts:', newSubAccount.name);
+            } else {
+              // Filter to specific account when viewing individual account
+              filterReportsContent([newSubAccount.id]);
+              console.log('Content filtered to specific account:', newSubAccount.name, newSubAccount.id);
+            }
           }
         }
       }, 500); // Check every 500ms for account changes
