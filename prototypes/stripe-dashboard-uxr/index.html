@@ -591,6 +591,20 @@ document.addEventListener('DOMContentLoaded', function() {
   navLinks.forEach(function(link) {
     var href = link.getAttribute('href');
     if (!href) return;
+    
+    // Handle special case for home page (./ or index.html)
+    if (href === './' || href === './index.html' || href === 'index.html') {
+      // Check if current path ends with the directory containing index.html
+      var pathSegments = currentPath.split('/').filter(Boolean);
+      var isHomePage = pathSegments.length <= 2 || currentPath.endsWith('/stripe-dashboard-uxr/');
+      if (isHomePage) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+      return;
+    }
+    
     // Normalize for ./, /, and .html endings
     var normalizedHref = href.replace(/\/index\.html$/, '/').replace(/^\./, '');
     if (normalizedHref === currentPath || (normalizedHref !== '/' && currentPath.startsWith(normalizedHref))) {
@@ -601,6 +615,223 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+    <!-- Flyout for collapsed nav workloads -->
+    <style>
+    /* Flyout for collapsed nav workloads */
+    .workload-flyout {
+      position: fixed;
+      left: 64px; /* width of collapsed nav */
+      top: 0;
+      min-width: 220px;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 4px rgba(0,0,0,0.08);
+      border-radius: 10px;
+      z-index: 10000;
+      padding: 8px 0;
+      border: 1px solid var(--neutral-100);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+    .workload-flyout.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .workload-flyout .section-header {
+      padding: 12px 16px 8px 24px;
+      font-size: 12px;
+      color: var(--neutral-600);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .workload-flyout .workload-submenu {
+      display: flex;
+      flex-direction: column;
+      padding-left: 0;
+      margin-top: 0;
+      gap: 0;
+    }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const navPanel = document.getElementById('navPanel');
+      const workloadsNav = navPanel.querySelector('.workloads-nav');
+      let flyoutParent = null;
+      let flyout = null;
+      let currentTrigger = null;
+
+      function showWorkloadFlyout(workloadItem) {
+        if (flyoutParent && currentTrigger === workloadItem) return;
+        hideWorkloadFlyout();
+        currentTrigger = workloadItem;
+
+        // Find the section header and submenu for this workload
+        const container = workloadItem.closest('.workload-item-container');
+        const sectionHeader = container.querySelector('.section-header');
+        const submenu = container.querySelector('.workload-submenu');
+        if (!submenu) return;
+
+        // Create parent container
+        flyoutParent = document.createElement('div');
+        flyoutParent.className = 'workload-flyout-parent';
+        flyoutParent.style.position = 'fixed';
+        flyoutParent.style.zIndex = '10000';
+        flyoutParent.style.pointerEvents = 'none'; // Only the flyout itself is interactive
+
+        // Position parent to cover trigger and flyout area
+        const triggerRect = workloadItem.getBoundingClientRect();
+        const flyoutWidth = 260;
+        const flyoutHeight = Math.max(120, submenu.children.length * 32 + 48);
+        flyoutParent.style.top = `${Math.max(0, triggerRect.top - 8)}px`;
+        flyoutParent.style.left = `${triggerRect.right + 8}px`;
+        flyoutParent.style.width = `${flyoutWidth}px`;
+        flyoutParent.style.height = `${flyoutHeight}px`;
+
+        // Create flyout
+        flyout = document.createElement('div');
+        flyout.className = 'popover workload-flyout show';
+        flyout.style.position = 'absolute';
+        flyout.style.top = '0';
+        flyout.style.left = '0';
+        flyout.style.pointerEvents = 'auto';
+
+        // Clone header and submenu
+        if (sectionHeader) {
+          const headerClone = sectionHeader.cloneNode(true);
+          flyout.appendChild(headerClone);
+        }
+        const submenuClone = submenu.cloneNode(true);
+        submenuClone.classList.add('expanded');
+        flyout.appendChild(submenuClone);
+
+        flyoutParent.appendChild(flyout);
+        document.body.appendChild(flyoutParent);
+
+        // Mouseleave on parent hides flyout
+        flyoutParent.addEventListener('mouseleave', hideWorkloadFlyout);
+        // Mouseenter on parent cancels hide
+        flyoutParent.addEventListener('mouseenter', function() {
+          if (flyoutParent.hideTimeout) {
+            clearTimeout(flyoutParent.hideTimeout);
+            flyoutParent.hideTimeout = null;
+          }
+        });
+      }
+
+      function hideWorkloadFlyout() {
+        if (flyoutParent) {
+          if (flyoutParent.hideTimeout) {
+            clearTimeout(flyoutParent.hideTimeout);
+            flyoutParent.hideTimeout = null;
+          }
+          flyoutParent.remove();
+          flyoutParent = null;
+          flyout = null;
+          currentTrigger = null;
+        }
+      }
+
+      // Attach listeners to only expandable workload items
+      function attachWorkloadFlyoutListeners() {
+        const triggers = workloadsNav.querySelectorAll('.workload-item.expandable');
+        triggers.forEach(trigger => {
+          trigger.addEventListener('mouseenter', function() {
+            if (!navPanel.classList.contains('collapsed')) return;
+            showWorkloadFlyout(trigger);
+          });
+          trigger.addEventListener('mouseleave', function() {
+            if (flyoutParent) {
+              // Delay hide to allow mouse to enter flyoutParent
+              flyoutParent.hideTimeout = setTimeout(() => {
+                hideWorkloadFlyout();
+              }, 200);
+            }
+          });
+          // Prevent expand/collapse in collapsed state
+          trigger.addEventListener('click', function(e) {
+            if (navPanel.classList.contains('collapsed')) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          });
+          trigger.addEventListener('keydown', function(e) {
+            if (navPanel.classList.contains('collapsed') && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          });
+        });
+      }
+
+      attachWorkloadFlyoutListeners();
+    });
+    </script>
+
+    <!-- Force-disable tooltip for workload items in collapsed nav -->
+    <style>
+    /* Force-disable tooltip for workload items in collapsed nav */
+    .nav-panel.collapsed .workload-item:hover .nav-item-tooltip {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    </style>
+    <style>
+    .workload-flyout-parent {
+      /* No background, invisible container for event handling */
+    }
+    </style>
+    <style>
+    .workload-flyout .workload-submenu {
+      padding-left: 0 !important;
+    }
+    .workload-flyout .workload-subitem {
+      padding-left: 0 !important;
+    }
+    .workload-flyout .workload-subitem::before {
+      left: 0 !important;
+    }
+    </style>
+    <style>
+.workload-flyout .workload-subitem {
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 16px !important;
+  display: flex;
+  align-items: center;
+  border-radius: 6px !important;
+  font-size: 14px;
+  font-weight: 500;
+  background: #fff !important;
+  box-sizing: border-box;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+.workload-flyout .workload-subitem::before {
+  background: transparent !important;
+}
+.workload-flyout .workload-subitem .nav-item-icon {
+  display: none !important;
+}
+.workload-flyout .workload-subitem .nav-item-label {
+  margin-left: 0 !important;
+}
+.workload-flyout .workload-subitem:hover .nav-item-label,
+.workload-flyout .workload-subitem.active .nav-item-label {
+  color: var(--brand-600) !important;
+}
+.workload-flyout .workload-subitem:hover:not(.disabled),
+.workload-flyout .workload-subitem.active {
+  background: var(--neutral-50) !important;
+  text-decoration: none !important;
+  /* color intentionally omitted to allow label override */
+}
+</style>
 </head>
 <body>
   <div class="layout-container">

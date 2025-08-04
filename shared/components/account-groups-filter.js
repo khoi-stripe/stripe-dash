@@ -42,7 +42,10 @@ class AccountGroupsFilter {
     this.attachEventListeners();
     this.currentGroup = 'all';
     this.renderAccounts('all');
-    this.updateTriggerLabel('all');
+    // Update trigger label after a brief delay to ensure DOM is ready
+    setTimeout(() => {
+      this.updateTriggerLabel('all');
+    }, 0);
     this.addScrollEffect();
   }
   
@@ -388,6 +391,11 @@ class AccountGroupsFilter {
     if (selectionCount) {
       selectionCount.textContent = `${checked} selected`;
     }
+    
+    // Always update trigger label with current count when in custom mode
+    if (this.isCustomMode) {
+      this.updateTriggerLabel('custom');
+    }
   }
   
   updateSelectAllState() {
@@ -460,14 +468,16 @@ class AccountGroupsFilter {
         'Custom': 'Custom'
       };
       
+      // Always calculate and show the count
+      const selectedCount = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`).length;
+      
       if (this.isCustomMode) {
-        // Calculate selected accounts count
-        const selectedCount = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`).length;
         // Use innerHTML to allow styled count
         triggerOption.innerHTML = `Custom <span style="color: var(--neutral-500);">(${selectedCount})</span>`;
       } else {
         const labelText = groupNames[groupKey] || 'All accounts';
-        triggerOption.textContent = labelText;
+        // Always show count for all group types
+        triggerOption.innerHTML = `${labelText} <span style="color: var(--neutral-500);">(${selectedCount})</span>`;
       }
       
       // Recalculate position based on new trigger size but keep same alignment mode
