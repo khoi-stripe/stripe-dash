@@ -36,6 +36,8 @@
 
 .trigger-option {
   color: var(--neutral-900);
+  display: flex;
+  align-items: center;
 }
 
 .trigger-chevron {
@@ -54,7 +56,7 @@
   background: #FFF;
   box-shadow: 0 15px 35px 0 rgba(48, 49, 61, 0.08), 0 5px 15px 0 rgba(0, 0, 0, 0.12);
   overflow: hidden;
-  height: 360px; /* Fixed total height */
+  height: 368px; /* Fixed total height */
   width: 532px; /* Fixed total width */
   display: flex;
   flex-direction: row; /* Two-column layout */
@@ -69,10 +71,10 @@
 /* Column 1 - Groups (Full height) */
 .groups-section {
   width: 200px !important;
-  height: 360px; /* Full popover height */
+  height: 368px; /* Full popover height */
   flex-shrink: 0 !important; /* Prevent shrinking */
   background: white;
-  border-right: 1px solid var(--neutral-100);
+  border-right: 1px solid var(--neutral-50);
   overflow-y: auto;
   position: relative;
   z-index: 1;
@@ -85,6 +87,8 @@
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-20);
   color: var(--neutral-900);
+  display: flex;
+  align-items: center;
 }
 
 .group-item {
@@ -123,7 +127,7 @@
 /* Column 2 - Accounts Section (Full height with Search + Select All + List + Footer) */
 .accounts-section {
   flex: 1 !important;
-  height: 360px; /* Full popover height */
+  height: 368px; /* Full popover height */
   width: 332px; /* Remaining width after 200px groups section */
   display: flex !important;
   flex-direction: column !important;
@@ -133,7 +137,7 @@
 }
 
 .filter-search-container {
-  padding: 16px 8px 8px 8px;
+  padding: 16px;
   position: relative;
   flex-shrink: 0; /* Fixed height element */
   text-align: left; /* Ensure search field is always left-aligned */
@@ -141,7 +145,7 @@
 
 .filter-search-icon {
   position: absolute;
-  left: 16px; /* 8px container padding + 8px icon offset */
+  left: 24px; /* 16px container padding + 8px icon offset */
   top: 24px; /* 16px container top padding + 4px input padding + 4px center adjustment */
   width: 12px;
   height: 12px;
@@ -432,9 +436,11 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 12px 8px;
+  gap: 12px;
+  padding: 16px;
   background: white;
   flex-shrink: 0; /* Fixed height element */
+  overflow: visible !important; /* Allow tooltips to escape */
 }
 
 
@@ -442,10 +448,17 @@
 .footer-buttons {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-cancel, .btn-apply {
-  padding: 6px 12px;
+  display: inline-flex;
+  height: 28px;
+  min-height: 28px;
+  padding: var(--Spacing-xsmall, 4px) var(--Spacing-small, 8px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--Spacing-75, 6px);
   border-radius: 6px;
   font-size: var(--font-size-12);
   font-weight: var(--font-weight-semibold);
@@ -475,6 +488,70 @@
 .btn-apply:hover {
   background: var(--brand-700);
   border-color: var(--brand-700);
+}
+
+.btn-apply:disabled,
+.btn-apply.disabled {
+  border-radius: var(--Border-radius-action, 6px);
+  border: 1px solid var(--border-action-primary-disabled, #675DFF);
+  opacity: 0.5;
+  background: var(--background-action-primary-disabled, #675DFF);
+  color: white;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.btn-apply:disabled:hover,
+.btn-apply.disabled:hover {
+  border-radius: var(--Border-radius-action, 6px);
+  border: 1px solid var(--border-action-primary-disabled, #675DFF);
+  opacity: 0.5;
+  background: var(--background-action-primary-disabled, #675DFF);
+  color: white;
+}
+
+/* Custom tooltip for disabled button */
+.btn-apply.disabled {
+  position: relative;
+}
+
+.btn-apply.disabled:hover::before {
+  content: "Select at least one account";
+  position: fixed;
+  top: calc(var(--tooltip-y, 50vh) - 28px - 4px); /* Adjusted for nav tooltip height + 4px gap */
+  left: var(--tooltip-x, 50vw);
+  transform: translateX(-50%);
+  background: #21252C;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-16);
+  white-space: nowrap;
+  opacity: 1;
+  z-index: 999999999;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  min-width: max-content;
+}
+
+/* Arrow pointing down to the button */
+.btn-apply.disabled:hover::after {
+  content: "";
+  position: fixed;
+  top: calc(var(--tooltip-y, 50vh) - 6px - 4px); /* 6px for arrow height + 4px gap */
+  left: var(--tooltip-x, 50vw);
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #21252C;
+  z-index: 999999999;
+  pointer-events: none;
 }
 
 /* Alternate Button Style */

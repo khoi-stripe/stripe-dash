@@ -300,7 +300,7 @@
    
    When creating icons:
    1. Use clean, fill-based SVGs (no stroke outlines)
-   2. Default color: #6C7688 (use fill="currentColor" for inheritance)
+   2. Default color: var(--neutral-600) (use fill="currentColor" for inheritance)
    3. Size: 16px x 16px in 24px container
    4. ViewBox: "0 0 16 16" for consistency
    5. No stroke attributes
@@ -353,7 +353,7 @@
 
 .nav-item-icon svg {
   stroke: none;
-  color: #6C7688;
+  color: var(--neutral-600);
 }
 
 /* Icons now use fill-based design without strokes */
@@ -465,7 +465,7 @@
   display: block;
   margin: auto; /* Ensure SVG is perfectly centered in container */
   stroke: none;
-  color: #6C7688;
+  color: var(--neutral-600);
 }
 
 .workload-item .nav-item-label {
@@ -495,7 +495,7 @@
   height: 8px;
   display: block;
   margin: auto; /* Ensure caret SVG is perfectly centered in container */
-  color: #6C7688;
+  color: var(--neutral-600);
 }
 
 /* Workload Item Hover state */
@@ -625,7 +625,7 @@
 }
 
 .popover-option .nav-item-icon svg {
-  color: #6C7688;
+  color: var(--neutral-600);
 }
 
 /* Popover option hover states */
@@ -639,7 +639,7 @@
 
 .popover-option:hover .nav-item-icon svg {
   stroke: none;
-  color: #6C7688;
+  color: var(--neutral-600);
 }
 
 /* Global behavior: Persist button hover state when popover is open */

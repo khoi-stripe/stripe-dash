@@ -546,14 +546,126 @@
        margin-bottom: 8px;
      }
 
-     .metric-subtitle {
-       font-size: 12px;
-       color: var(--neutral-500);
-     }
+         .metric-subtitle {
+      font-size: 12px;
+      color: var(--neutral-500);
+    }
 
+    /* Balance Summary Table Styles */
+    .balance-table {
+      width: 100%;
+    }
 
+    .balance-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+    }
 
-    /* Responsive behavior */
+    .balance-row:nth-child(even):not(.total-row) {
+      background: var(--neutral-25);
+    }
+
+    .balance-row.sub-row {
+      padding-left: 36px; /* 16px base + 20px additional indent */
+      font-size: 14px;
+    }
+
+    .balance-row.total-row {
+      padding-top: 12px;
+      margin-top: 8px;
+      font-weight: 600;
+      background: transparent !important;
+    }
+
+    .balance-label {
+      font-size: 14px;
+      color: var(--neutral-700);
+    }
+
+    .balance-value {
+      font-size: 14px;
+      color: var(--neutral-900);
+      font-weight: 500;
+      text-align: right;
+    }
+
+    /* Activity Table Styles */
+    .activity-table {
+      width: 100%;
+    }
+
+    .activity-section {
+      margin-bottom: 24px;
+    }
+
+    .activity-section-header {
+      margin-bottom: 8px;
+    }
+
+    .activity-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-700);
+    }
+
+    .activity-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0 4px 16px;
+    }
+
+    .activity-detail {
+      font-size: 14px;
+      color: var(--neutral-600);
+    }
+
+    .activity-value {
+      font-size: 14px;
+      color: var(--neutral-900);
+      text-align: right;
+      min-width: 80px;
+    }
+
+    .activity-row:nth-child(even):not(.total-row) {
+      background: var(--neutral-25);
+    }
+
+    .activity-section.total-section {
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+
+    .activity-row.total-row {
+      font-weight: 600;
+      padding-left: 0;
+      display: grid;
+      grid-template-columns: 1fr 80px 120px;
+      gap: 16px;
+      background: transparent !important;
+    }
+
+    .activity-row.total-row .activity-label {
+      color: var(--neutral-900);
+    }
+
+    /* Payouts Table Styles */
+    .payouts-table {
+      width: 100%;
+    }
+
+    /* Account Breakdown Styles */
+    .account-breakdown-row {
+      border-radius: 8px;
+    }
+
+    .account-breakdown-row:nth-child(even) {
+      background: var(--neutral-25);
+    }
+
+   /* Responsive behavior */
     @media (max-width: 768px) {
       .nav-panel {
         position: fixed;
@@ -970,8 +1082,6 @@
             <div class="nav-item-icon">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M0 3.88431C0 3.08377 0.545006 2.40837 1.3057 2.20462L1.32368 2.19981L10.5518 0.212648C10.7019 0.175079 10.8523 0.157617 11 0.158478C11.927 0.163877 12.75 0.890772 12.75 1.89811V4.5H13.5C14.8807 4.5 16 5.61929 16 7V13.5C16 14.8807 14.8807 16 13.5 16H2.5C1.11929 16 0 14.8807 0 13.5V3.88431ZM10.9127 1.6686C11.1118 1.61666 11.25 1.75884 11.25 1.89811V4.5H2.5C2.14445 4.5 1.80623 4.57422 1.5 4.70802V3.88431C1.5 3.79247 1.5588 3.69527 1.68102 3.65725L10.8971 1.67268L10.9127 1.6686ZM1.5 7V13.5C1.5 14.0523 1.94772 14.5 2.5 14.5H13.5C14.0523 14.5 14.5 14.0523 14.5 13.5V7C14.5 6.44772 14.0523 6 13.5 6H2.5C1.94772 6 1.5 6.44772 1.5 7ZM13 10.25C13 10.9375 12.4375 11.5 11.75 11.5C11.0625 11.5 10.5 10.95 10.5 10.25C10.5 9.56248 11.0625 8.99998 11.75 8.99998C12.4375 8.99998 13 9.56248 13 10.25Z" fill="currentColor"/>
-                <path d="M9.125 3.5C9.60825 3.5 10 3.89175 10 4.375V10.625C10 11.1082 9.60825 11.5 9.125 11.5C8.64175 11.5 8.25 11.1082 8.25 10.625V4.375C8.25 3.89175 8.64175 3.5 9.125 3.5Z" fill="currentColor"/>
-                <path d="M6 6.875C6 6.39175 5.60825 6 5.125 6C4.64175 6 4.25 6.39175 4.25 6.875V10.625C4.25 11.1082 4.64175 11.5 5.125 11.5C5.60825 11.5 6 11.1082 6 10.625V6.875Z" fill="currentColor"/>
               </svg>
             </div>
             <span class="nav-item-label">Payments</span>
@@ -989,8 +1099,6 @@
                 <path d="M4 4.70007C4 4.28586 4.33579 3.95007 4.75 3.95007H7.25C7.66421 3.95007 8 4.28586 8 4.70007C8 5.11429 7.66421 5.45007 7.25 5.45007H4.75C4.33579 5.45007 4 5.11429 4 4.70007Z" fill="currentColor"/>
                 <path d="M4.75 6.95007C4.33579 6.95007 4 7.28586 4 7.70007C4 8.11429 4.33579 8.45007 4.75 8.45007H11.25C11.6642 8.45007 12 8.11429 12 7.70007C12 7.28586 11.6642 6.95007 11.25 6.95007H4.75Z" fill="currentColor"/>
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M1.55279 15.2764C1.214 15.107 1 14.7607 1 14.382V2.5C1 1.11929 2.11929 0 3.5 0H12.5C13.8807 0 15 1.11929 15 2.5V12C15 12.3148 14.8518 12.6111 14.6 12.8L13.3 13.775C13.1222 13.9083 12.8778 13.9083 12.7 13.775L11.3163 12.7372C11.1309 12.5982 10.8743 12.6048 10.6962 12.7531L8.27282 14.7727C8.10945 14.9088 7.87783 14.9267 7.69548 14.8173L5.83475 13.7009C5.63802 13.5828 5.38619 13.6138 5.22395 13.776L3.25483 15.7452C3.10265 15.8974 2.87016 15.9351 2.67767 15.8388L1.55279 15.2764ZM2.5 14.0729V2.5C2.5 1.94772 2.94772 1.5 3.5 1.5H12.5C13.0523 1.5 13.5 1.94772 13.5 2.5V11.75L13 12.125L12.2163 11.5372C11.4747 10.9811 10.4481 11.0073 9.73596 11.6008L7.85818 13.1656L6.6065 12.4146C5.81955 11.9424 4.81223 12.0664 4.16329 12.7154L2.70382 14.1749L2.5 14.0729Z" fill="currentColor"/>
-                <path d="M9.125 3.5C9.60825 3.5 10 3.89175 10 4.375V10.625C10 11.1082 9.60825 11.5 9.125 11.5C8.64175 11.5 8.25 11.1082 8.25 10.625V4.375C8.25 3.89175 8.64175 3.5 9.125 3.5Z" fill="currentColor"/>
-                <path d="M6 6.875C6 6.39175 5.60825 6 5.125 6C4.64175 6 4.25 6.39175 4.25 6.875V10.625C4.25 11.1082 4.64175 11.5 5.125 11.5C5.60825 11.5 6 11.1082 6 10.625V6.875Z" fill="currentColor"/>
               </svg>
             </div>
             <span class="nav-item-label">Billing</span>
@@ -1156,7 +1264,12 @@
             <div class="account-groups-popover" id="reportsFilterPopover" style="display: none;">
               <!-- Column 1 - Groups -->
               <div class="groups-section">
-                <div class="groups-header">Account groups</div>
+                <div class="groups-header">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 6px; flex-shrink: 0;">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M16 7.82679C16 7.94141 15.9803 8.05518 15.9417 8.16312L13.974 13.6727C13.6898 14.4687 12.9358 15 12.0906 15H2C0.895431 15 0 14.1046 0 13V3C0 1.89543 0.89543 1 2 1H4.58579C4.851 1 5.10536 1.10536 5.29289 1.29289L6 2H11C12.1046 2 13 2.89543 13 4V5H14C15.1046 5 16 5.89543 16 7V7.82679ZM3.75 6.5C3.33579 6.5 3 6.16421 3 5.75C3 5.33579 3.33579 5 3.75 5H11.5V4C11.5 3.72386 11.2761 3.5 11 3.5H6C5.60218 3.5 5.22064 3.34196 4.93934 3.06066L4.37868 2.5H2C1.72386 2.5 1.5 2.72386 1.5 3V13C1.5 13.2761 1.72386 13.5 2 13.5H12.0906C12.3019 13.5 12.4904 13.3672 12.5614 13.1682L14.5 7.74018V7C14.5 6.72386 14.2761 6.5 14 6.5H3.75Z" fill="currentColor"/>
+                  </svg>
+                  Account groups
+                </div>
                 <button class="group-item active" data-group="all">All accounts</button>
                 <button class="group-item" data-group="connected">Connected accounts</button>
                 <button class="group-item" data-group="express">Express accounts</button>
@@ -1255,6 +1368,207 @@
               </div>
               <div class="metric-subtitle">
                 Current organization
+              </div>
+            </div>
+          </div>
+
+          <!-- Balance Summary Section -->
+          <div class="metric-card balance-summary-card" style="margin-top: 32px;">
+            <div class="metric-header">
+              <h3 class="metric-title">Balance summary</h3>
+              <button class="download-btn" style="border: none; background: none; color: var(--neutral-600); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                Download
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 15V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div style="font-size: 14px; color: var(--neutral-600); margin-bottom: 20px; line-height: 1.5;">
+              Shows starting and ending balance in your Stripe accounts. Starting balance is the sum of your available balance, pending balance, issuing balance and Connect reserved balance. Changes to your balance come from activity (payments, refunds, transfers, etc.) and from payouts to your bank (aggregated here and broken out in detail in the reports below).
+            </div>
+            
+            <div class="balance-table">
+              <div class="balance-row">
+                <div class="balance-label">Starting balance — Jun 30 UTC</div>
+                <div class="balance-value">-$16,021.92</div>
+              </div>
+              <div class="balance-row">
+                <div class="balance-label">Balance change from activity</div>
+                <div class="balance-value"></div>
+              </div>
+              <div class="balance-row sub-row">
+                <div class="balance-label">Account activity before fees</div>
+                <div class="balance-value">$13.54</div>
+              </div>
+              <div class="balance-row sub-row">
+                <div class="balance-label">Less fees</div>
+                <div class="balance-value">-$3,369.25</div>
+              </div>
+              <div class="balance-row">
+                <div class="balance-label">Net balance change from activity</div>
+                <div class="balance-value">-$3,355.71</div>
+              </div>
+              <div class="balance-row">
+                <div class="balance-label">Total payouts</div>
+                <div class="balance-value">$0.00</div>
+              </div>
+              <div class="balance-row total-row">
+                <div class="balance-label">Ending balance — Jul 30 UTC</div>
+                <div class="balance-value">-$19,377.63</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Balance Change from Activity Section -->
+          <div class="metric-card balance-activity-card" style="margin-top: 20px;">
+            <div class="metric-header">
+              <h3 class="metric-title">Balance change from activity</h3>
+              <button class="download-btn" style="border: none; background: none; color: var(--neutral-600); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                Download
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 15V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div style="font-size: 14px; color: var(--neutral-600); margin-bottom: 20px; line-height: 1.5;">
+              Detailed breakdown of the balance change from activity line from the above Balance Summary report. Includes changes to your Stripe balance from activity (payments, refunds, transfers, etc.), excluding payouts, as well as itemized downloads.
+            </div>
+            
+            <div class="activity-table">
+              <div class="activity-section">
+                <div class="activity-section-header">
+                  <div class="activity-label">Charges</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Count</div>
+                  <div class="activity-value">1</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Gross amount</div>
+                  <div class="activity-value">$1.00</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Fees</div>
+                  <div class="activity-value">-$0.08</div>
+                </div>
+              </div>
+
+              <div class="activity-section">
+                <div class="activity-section-header">
+                  <div class="activity-label">Refunds</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Count</div>
+                  <div class="activity-value">3</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Gross amount</div>
+                  <div class="activity-value">-$4.13</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Fees returned</div>
+                  <div class="activity-value">$0.42</div>
+                </div>
+              </div>
+
+              <div class="activity-section">
+                <div class="activity-section-header">
+                  <div class="activity-label">Refund failures</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Count</div>
+                  <div class="activity-value">7</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Gross amount</div>
+                  <div class="activity-value">$16.68</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Fees</div>
+                  <div class="activity-value">-$1.34</div>
+                </div>
+              </div>
+
+              <div class="activity-section">
+                <div class="activity-section-header">
+                  <div class="activity-label">Additional Stripe fees</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Count</div>
+                  <div class="activity-value">16</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Gross amount</div>
+                  <div class="activity-value">-$3,368.25</div>
+                </div>
+              </div>
+
+              <div class="activity-section">
+                <div class="activity-section-header">
+                  <div class="activity-label">Contributions</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Count</div>
+                  <div class="activity-value">1</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Gross amount</div>
+                  <div class="activity-value">-$0.01</div>
+                </div>
+              </div>
+
+              <div class="activity-section total-section">
+                <div class="activity-row total-row">
+                  <div class="activity-label">Balance change from activity</div>
+                  <div class="activity-value">28</div>
+                  <div class="activity-value">-$3,355.71</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payouts Section -->
+          <div class="metric-card payouts-card" style="margin-top: 20px;">
+            <div class="metric-header">
+              <h3 class="metric-title">Payouts</h3>
+              <button class="download-btn" style="border: none; background: none; color: var(--neutral-600); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                Download
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 15V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div style="font-size: 14px; color: var(--neutral-600); margin-bottom: 20px; line-height: 1.5;">
+              Detailed breakdown of the total payouts line from the above Balance Summary report. Includes changes to your Stripe balance, from payouts to your bank, as well as itemized downloads.
+            </div>
+            
+            <div class="payouts-table">
+              <div class="activity-section">
+                <div class="activity-section-header">
+                  <div class="activity-label">Payouts</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Count</div>
+                  <div class="activity-value">0</div>
+                </div>
+                <div class="activity-row">
+                  <div class="activity-detail">Gross amount</div>
+                  <div class="activity-value">$0.00</div>
+                </div>
+              </div>
+
+              <div class="activity-section total-section">
+                <div class="activity-row total-row">
+                  <div class="activity-label">Total paid out</div>
+                  <div class="activity-value">0</div>
+                  <div class="activity-value">$0.00</div>
+                </div>
               </div>
             </div>
           </div>
@@ -2358,7 +2672,7 @@
         const transactionGrowth = parseFloat(account.transactionGrowth);
         
         return `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--neutral-100);">
+          <div class="account-breakdown-row" style="display: flex; justify-content: space-between; align-items: center; padding: 16px;">
             <div>
               <div style="font-weight: 600; color: var(--neutral-900); margin-bottom: 4px;">${account.name}</div>
               <div style="font-size: 12px; color: var(--neutral-500);">${account.transactions.toLocaleString()} transactions</div>

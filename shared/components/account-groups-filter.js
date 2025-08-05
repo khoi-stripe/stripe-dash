@@ -27,25 +27,64 @@ class AccountGroupsFilter {
     this.triggerDimensions = null; // Store trigger size for consistent positioning
     this.alignmentMode = 'left'; // 'left' or 'right' - determines which edge to align to
     this.alignmentLocked = false; // Whether alignment mode has been determined
+    this.retryCount = 0; // Track initialization retries
+    this.maxRetries = 3; // Maximum number of initialization retries
     
     this.init();
   }
   
   init() {
+    // Ensure DOM is ready before initializing
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.initializeComponent());
+    } else {
+      this.initializeComponent();
+    }
+  }
+  
+  initializeComponent() {
     // Generate account groups if function provided
     if (this.options.generateAccountGroups) {
-      this.accountGroups = this.options.generateAccountGroups();
+      try {
+        this.accountGroups = this.options.generateAccountGroups();
+      } catch (error) {
+        console.error('Error generating account groups:', error);
+        this.accountGroups = this.options.accountGroups || {};
+      }
     } else {
-      this.accountGroups = this.options.accountGroups;
+      this.accountGroups = this.options.accountGroups || {};
+    }
+    
+    // Verify all required DOM elements exist before proceeding
+    const requiredElements = [
+      this.options.triggerId,
+      this.options.popoverId,
+      this.options.searchInputId,
+      this.options.selectAllContainerId,
+      this.options.accountsListId,
+      this.options.triggerOptionId
+    ];
+    
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    if (missingElements.length > 0) {
+      console.warn('AccountGroupsFilter: Missing required DOM elements:', missingElements);
+      
+      // Retry initialization after a delay if we haven't exceeded max retries
+      if (this.retryCount < this.maxRetries) {
+        this.retryCount++;
+        console.log(`AccountGroupsFilter: Retrying initialization (attempt ${this.retryCount}/${this.maxRetries})`);
+        setTimeout(() => this.initializeComponent(), 100 * this.retryCount); // Increasing delay
+        return;
+      } else {
+        console.error('AccountGroupsFilter: Failed to initialize after maximum retries');
+        return;
+      }
     }
     
     this.attachEventListeners();
     this.currentGroup = 'all';
     this.renderAccounts('all');
-    // Update trigger label after a brief delay to ensure DOM is ready
-    setTimeout(() => {
-      this.updateTriggerLabel('all');
-    }, 0);
+    this.updateTriggerLabel('all');
     this.addScrollEffect();
   }
   
@@ -182,6 +221,8 @@ class AccountGroupsFilter {
       trigger.classList.add('open');
       // Calculate fresh position when opening
       this.positionPopover(true);
+      // Update Apply button state when opening
+      this.updateApplyButtonState();
     }
   }
   
@@ -191,6 +232,13 @@ class AccountGroupsFilter {
     const accounts = this.accountGroups[groupKey] || [];
     
     if (!selectAllContainer || !accountsList) {
+      console.warn('AccountGroupsFilter: Required containers not found for renderAccounts');
+      return;
+    }
+    
+    // Ensure we have account groups data
+    if (!this.accountGroups || Object.keys(this.accountGroups).length === 0) {
+      console.warn('AccountGroupsFilter: No account groups data available');
       return;
     }
     
@@ -396,6 +444,10 @@ class AccountGroupsFilter {
     if (this.isCustomMode) {
       this.updateTriggerLabel('custom');
     }
+    
+    // Update Apply button state and hide validation error when selection changes
+    this.updateApplyButtonState();
+    this.hideValidationError();
   }
   
   updateSelectAllState() {
@@ -456,40 +508,64 @@ class AccountGroupsFilter {
   updateTriggerLabel(groupKey) {
     const triggerOption = document.getElementById(this.options.triggerOptionId);
     
-
+    if (!triggerOption) {
+      console.warn('AccountGroupsFilter: Trigger option element not found');
+      return;
+    }
     
-    if (triggerOption) {
-      const groupNames = {
-        'all': 'All accounts',
-        'connected': 'Connected accounts',
-        'express': 'Express accounts',
-        'standard': 'Standard accounts',
-        'custom': 'Custom accounts',
-        'Custom': 'Custom'
-      };
-      
-      // Always calculate and show the count
-      const selectedCount = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`).length;
-      
-      if (this.isCustomMode) {
-        // Use innerHTML to allow styled count
-        triggerOption.innerHTML = `Custom <span style="color: var(--neutral-500);">(${selectedCount})</span>`;
-      } else {
-        const labelText = groupNames[groupKey] || 'All accounts';
-        // Always show count for all group types
-        triggerOption.innerHTML = `${labelText} <span style="color: var(--neutral-500);">(${selectedCount})</span>`;
-      }
-      
-      // Recalculate position based on new trigger size but keep same alignment mode
-      const popover = document.getElementById(this.options.popoverId);
-      if (popover && popover.style.display === 'flex') {
-        this.positionPopover(false); // Don't force recalculation of alignment mode
-      }
+    // Ensure we have account data to count
+    const accountsList = document.getElementById(this.options.accountsListId);
+    if (!accountsList) {
+      console.warn('AccountGroupsFilter: Accounts list not found for count calculation');
+      return;
+    }
+    
+    const groupNames = {
+      'all': 'All accounts',
+      'connected': 'Connected accounts',
+      'express': 'Express accounts',
+      'standard': 'Standard accounts',
+      'custom': 'Custom accounts',
+      'Custom': 'Custom'
+    };
+    
+    // Always calculate and show the count
+    const selectedCount = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`).length;
+    
+    const folderIcon = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px; flex-shrink: 0;">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M16 7.82679C16 7.94141 15.9803 8.05518 15.9417 8.16312L13.974 13.6727C13.6898 14.4687 12.9358 15 12.0906 15H2C0.895431 15 0 14.1046 0 13V3C0 1.89543 0.89543 1 2 1H4.58579C4.851 1 5.10536 1.10536 5.29289 1.29289L6 2H11C12.1046 2 13 2.89543 13 4V5H14C15.1046 5 16 5.89543 16 7V7.82679ZM3.75 6.5C3.33579 6.5 3 6.16421 3 5.75C3 5.33579 3.33579 5 3.75 5H11.5V4C11.5 3.72386 11.2761 3.5 11 3.5H6C5.60218 3.5 5.22064 3.34196 4.93934 3.06066L4.37868 2.5H2C1.72386 2.5 1.5 2.72386 1.5 3V13C1.5 13.2761 1.72386 13.5 2 13.5H12.0906C12.3019 13.5 12.4904 13.3672 12.5614 13.1682L14.5 7.74018V7C14.5 6.72386 14.2761 6.5 14 6.5H3.75Z" fill="currentColor"/>
+    </svg>`;
+    
+    if (this.isCustomMode) {
+      // Use innerHTML to allow styled count
+      triggerOption.innerHTML = `${folderIcon}Custom <span style="color: var(--neutral-500);">&nbsp;(${selectedCount})</span>`;
+    } else {
+      const labelText = groupNames[groupKey] || 'All accounts';
+      // Always show count for all group types
+      triggerOption.innerHTML = `${folderIcon}${labelText} <span style="color: var(--neutral-500);">&nbsp;(${selectedCount})</span>`;
+    }
+    
+    // Recalculate position based on new trigger size but keep same alignment mode
+    const popover = document.getElementById(this.options.popoverId);
+    if (popover && popover.style.display === 'flex') {
+      this.positionPopover(false); // Don't force recalculation of alignment mode
     }
   }
   
   // Public method to apply selection (can be overridden)
   applySelection() {
+    // Check if at least one account is selected
+    const checkedCheckboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`);
+    
+    if (checkedCheckboxes.length === 0) {
+      // Don't apply if no accounts are selected
+      this.showValidationError();
+      return;
+    }
+    
+    // Hide validation error if it was showing
+    this.hideValidationError();
+    
     // Update trigger label based on current selection state
     this.updateTriggerBasedOnSelection();
     this.togglePopover();
@@ -553,6 +629,9 @@ class AccountGroupsFilter {
     // Restore the original selection when canceling
     this.restoreCommittedSelection();
     
+    // Hide validation error when closing
+    this.hideValidationError();
+    
     const popover = document.getElementById(this.options.popoverId);
     const trigger = document.getElementById(this.options.triggerId);
     
@@ -564,6 +643,60 @@ class AccountGroupsFilter {
       this.triggerDimensions = null;
       this.alignmentMode = 'left';
       this.alignmentLocked = false;
+    }
+  }
+  
+    // Show validation error when no accounts are selected
+  showValidationError() {
+    // CSS handles the tooltip display via .btn-apply.disabled:hover::after
+    // No JavaScript needed for tooltip
+  }
+
+  // Hide validation error
+  hideValidationError() {
+    // CSS handles the tooltip display via .btn-apply.disabled:hover::after
+    // No JavaScript needed for tooltip
+  }
+  
+  // Update Apply button state based on selection
+  updateApplyButtonState() {
+    const applyButton = document.querySelector(`#${this.options.popoverId} .btn-apply`);
+    if (!applyButton) return;
+    
+    const checkedCheckboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`);
+    const hasSelection = checkedCheckboxes.length > 0;
+    
+    if (hasSelection) {
+      applyButton.disabled = false;
+      applyButton.classList.remove('disabled');
+      this.hideValidationError();
+    } else {
+      applyButton.disabled = true;
+      applyButton.classList.add('disabled');
+      this.showValidationError();
+      
+      // Set CSS custom properties for tooltip positioning
+      const rect = applyButton.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const topY = rect.top;
+      
+      // Update CSS custom properties for the tooltip
+      document.documentElement.style.setProperty('--tooltip-x', `${centerX}px`);
+      document.documentElement.style.setProperty('--tooltip-y', `${topY}px`);
+    }
+  }
+  
+  // Public method to refresh the component data
+  refresh() {
+    // Re-generate account groups if function provided
+    if (this.options.generateAccountGroups) {
+      try {
+        this.accountGroups = this.options.generateAccountGroups();
+        this.renderAccounts(this.currentGroup);
+        this.updateTriggerLabel(this.currentGroup);
+      } catch (error) {
+        console.error('Error refreshing account groups:', error);
+      }
     }
   }
 } 
