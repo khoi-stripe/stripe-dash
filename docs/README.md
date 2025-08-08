@@ -382,11 +382,47 @@ export function myUtility(input) {
 - Debounce expensive operations (scroll, resize)
 - Consider lazy loading for large prototypes
 
+## 🎨 Wireframe System (NEW!)
+
+The system now includes comprehensive wireframing capabilities for progressive fidelity prototyping:
+
+### Quick Start with Wireframes
+```html
+<script type="module">
+  import { WireframeElements, FidelityController } from '../../shared/components/wireframe-elements.js';
+  
+  // Initialize fidelity controls
+  FidelityController.init();
+  
+  // Create wireframe layout
+  document.body.innerHTML = WireframeElements.layout({
+    header: WireframeElements.header('My App'),
+    sidebar: WireframeElements.sidebar(['Home', 'Settings']),
+    main: WireframeElements.card('Main content')
+  });
+</script>
+```
+
+### Fidelity Levels
+- **Low-Fi** (`Alt+1`): Gray boxes, dashed borders, focus on structure
+- **Mid-Fi** (`Alt+2`): Basic styling with design system colors
+- **High-Fi** (`Alt+3`): Full component integration
+
+### Wireframe Components
+- `WireframeElements.layout()` - Complete page layouts
+- `WireframeElements.header()` - Page headers with navigation
+- `WireframeElements.form()` - Forms with fields and validation
+- `WireframeElements.table()` - Data tables with sorting
+- `WireframeElements.card()` - Content cards and containers
+
+**📖 Complete Documentation:** See `/prototypes/wireframe-templates/README.md`
+
 ## 📚 Examples
 
 See the included prototypes for real-world examples:
 
-- **E-commerce Checkout** (`prototypes/ecommerce-checkout/`): Payment flow with experiment toggles
+- **🎨 Wireframe Templates** (`prototypes/wireframe-templates/`): Progressive fidelity wireframing system
+- **E-commerce Checkout** (`prototypes/ecommerce-checkout/`): Payment flow with experiment toggles  
 - **Dashboard Analytics** (coming soon): Data visualization experiments
 - **Mobile Navigation** (coming soon): Touch interaction patterns
 

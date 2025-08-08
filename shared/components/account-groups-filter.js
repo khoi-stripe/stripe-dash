@@ -263,13 +263,18 @@ class AccountGroupsFilter {
         '';
       const iconClass = account.backgroundColor ? 'account-icon' : `account-icon ${account.color}`;
       
+      // Use avatar image if available, otherwise fall back to initials
+      const avatarContent = account.avatar ? 
+        `<img src="${account.avatar}" alt="${account.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">` :
+        account.initials;
+      
       return `
         <div class="account-item">
           <div class="checkbox-container">
             <input type="checkbox" ${account.checked ? 'checked' : ''}>
           </div>
           <div class="account-filter-content">
-            <div class="${iconClass}" ${iconStyle}>${account.initials}</div>
+            <div class="${iconClass}" ${iconStyle}>${avatarContent}</div>
             <label>${account.name}</label>
           </div>
         </div>
@@ -692,11 +697,180 @@ class AccountGroupsFilter {
     if (this.options.generateAccountGroups) {
       try {
         this.accountGroups = this.options.generateAccountGroups();
+        this.rebuildGroupButtons();
         this.renderAccounts(this.currentGroup);
-        this.updateTriggerLabel(this.currentGroup);
       } catch (error) {
         console.error('Error refreshing account groups:', error);
       }
     }
+  }
+  
+  rebuildGroupButtons() {
+    // Find the popover and groups container
+    const popover = document.getElementById(this.options.popoverId);
+    if (!popover) {
+      console.warn('AccountGroupsFilter: Popover not found for rebuilding group buttons');
+      return;
+    }
+    
+    const groupsContainer = popover.querySelector('.groups-section');
+    const accountsSection = popover.querySelector('.accounts-section');
+    
+    if (!groupsContainer || !accountsSection) {
+      console.warn('AccountGroupsFilter: Required containers not found for rebuilding group buttons');
+      return;
+    }
+    
+    // Check if we have any custom groups (excluding 'all')
+    const customGroupKeys = Object.keys(this.accountGroups);
+    const hasCustomGroups = customGroupKeys.length > 0;
+    
+    if (!hasCustomGroups) {
+      // No custom groups - hide the groups section and show only accounts
+      groupsContainer.style.display = 'none';
+      accountsSection.style.width = '100%';
+      
+      // Create an "all" group with all available accounts
+      this.createAllAccountsGroup();
+      this.currentGroup = 'all';
+      this.renderAccounts('all');
+      
+      console.log('🔄 No custom groups found - showing all accounts only');
+      return;
+    }
+    
+    // Has custom groups - show the groups section
+    groupsContainer.style.display = '';
+    accountsSection.style.width = '';
+    
+    // Preserve the header and search bar
+    const header = groupsContainer.querySelector('.groups-header');
+    const searchBar = groupsContainer.querySelector('.search-bar');
+    
+    // Clear existing buttons but preserve header and search
+    groupsContainer.innerHTML = '';
+    
+    // Re-add header if it existed
+    if (header) {
+      groupsContainer.appendChild(header);
+    } else {
+      // Create header if it doesn't exist
+      const headerHTML = `
+        <div class="groups-header">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 6px; flex-shrink: 0;">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M16 7.82679C16 7.94141 15.9803 8.05518 15.9417 8.16312L13.974 13.6727C13.6898 14.4687 12.9358 15 12.0906 15H2C0.895431 15 0 14.1046 0 13V3C0 1.89543 0.89543 1 2 1H4.58579C4.851 1 5.10536 1.10536 5.29289 1.29289L6 2H11C12.1046 2 13 2.89543 13 4V5H14C15.1046 5 16 5.89543 16 7V7.82679ZM3.75 6.5C3.33579 6.5 3 6.16421 3 5.75C3 5.33579 3.33579 5 3.75 5H11.5V4C11.5 3.72386 11.2761 3.5 11 3.5H6C5.60218 3.5 5.22064 3.34196 4.93934 3.06066L4.37868 2.5H2C1.72386 2.5 1.5 2.72386 1.5 3V13C1.5 13.2761 1.72386 13.5 2 13.5H12.0906C12.3019 13.5 12.4904 13.3672 12.5614 13.1682L14.5 7.74018V7C14.5 6.72386 14.2761 6.5 14 6.5H3.75Z" fill="currentColor"/>
+          </svg>
+          Account groups
+        </div>
+      `;
+      groupsContainer.insertAdjacentHTML('afterbegin', headerHTML);
+    }
+    
+    // Re-add search bar if it existed
+    if (searchBar) {
+      groupsContainer.appendChild(searchBar);
+    }
+    
+    // Always create "All" button first
+    this.createAllAccountsGroup();
+    const allButton = document.createElement('button');
+    allButton.className = 'group-item active';
+    allButton.setAttribute('data-group', 'all');
+    allButton.textContent = 'All';
+    
+    // Add click handler for All button
+    allButton.addEventListener('click', (e) => {
+      // Remove active class from all buttons
+      groupsContainer.querySelectorAll('.group-item').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Add active class to clicked button
+      allButton.classList.add('active');
+      
+      // Render accounts for All group
+      this.renderAccounts('all');
+    });
+    
+    groupsContainer.appendChild(allButton);
+    
+    // Set current group to 'all' by default
+    this.currentGroup = 'all';
+    
+    // Create buttons for each custom account group
+    customGroupKeys.forEach((groupKey) => {
+      const button = document.createElement('button');
+      button.className = 'group-item';
+      button.setAttribute('data-group', groupKey);
+      
+      // Capitalize group name for display
+      const displayName = groupKey.split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
+      
+      button.textContent = displayName;
+      
+      // Add click handler
+      button.addEventListener('click', (e) => {
+        // Remove active class from all buttons
+        groupsContainer.querySelectorAll('.group-item').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        // Render accounts for selected group
+        this.renderAccounts(groupKey);
+      });
+      
+      groupsContainer.appendChild(button);
+    });
+    
+    console.log('🔄 Rebuilt group buttons with All + custom groups:', ['all', ...customGroupKeys]);
+  }
+  
+  createAllAccountsGroup() {
+    // Create an "all" group containing all available accounts from OrgDataManager
+    if (window.OrgDataManager) {
+      const currentOrg = window.OrgDataManager.getCurrentOrganization();
+      if (currentOrg && currentOrg.accounts) {
+        const allAccounts = currentOrg.accounts
+          .filter(acc => !acc.isAggregate)
+          .map((acc, index) => ({
+            name: acc.name,
+            initials: this.generateInitials(acc.name),
+            color: this.convertHexToColorClass(acc.color) || (index % 2 === 0 ? 'blue' : 'green'),
+            backgroundColor: acc.color,
+            checked: true,
+            id: acc.id,
+            type: acc.type || 'Account'
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        
+        this.accountGroups['all'] = allAccounts;
+      }
+    }
+  }
+  
+  generateInitials(name) {
+    return name.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0, 2).join('');
+  }
+  
+  convertHexToColorClass(hexColor) {
+    if (!hexColor) return null;
+    
+    const colorMap = {
+      '#3B82F6': 'blue',
+      '#10B981': 'green', 
+      '#F59E0B': 'orange',
+      '#EF4444': 'red',
+      '#8B5CF6': 'purple',
+      '#06B6D4': 'cyan',
+      '#84CC16': 'lime',
+      '#F97316': 'amber'
+    };
+    
+    return colorMap[hexColor.toUpperCase()] || null;
   }
 } 

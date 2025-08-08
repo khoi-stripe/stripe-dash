@@ -12,7 +12,6 @@
   white-space: nowrap; /* Prevent text wrapping */
   
   /* label/small emphasized typography */
-  font-family: var(--font-family-ui);
   font-size: var(--font-size-12);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-16);
@@ -52,11 +51,11 @@
 }
 
 .account-groups-popover {
-  border-radius: 8px;
+  border-radius: 12px;
   background: #FFF;
   box-shadow: 0 15px 35px 0 rgba(48, 49, 61, 0.08), 0 5px 15px 0 rgba(0, 0, 0, 0.12);
   overflow: hidden;
-  height: 368px; /* Fixed total height */
+  height: 364px; /* Fixed total height */
   width: 532px; /* Fixed total width */
   display: flex;
   flex-direction: row; /* Two-column layout */
@@ -69,10 +68,10 @@
 /* Removed popover-content wrapper - now using direct two-column layout */
 
 /* Column 1 - Groups (Full height) */
-.groups-section {
-  width: 200px !important;
-  height: 368px; /* Full popover height */
-  flex-shrink: 0 !important; /* Prevent shrinking */
+.account-groups-popover .groups-section {
+  width: 200px;
+  height: 364px; /* Full popover height */
+  flex-shrink: 0; /* Prevent shrinking */
   background: white;
   border-right: 1px solid var(--neutral-50);
   overflow-y: auto;
@@ -104,7 +103,6 @@
   transition: all var(--transition-fast);
   
   /* label/medium typography */
-  font-family: var(--font-family-ui);
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-20);
@@ -125,19 +123,19 @@
 }
 
 /* Column 2 - Accounts Section (Full height with Search + Select All + List + Footer) */
-.accounts-section {
-  flex: 1 !important;
-  height: 368px; /* Full popover height */
+.account-groups-popover .accounts-section {
+  flex: 1;
+  height: 364px; /* Full popover height */
   width: 332px; /* Remaining width after 200px groups section */
-  display: flex !important;
-  flex-direction: column !important;
+  display: flex;
+  flex-direction: column;
   background: white;
   overflow: hidden; /* Contain scrolling to accounts-list */
   text-align: left; /* Override any inherited text alignment */
 }
 
 .filter-search-container {
-  padding: 16px;
+  padding: 16px 16px 8px 16px;
   position: relative;
   flex-shrink: 0; /* Fixed height element */
   text-align: left; /* Ensure search field is always left-aligned */
@@ -170,7 +168,7 @@
   background: white;
   border: 1px solid var(--neutral-100);
   border-radius: 8px;
-  font-family: var(--font-family-ui);
+
   font-size: var(--font-size-14);
   color: var(--color-text);
   box-sizing: border-box;
@@ -230,55 +228,55 @@
 }
 
 .account-groups-popover .account-item {
-  display: flex !important;
-  align-items: center !important; /* Changed from stretch to center to match select-all alignment */
-  height: 36px !important;
-  width: 100% !important;
+  display: flex;
+  align-items: center; /* Changed from stretch to center to match select-all alignment */
+  height: 36px;
+  width: 100%;
   cursor: pointer;
   transition: background 0.15s ease;
   user-select: none; /* Prevent text selection when clicking */
-  position: relative !important; /* Allow absolute positioning of checkbox */
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  position: relative; /* Allow absolute positioning of checkbox */
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .account-groups-popover .account-item:hover {
-  background: var(--neutral-25) !important;
-  border-radius: 6px !important;
+  background: var(--neutral-25);
+  border-radius: 6px;
 }
 
 .account-groups-popover .checkbox-container {
-  width: 22px !important;
-  height: 36px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
-  position: absolute !important;
-  left: 8px !important; /* Fixed position from left edge */
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  width: 22px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: absolute;
+  left: 8px; /* Fixed position from left edge */
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .account-groups-popover .account-item input[type="checkbox"] {
-  width: 14px !important;
-  height: 14px !important;
-  border: 1px solid var(--neutral-300) !important;
-  border-radius: 4px !important;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--neutral-300);
+  border-radius: 4px;
   cursor: pointer;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .account-groups-popover .account-item input[type="checkbox"]:checked {
-  background: var(--brand-600) !important;
-  border-color: var(--brand-600) !important;
+  background: var(--brand-600);
+  border-color: var(--brand-600);
   position: relative;
 }
 
@@ -295,43 +293,43 @@
 }
 
 .account-groups-popover .select-all-item {
-  display: flex !important;
-  align-items: center !important; /* Changed from stretch to center for consistent alignment */
-  height: 36px !important;
-  width: 100% !important;
+  display: flex;
+  align-items: center; /* Changed from stretch to center for consistent alignment */
+  height: 36px;
+  width: 100%;
   cursor: pointer;
   transition: background 0.15s ease;
   user-select: none; /* Prevent text selection when clicking */
-  position: relative !important; /* Allow absolute positioning of checkbox */
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  position: relative; /* Allow absolute positioning of checkbox */
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .account-groups-popover .select-all-item:hover {
-  background: var(--neutral-25) !important;
-  border-radius: 6px !important;
+  background: var(--neutral-25);
+  border-radius: 6px;
 }
 
 /* Remove duplicate - use shared .checkbox-container style */
 
 .account-groups-popover .select-all-item input[type="checkbox"] {
-  width: 14px !important;
-  height: 14px !important;
-  border: 1px solid var(--neutral-300) !important;
-  border-radius: 4px !important;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--neutral-300);
+  border-radius: 4px;
   cursor: pointer;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .account-groups-popover .select-all-item input[type="checkbox"]:checked {
-  background: var(--brand-600) !important;
-  border-color: var(--brand-600) !important;
+  background: var(--brand-600);
+  border-color: var(--brand-600);
   position: relative;
 }
 
@@ -348,8 +346,8 @@
 }
 
 .account-groups-popover .select-all-item input[type="checkbox"]:indeterminate {
-  background: var(--brand-600) !important;
-  border-color: var(--brand-600) !important;
+  background: var(--brand-600);
+  border-color: var(--brand-600);
   position: relative;
 }
 
@@ -365,36 +363,26 @@
   border-radius: 1px;
 }
 
-.account-groups-popover .select-all-item .account-filter-content {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 8px 6px !important;
-  margin-left: 30px !important; /* Space for checkbox: 8px position + 22px width */
-  flex: 1 !important;
-  box-sizing: border-box !important;
+/* Consolidated styles for both select-all-item and account-item content */
+.account-groups-popover .select-all-item .account-filter-content,
+.account-groups-popover .account-item .account-filter-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px;
+  margin-left: 30px; /* Space for checkbox: 8px position + 22px width */
+  flex: 1;
+  box-sizing: border-box;
 }
 
 .select-all-item label {
-  font-family: var(--font-family-ui);
+
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-20);
   letter-spacing: -0.005em;
   color: var(--neutral-700);
   cursor: pointer;
-}
-
-
-
-.account-groups-popover .account-item .account-filter-content {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 8px 6px !important;
-  margin-left: 30px !important; /* Space for checkbox: 8px position + 22px width */
-  flex: 1 !important;
-  box-sizing: border-box !important;
 }
 
 .account-icon {
@@ -422,7 +410,7 @@
 
 .account-item label {
   flex: 1;
-  font-family: var(--font-family-ui);
+
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-20);
@@ -525,7 +513,7 @@
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
-  font-family: var(--font-family-ui);
+
   font-size: var(--font-size-12);
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-16);
@@ -564,7 +552,7 @@
   transition: all var(--transition-fast);
   
   /* label/medium typography */
-  font-family: var(--font-family-ui);
+
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-20);

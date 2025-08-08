@@ -26,6 +26,11 @@ This directory contains reusable UI components used across the dashboard prototy
 - **`modal.css`** - Global modal styles (included in base.css)
 - **`modal-example.html`** - Comprehensive usage examples and documentation
 
+### **Wireframe System** 🆕
+- **`wireframe-elements.js`** - Progressive fidelity wireframing components
+- **`wireframe.css`** - Wireframe-specific styles (included in base.css)
+- **`../prototypes/wireframe-templates/`** - Complete wireframe examples and documentation
+
 ## Modal Component Usage
 
 The Modal component is a flexible, reusable dialog system with the following features:
@@ -161,6 +166,38 @@ filter.close();
 ### Example Files
 - **`account-groups-filter-example.html`** - Live examples with various configurations
 - Run locally to see interactive demonstrations
+
+## Wireframe System Usage
+
+The wireframe system enables progressive fidelity prototyping:
+
+### Basic Usage
+```javascript
+import { WireframeElements, FidelityController } from './wireframe-elements.js';
+
+// Initialize fidelity controls
+FidelityController.init();
+
+// Create wireframe components
+const app = WireframeElements.layout({
+  header: WireframeElements.header('My App'),
+  sidebar: WireframeElements.sidebar(['Home', 'Profile']),
+  main: WireframeElements.card('Main content area')
+});
+```
+
+### Fidelity Levels
+- **Low**: Gray boxes, dashed borders (`Alt+1`)
+- **Mid**: Basic styling with design system (`Alt+2`) 
+- **High**: Full component integration (`Alt+3`)
+
+### Available Components
+- Layout: `layout()`, `header()`, `sidebar()`
+- Content: `box()`, `card()`, `text()`
+- Forms: `form()`, `input()`, `button()`
+- Data: `table()`
+
+**See** `/prototypes/wireframe-templates/` for complete examples and documentation.
 
 ## Future Components
 

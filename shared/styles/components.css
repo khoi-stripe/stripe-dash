@@ -1,4 +1,17 @@
-/* Layout utilities */
+/* ===== LAYOUT UTILITIES ===== */
+/* Flexbox and layout utilities to reduce repetitive CSS patterns
+ * 
+ * Usage Examples:
+ * - Replace "display: flex; align-items: center;" with class="flex items-center"
+ * - Replace "display: flex; align-items: center; justify-content: center;" with class="flex items-center justify-center"
+ * - Replace "display: inline-flex; align-items: center; justify-content: center;" with class="inline-flex items-center justify-center"
+ * 
+ * Benefits:
+ * - Reduces CSS repetition across components
+ * - Provides consistent flexbox patterns
+ * - Makes HTML more semantic and maintainable
+ * - Following Tailwind-style utility approach
+ */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -28,6 +41,46 @@
 .gap-sm { gap: var(--space-sm); }
 .gap-md { gap: var(--space-md); }
 .gap-lg { gap: var(--space-lg); }
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.items-stretch {
+  align-items: stretch;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
 
 .grid {
   display: grid;
@@ -163,45 +216,402 @@
   line-height: var(--line-height-24);
 }
 
-/* Form components */
+/* ===== FORM COMPONENTS ===== */
+/* Consolidated form UI system for consistent styling across all components */
+
+/* Form Layout */
 .form-group {
   margin-bottom: var(--space-md);
 }
 
-.form-label {
-  display: block;
-  font-family: var(--font-family-ui);
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-20);
-  letter-spacing: -0.005em;
-  margin-bottom: var(--space-xs);
-  color: var(--color-text);
+.form-section {
+  margin-bottom: 24px;
 }
 
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Form Labels */
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: var(--line-height-20);
+  letter-spacing: -0.005em;
+  margin-bottom: 6px;
+  color: var(--neutral-900);
+}
+
+/* Help Text */
+.form-help {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--neutral-600);
+  line-height: 1.4;
+}
+
+/* Text Inputs */
 .form-input {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-family-ui);
-  font-size: var(--font-size-16);
+  padding: 12px 16px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-24);
   letter-spacing: -0.005em;
-  background-color: var(--color-background);
-  color: var(--color-text);
-  transition: border-color var(--transition-fast);
+  background-color: white;
+  color: var(--neutral-900);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
-  border-color: var(--color-primary);
+  border-color: var(--brand-600);
   outline: none;
-  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .form-input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--neutral-400);
+}
+
+.form-input:disabled {
+  background-color: var(--neutral-50);
+  border-color: var(--neutral-200);
+  color: var(--neutral-500);
+  cursor: not-allowed;
+}
+
+/* ===== FORM INPUT SIZE VARIANTS ===== */
+
+/* Small Size (24px height) */
+.form-input.small,
+.search-input.small,
+.dashboard-search-input.small {
+  height: 24px;
+  padding: 4px 12px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* Medium Size (28px height) - Default */
+.form-input.medium,
+.search-input.medium,
+.dashboard-search-input.medium {
+  height: 28px;
+  padding: 4px 12px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+/* Large Size (40px height) */
+.form-input.large,
+.search-input.large,
+.dashboard-search-input.large {
+  height: 40px;
+  padding: 8px 16px;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+/* Textarea */
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+  background-color: white;
+  color: var(--neutral-900);
+}
+
+.form-textarea:focus {
+  border-color: var(--brand-600);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-textarea::placeholder {
+  color: var(--neutral-400);
+}
+
+/* ===== SEARCH INPUTS ===== */
+/* Consolidated search input system with modifiers for specific contexts */
+
+/* Base Search Input */
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: white;
+  color: var(--neutral-900);
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--brand-600);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--neutral-400);
+}
+
+/* Dashboard Search - Distinct styling for dashboard chrome */
+.dashboard-search-input {
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: white;
+  color: var(--neutral-900);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.dashboard-search-input:focus {
+  border-color: var(--brand-600);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+.dashboard-search-input::placeholder {
+  color: var(--neutral-400);
+}
+
+/* Search with Icon - Accommodates left-side search icon */
+.search-input.with-icon {
+  padding-left: 28px;
+  height: 28px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/* Filter Context - For account groups and similar filters */
+.search-input.filter {
+  border: 1px solid var(--neutral-100);
+  border-radius: 8px;
+}
+
+.search-input.filter:focus {
+  background: var(--neutral-50);
+}
+
+/* Legacy class alias for filter search (backward compatibility) */
+.filter-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: white;
+  color: var(--neutral-900);
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.filter-search-input:focus {
+  border-color: var(--brand-600);
+  outline: none;
+}
+
+.filter-search-input::placeholder {
+  color: var(--neutral-400);
+}
+
+/* Select Dropdowns */
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: white;
+  color: var(--neutral-900);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.form-select:focus {
+  border-color: var(--brand-600);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-select:disabled {
+  background-color: var(--neutral-50);
+  border-color: var(--neutral-200);
+  color: var(--neutral-500);
+  cursor: not-allowed;
+}
+
+/* Checkbox and Radio */
+.form-checkbox,
+.form-radio {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--neutral-300);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0 8px 0 0;
+  padding: 0;
+  flex-shrink: 0;
+  position: relative;
+  box-sizing: border-box;
+  outline: none;
+  vertical-align: top;
+}
+
+.form-radio {
+  border-radius: 50%;
+}
+
+.form-checkbox:checked,
+.form-radio:checked {
+  background: var(--brand-600);
+  border-color: var(--brand-600);
+}
+
+.form-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 7px;
+  border: solid white;
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}
+
+.form-checkbox:indeterminate {
+  background: var(--brand-600);
+  border-color: var(--brand-600);
+}
+
+.form-checkbox:indeterminate::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 1px;
+  background: white;
+}
+
+.form-radio:checked::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+.form-checkbox:focus,
+.form-radio:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+/* Form States */
+.form-input.error,
+.form-textarea.error,
+.form-select.error {
+  border-color: var(--critical-600);
+}
+
+.form-input.error:focus,
+.form-textarea.error:focus,
+.form-select.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input.success,
+.form-textarea.success,
+.form-select.success {
+  border-color: var(--green-600);
+}
+
+.form-input.success:focus,
+.form-textarea.success:focus,
+.form-select.success:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* ===== FORM SELECT SIZE VARIANTS ===== */
+
+/* Small Size (24px height) */
+.form-select.small {
+  height: 24px;
+  padding: 4px 12px;
+  font-size: 12px;
+  line-height: 1.2;
+  padding-right: 32px;
+}
+
+/* Medium Size (28px height) - Default */
+.form-select.medium {
+  height: 28px;
+  padding: 4px 12px;
+  font-size: 14px;
+  line-height: 1.3;
+  padding-right: 36px;
+}
+
+/* Large Size (40px height) */
+.form-select.large {
+  height: 40px;
+  padding: 8px 16px;
+  font-size: 16px;
+  line-height: 1.3;
+  padding-right: 40px;
+}
+
+/* Form Error Messages */
+.form-error {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--critical-600);
+  line-height: 1.4;
+}
+
+.form-success {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--green-600);
+  line-height: 1.4;
 }
 
 /* Badge component */
@@ -686,3 +1096,95 @@ button.popover-open,
 .nav-panel.collapsed .workload-item.active .nav-item-icon svg {
   color: var(--brand-600) !important;
 }
+
+/* ===== DATE CONTROL COMPONENTS ===== */
+/* Date Range Display Component */
+.date-range-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 100px; /* Pill shape */
+  background: white;
+  white-space: nowrap;
+  
+  /* label/small emphasized typography */
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-16);
+  letter-spacing: 0;
+  color: var(--neutral-900);
+}
+
+.date-period-text {
+  color: var(--neutral-700);
+}
+
+.date-period-chevron {
+  color: var(--neutral-500);
+  margin-left: 4px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.date-range-divider {
+  color: var(--neutral-300);
+  margin: 0 4px;
+}
+
+.date-range-icon {
+  color: var(--neutral-500);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+/* ===== DASHBOARD SEARCH COMPONENTS ===== */
+/* Dashboard Header Search Component */
+.dashboard-search-container {
+  position: relative;
+  width: 360px;
+}
+
+.dashboard-search-input {
+  width: 100%;
+  height: 36px;
+  padding: 8px 8px 8px 32px;
+  background: var(--neutral-50);
+  border: none;
+  border-radius: 8px;
+  font-size: var(--font-size-14);
+  color: var(--color-text);
+  box-sizing: border-box;
+  transition: var(--transition-default);
+}
+
+.dashboard-search-input:focus {
+  outline: none;
+  background: var(--neutral-50);
+}
+
+.dashboard-search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.dashboard-search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-search-icon svg {
+  width: 12px;
+  height: 12px;
+  color: currentColor;
+}
+

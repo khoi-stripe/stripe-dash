@@ -11,9 +11,7 @@
   <link rel="stylesheet" href="../../shared/styles/typography.css">
   <link rel="stylesheet" href="../../shared/styles/components.css">
   <link rel="stylesheet" href="../../shared/styles/color-utilities.css">
-  <link rel="stylesheet" href="../../shared/styles/dashboard-search.css">
-  <link rel="stylesheet" href="../../shared/styles/account-groups-filter.css">
-  <link rel="stylesheet" href="../../shared/styles/date-control.css">
+      <link rel="stylesheet" href="../../shared/styles/account-groups-filter.css">
   
   <style>
     body {
@@ -1598,6 +1596,8 @@
 
   <!-- Include account switcher component -->
   <script src="../../shared/components/account-switcher.js"></script>
+  <!-- Include account groups data provider -->
+  <script src="../../shared/components/account-groups-data.js"></script>
   <!-- Include account groups filter global component -->
   <script src="../../shared/components/account-groups-filter.js"></script>
   
@@ -2719,6 +2719,21 @@
           filterContainer.style.display = 'block';
         }
         
+        // Ensure custom account groups function is available and wait for it
+        console.log('🔧 Custom groups function available:', !!window.generateCustomAccountGroups);
+        console.log('🔧 Will use function:', window.generateCustomAccountGroups ? 'custom' : 'local');
+        
+        // Use a wrapper function that always calls the latest custom function
+        const getAccountGroups = () => {
+          if (window.generateCustomAccountGroups) {
+            console.log('🔧 Using custom account groups');
+            return window.generateCustomAccountGroups();
+          } else {
+            console.log('🔧 Falling back to local account groups');
+            return generateAccountGroups();
+          }
+        };
+        
         const reportsFilter = new AccountGroupsFilter({
           triggerId: 'reportsFilterTrigger',
           popoverId: 'reportsFilterPopover',
@@ -2727,11 +2742,17 @@
           accountsListId: 'reportsAccountsList',
           triggerOptionId: 'reportsFilterOption',
           namespace: 'reports',
-          generateAccountGroups: generateAccountGroups
+          generateAccountGroups: getAccountGroups
         });
         
         // Make filter globally accessible for button handlers
         window.reportsFilter = reportsFilter;
+        
+        // Force refresh to ensure custom groups are loaded
+        setTimeout(() => {
+          console.log('🔄 Force refreshing filter to load custom groups...');
+          reportsFilter.refresh();
+        }, 100);
         
         // Override the apply method to filter content
         reportsFilter.applySelection = function() {
