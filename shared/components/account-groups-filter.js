@@ -88,6 +88,11 @@ class AccountGroupsFilter {
     this.isCustomMode = false;
     this.updateTriggerLabel('all');
     this.addScrollEffect();
+    
+    // Check for overflow after initial render
+    setTimeout(() => {
+      this.checkAccountsListOverflow();
+    }, 50);
   }
   
   calculateTriggerDimensions() {
@@ -225,6 +230,10 @@ class AccountGroupsFilter {
       this.positionPopover(true);
       // Update Apply button state when opening
       this.updateApplyButtonState();
+      // Check for scroll overflow after popover is shown and positioned
+      setTimeout(() => {
+        this.checkAccountsListOverflow();
+      }, 10);
     }
   }
   
@@ -802,7 +811,14 @@ class AccountGroupsFilter {
     const allButton = document.createElement('button');
     allButton.className = 'group-item active';
     allButton.setAttribute('data-group', 'all');
-    allButton.textContent = 'All';
+    
+    // Get count for All group
+    const allAccountsCount = this.accountGroups['all'] ? this.accountGroups['all'].length : 0;
+    
+    allButton.innerHTML = `
+      <span class="group-label">All</span>
+      <span class="group-count">${allAccountsCount}</span>
+    `;
     
     // Add click handler for All button
     allButton.addEventListener('click', (e) => {
@@ -834,7 +850,13 @@ class AccountGroupsFilter {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
       
-      button.textContent = displayName;
+      // Get count for this group
+      const groupAccountsCount = this.accountGroups[groupKey] ? this.accountGroups[groupKey].length : 0;
+      
+      button.innerHTML = `
+        <span class="group-label">${displayName}</span>
+        <span class="group-count">${groupAccountsCount}</span>
+      `;
       
       // Add click handler
       button.addEventListener('click', (e) => {
