@@ -1078,9 +1078,86 @@ button.popover-open,
   text-decoration: none !important;
 }
 
-.workload-subitem,
+/* ========================================
+   WORKLOAD SUBITEM STYLES
+   ======================================== */
+
+.workload-subitem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  width: 100%;
+  padding: 0 0 0 32px; /* Left indent for sub-items */
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.workload-subitem:hover {
+  text-decoration: none;
+}
+
+.workload-subitem .nav-item-label {
+  flex: 1;
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
+  font-weight: var(--font-weight-medium);
+  color: var(--neutral-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  z-index: 1;
+}
+
+/* Workload Subitem Background Hover Effect */
+.workload-subitem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  border-radius: 8px;
+  transition: background-color var(--transition-fast);
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.workload-subitem:hover::before {
+  background-color: var(--neutral-50);
+}
+
+/* Active state for workload subitems */
 .workload-subitem.active {
   text-decoration: none !important;
+}
+
+.workload-subitem.active .nav-item-label {
+  color: var(--brand-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.workload-subitem.active:hover::before {
+  background-color: var(--brand-50);
+}
+
+/* Disabled state for workload subitems */
+.workload-subitem.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.workload-subitem.disabled:hover::before {
+  background-color: transparent;
+}
+
+.workload-subitem.disabled .nav-item-label {
+  color: var(--neutral-400);
 }
 
 .nav-panel.collapsed .nav-item.active,
