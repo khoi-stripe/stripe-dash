@@ -1123,17 +1123,9 @@ class PrototypeControlPanel {
   resetAllData() {
     if (confirm('Reset all prototype data including account groups and spreadsheet connections?\n\nThis cannot be undone.')) {
       this.showStatus('Resetting all data...', 'loading');
-      
-      // Clear OrgDataManager data
+      // Clear user-created custom account groups as well
+      try { localStorage.removeItem('accountGroups'); } catch (e) {}
       window.OrgDataManager.resetAllData();
-      
-      // Clear saved account groups from localStorage
-      try {
-        localStorage.removeItem('accountGroups');
-        console.log('Cleared saved account groups from localStorage');
-      } catch (error) {
-        console.error('Failed to clear saved account groups:', error);
-      }
       
       setTimeout(() => {
         location.reload();

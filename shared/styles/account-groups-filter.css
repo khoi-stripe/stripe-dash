@@ -60,7 +60,7 @@
   display: flex;
   flex-direction: row; /* Two-column layout */
   position: absolute;
-  z-index: 100000; /* Highest z-index to ensure always visible above all UI elements */
+  z-index: 2147483647; /* Ensure always above all UI elements */
   text-align: left; /* Override any inherited text alignment */
   /* top, left, margin-top will be set by JavaScript for smart positioning */
 }
@@ -78,10 +78,11 @@
   position: relative;
   z-index: 1;
   text-align: left; /* Override any inherited text alignment */
+  margin-top: 4px;
 }
 
 .groups-header {
-  padding: 16px 16px 20px 16px;
+  padding: 16px 16px 16px 16px;
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-20);
@@ -94,7 +95,7 @@
   display: flex;
   align-items: center;
   width: calc(100% - 16px);
-  margin: 0 8px;
+  margin: 0 8px 2px 8px;
   padding: 4px 8px;
   border: none;
   background: transparent;
@@ -132,6 +133,7 @@
   background: white;
   overflow: hidden; /* Contain scrolling to accounts-list */
   text-align: left; /* Override any inherited text alignment */
+  position: relative; /* For absolute positioning of bottom shadow */
 }
 
 .filter-search-container {
@@ -225,6 +227,26 @@
 
 .accounts-list::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
+}
+
+/* Bottom scroll shadow for accounts list - only visible when overflowing */
+.accounts-section::after {
+  content: '';
+  position: absolute;
+  bottom: 60px; /* Above the footer which is ~60px tall */
+  left: 0;
+  right: 0;
+  height: 24px;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, #000 100%);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* Show shadow when list has overflow */
+.accounts-section.has-overflow::after {
+  opacity: 0.04;
 }
 
 .account-groups-popover .account-item {

@@ -521,6 +521,8 @@ class OrganizationDataManager {
     localStorage.removeItem('uxr_current_sub_account');
     localStorage.removeItem('uxr_csv_data'); // Clear saved CSV data
     localStorage.removeItem('uxr_organizations_data'); // Clear saved organizations data with colors
+    // Clear user-created custom account groups stored by creation modal
+    localStorage.removeItem('accountGroups');
     Object.keys(localStorage).forEach(key => {
       if (key.startsWith('uxr_account_groups_')) {
         localStorage.removeItem(key);

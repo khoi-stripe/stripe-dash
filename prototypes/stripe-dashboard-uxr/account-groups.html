@@ -1220,64 +1220,91 @@
          <div style="display: flex; flex-direction: column; gap: 4px; padding: 6px 0;">
            <!-- Breadcrumb Navigation -->
            <div style="display: flex; align-items: center; gap: 8px;">
-             <span style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: #533afd; letter-spacing: -0.024px;">Organization settings</span>
+             <a href="./settings.html" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: #533afd; letter-spacing: -0.024px; text-decoration: none; cursor: pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Organization settings</a>
              <div style="width: 8px; height: 8px; display: flex; align-items: center; justify-content: center;">
                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                  <path d="M2 1.5L5.5 4L2 6.5" stroke="#6c7688" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-               </svg>
+                </svg>
               </div>
-           </div>
-           
+            </div>
+            
            <!-- Page Title -->
            <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
              <div style="flex: 1;">
                <h1 style="font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 700; font-size: 28px; line-height: 36px; color: #353a44; letter-spacing: 0.38px; margin: 0;">Account groups</h1>
-             </div>
+                </div>
              <!-- Removed Add group button per design update -->
-           </div>
-         </div>
+              </div>
+            </div>
          
-         <!-- Subheader Section (Figma 1194-193236) -->
-         <div id="groups-page-subheader" style="display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0 12px 0; border-bottom: 1px solid rgba(0, 39, 77, 0.08);">
-           <div style="display: flex; align-items: center; gap: 8px;">
-             <!-- Left chip: "+ Account" -->
-             <div style="display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 4px 12px; border-radius: 1000px; border: 1px dashed rgba(89, 97, 113, 0.4); background: transparent;">
-               <span style="display:flex; width:16px; height:16px; align-items:center; justify-content:center; border-radius: 999px; border:1px solid rgba(89,97,113,0.35);">
-                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                   <path d="M6 1V11M1 6H11" stroke="#596171" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-               </span>
-               <span style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 14px; line-height: 20px; color: #596171; letter-spacing: -0.15px;">Account</span>
-             </div>
-           </div>
-           <div style="display: flex; align-items: center; gap: 8px;">
-             <!-- Right action: Add group -->
-             <button id="add-group-subheader" onclick="showFigmaCreateGroupModalV3()" style="background: #ffffff; border: 1px solid #d8dee4; border-radius: 6px; height: 28px; padding: 4px 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0px 1px 1px 0px rgba(33,37,44,0.16);">
-               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                 <path d="M6 1V11M1 6H11" stroke="#353a44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-               </svg>
-               <span style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 14px; line-height: 20px; color: #353a44; letter-spacing: -0.15px;">Add group</span>
-              </button>
-           </div>
+                   <!-- Table Toolbar -->
+          <div id="groups-page-subheader" style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 0 0 12px 0;
+            border-bottom: 1px solid #d8dee4;
+          ">
+            <!-- Table Filters (disabled account filter) -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="
+                display: flex;
+                align-items: center;
+                height: 24px;
+                padding: 0 6px 0 12px;
+                border: 1px solid #b6c0cd;
+                border-radius: 999px;
+                background: transparent;
+                cursor: default;
+              ">
+                <span style="
+                  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+                  font-weight: 600;
+                  font-size: 12px;
+                  line-height: 16px;
+                  color: #596171;
+                  letter-spacing: -0.024px;
+                  margin-right: 6px;
+                ">Account</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="6" cy="6" r="5" stroke="#6c7688" stroke-width="1" fill="none"/>
+                  <path d="M6 3v6M3 6h6" stroke="#6c7688" stroke-width="1" stroke-linecap="round"/>
+                  </svg>
+                </div>
             </div>
             
-         <!-- Content Area -->
-         <div id="groups-container" style="width: 100%; min-height: 100%; box-sizing: border-box;">
-           <div style="background: #f5f6f8; border-radius: 12px; padding: 88px 72px; display: flex; flex-direction: column; gap: 22px; align-items: flex-start; justify-content: flex-start; overflow: hidden;">
-             <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 731px;">
-               <h2 style="font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 700; font-size: 40px; line-height: 48px; color: #353a44; letter-spacing: 0.37px; margin: 0;">Create an account group</h2>
-               <p style="font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 400; font-size: 20px; line-height: 28px; color: #596171; letter-spacing: 0.3px; margin: 0;">Aggregate reports and manage roles for related accounts.</p>
-                </div>
-                         <div style="display: flex; gap: 16px; align-items: center;">
-              <button onclick="showFigmaCreateGroupModalV3()" style="background: #675dff; border: 1px solid #675dff; border-radius: 6px; padding: 8px 16px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0px 1px 1px 0px rgba(47,14,99,0.32); transition: all 0.15s ease;" onmouseover="this.style.background='#5951e6'" onmouseout="this.style.background='#675dff'">
-                <span style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; color: #ffffff; letter-spacing: -0.31px;">Create group</span>
-              </button>
-              <button style="background: #ffffff; border: 1px solid #d8dee4; border-radius: 6px; padding: 8px 16px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0px 1px 1px 0px rgba(33,37,44,0.16); transition: all 0.15s ease;" onmouseover="this.style.borderColor='#c1c7d0'" onmouseout="this.style.borderColor='#d8dee4'">
-                <span style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; color: #353a44; letter-spacing: -0.31px;">View docs</span>
+            <!-- Table Actions (enabled add group button) -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button onclick="showFigmaCreateGroupModalV3()" style="
+                background: #ffffff;
+                border: 1px solid #d8dee4;
+                border-radius: 6px;
+                padding: 4px 8px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                cursor: pointer;
+                color: #353a44;
+                font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 16px;
+                letter-spacing: -0.024px;
+                box-shadow: 0px 1px 1px 0px rgba(33,37,44,0.16);
+              ">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 2.5V9.5M2.5 6H9.5" stroke="#474e5a" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+                Add group
                 </button>
               </div>
             </div>
-          </div>
+            
+         <!-- Content Area -->
+         <div id="groups-container" style="width: 100%; min-height: 100%; box-sizing: border-box; padding: 0;"></div>
        </div>
      </div>
   </div>
@@ -1559,31 +1586,91 @@
       const container = document.getElementById('groups-container');
       
       if (allGroups.length === 0) {
-        // Apply responsive empty state styling with gradient background
-        container.className = 'figma-gradient-clean';
-        container.style.display = 'flex';
+        // Empty state: exact Figma match
+        container.className = '';
+        container.style.display = 'block';
         container.style.width = '100%';
         container.style.minHeight = '100%';
-        container.style.padding = 'var(--Spacing-medium, 16px)';
-        container.style.flexDirection = 'column';
-        container.style.alignItems = 'center';
-        container.style.justifyContent = 'center';
-        container.style.gap = '22px';
-        container.style.overflow = 'auto';
+        container.style.padding = '0';
         container.style.boxSizing = 'border-box';
-        
+
         container.innerHTML = `
-          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 731px; text-align: center;">
-            <h2 style="font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 700; font-size: 40px; line-height: 48px; color: #353a44; letter-spacing: 0.37px; margin: 0;">Create an account group</h2>
-            <p style="font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 400; font-size: 20px; line-height: 28px; color: #596171; letter-spacing: 0.3px; margin: 0;">Aggregate reports and manage roles for related accounts.</p>
-          </div>
-          <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
-            <button onclick="showFigmaCreateGroupModalV3()" style="background: #675dff; border: 1px solid #675dff; border-radius: 6px; padding: 8px 16px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0px 1px 1px 0px rgba(47,14,99,0.32); transition: all 0.15s ease;" onmouseover="this.style.background='#5951e6'" onmouseout="this.style.background='#675dff'">
-              <span style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; color: #ffffff; letter-spacing: -0.31px;">Create group</span>
-            </button>
-            <button style="background: #ffffff; border: 1px solid #d8dee4; border-radius: 6px; padding: 8px 16px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0px 1px 1px 0px rgba(33,37,44,0.16); transition: all 0.15s ease;" onmouseover="this.style.borderColor='#c1c7d0'" onmouseout="this.style.borderColor='#d8dee4'">
-              <span style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; color: #353a44; letter-spacing: -0.31px;">View docs</span>
-            </button>
+          <div style="
+            width: 100%;
+            background: #f5f6f8;
+            border-radius: 12px;
+            padding: 88px 72px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+          ">
+            <div style="
+              display: flex;
+              flex-direction: column;
+              gap: 35px;
+              text-align: left;
+              width: 100%;
+              max-width: 731px;
+            ">
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <h2 style="
+                  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+                  font-weight: 700;
+                  font-size: 40px;
+                  line-height: 48px;
+                  color: #353a44;
+                  letter-spacing: 0.37px;
+                  margin: 0;
+                ">Create an account group</h2>
+                <p style="
+                  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+                  font-weight: 400;
+                  font-size: 20px;
+                  line-height: 28px;
+                  color: #596171;
+                  letter-spacing: 0.3px;
+                  margin: 0;
+                ">Aggregate reports and manage roles for related accounts.</p>
+              </div>
+              <div style="display: flex; gap: 16px; align-items: center;">
+                <button onclick=\"showFigmaCreateGroupModalV3()\" style=\"
+                  background: #675dff;
+                  border: 1px solid #675dff;
+                  border-radius: 6px;
+                  padding: 8px 16px;
+                  height: 40px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  cursor: pointer;
+                  color: #ffffff;
+                  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+                  font-weight: 600;
+                  font-size: 16px;
+                  line-height: 24px;
+                  letter-spacing: -0.31px;
+                  box-shadow: 0px 1px 1px 0px rgba(47,14,99,0.32);
+                \">Create group</button>
+                <button style=\"
+                  background: #ffffff;
+                  border: 1px solid #d8dee4;
+                  border-radius: 6px;
+                  padding: 8px 16px;
+                  height: 40px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  cursor: pointer;
+                  color: #353a44;
+                  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+                  font-weight: 600;
+                  font-size: 16px;
+                  line-height: 24px;
+                  letter-spacing: -0.31px;
+                  box-shadow: 0px 1px 1px 0px rgba(33,37,44,0.16);
+                \" onclick=\"window.open('#','_blank')\">View docs</button>
+              </div>
+            </div>
           </div>
         `;
         return;
@@ -1660,6 +1747,17 @@
             const moreLink = `<a class="group-card-more-link" href="#" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: #3b82f6; text-decoration: none; padding: 4px 0; display: none;">+ more</a>`;
             
             accountsContainer.innerHTML = accountBadgesHtml + moreLink;
+            
+            // Update the count pill and data attribute to match actual account count
+            const groupCard = container.querySelector(`#group-card-${group.id}`);
+            if (groupCard) {
+              groupCard.setAttribute('data-account-count', accounts.length);
+              const countPill = groupCard.querySelector('.group-card-count');
+              if (countPill) {
+                countPill.textContent = accounts.length;
+                countPill.setAttribute('title', `${accounts.length} accounts`);
+              }
+            }
           }
         });
         
@@ -1861,15 +1959,27 @@
           card.style.zIndex = '10000';
           card.style.position = 'relative';
 
-          // Position tooltip and check viewport collision
-          const rect = container.getBoundingClientRect();
-          const tooltipRect = tooltip.getBoundingClientRect();
-
-          // Reset position
+          // Reset position first
           tooltip.classList.remove('bottom');
 
-          // Check if it goes off the top of the viewport
-          if (rect.top - tooltipRect.height < 0) {
+          // Temporarily make tooltip visible to get its actual dimensions
+          tooltip.style.opacity = '1';
+          tooltip.style.visibility = 'visible';
+          
+          // Get positioning info
+          const rect = container.getBoundingClientRect();
+          const tooltipRect = tooltip.getBoundingClientRect();
+          
+          // Hide tooltip again
+          tooltip.style.opacity = '0';
+          tooltip.style.visibility = 'hidden';
+
+          // Check if tooltip would go off the top of the viewport (with some margin)
+          const spaceAbove = rect.top;
+          const tooltipHeight = tooltipRect.height;
+          const marginBuffer = 16; // Extra buffer space
+          
+          if (spaceAbove < tooltipHeight + marginBuffer) {
             tooltip.classList.add('bottom');
           }
         });

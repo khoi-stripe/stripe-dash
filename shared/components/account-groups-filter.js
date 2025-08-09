@@ -84,6 +84,8 @@ class AccountGroupsFilter {
     this.attachEventListeners();
     this.currentGroup = 'all';
     this.renderAccounts('all');
+    // Set default trigger label to All with folder icon (brand-600)
+    this.isCustomMode = false;
     this.updateTriggerLabel('all');
     this.addScrollEffect();
   }
@@ -176,12 +178,12 @@ class AccountGroupsFilter {
     }
     
     // Calculate vertical position
-    let top = currentTriggerHeight + 8; // 8px below current trigger
+    let top = currentTriggerHeight + 4; // 4px below current trigger
     
     // Check if popover would go off the bottom of viewport
-    if (triggerRect.bottom + popoverHeight + 8 > viewportHeight - margin) {
+    if (triggerRect.bottom + popoverHeight + 4 > viewportHeight - margin) {
       // Position above trigger instead
-      top = -popoverHeight - 8;
+      top = -popoverHeight - 4;
     }
     
     // Ensure popover doesn't go off the top
@@ -296,6 +298,9 @@ class AccountGroupsFilter {
     
     this.updateSelectionCount();
     this.updateSelectAllState();
+    this.checkAccountsListOverflow();
+    
+    // Do not update trigger label until user clicks Apply
   }
   
   attachEventListeners() {
@@ -323,9 +328,8 @@ class AccountGroupsFilter {
         const group = item.getAttribute('data-group');
         if (group) {
           this.currentGroup = group;
+          this.isCustomMode = false; // Reset custom mode when selecting a group
           this.renderAccounts(group);
-          
-          // Note: Don't update trigger label here - only update on apply
         }
       });
     });
@@ -434,6 +438,7 @@ class AccountGroupsFilter {
     
     this.updateSelectionCount();
     this.updateSelectAllState();
+    this.checkAccountsListOverflow();
   }
   
   updateSelectionCount() {
@@ -443,11 +448,6 @@ class AccountGroupsFilter {
     
     if (selectionCount) {
       selectionCount.textContent = `${checked} selected`;
-    }
-    
-    // Always update trigger label with current count when in custom mode
-    if (this.isCustomMode) {
-      this.updateTriggerLabel('custom');
     }
     
     // Update Apply button state and hide validation error when selection changes
@@ -498,15 +498,22 @@ class AccountGroupsFilter {
   handleAccountCheckboxChange() {
     this.updateSelectionCount();
     this.updateSelectAllState();
-    
-    // Note: Don't update trigger label here - only update on apply
   }
   
   // Handle select all checkbox changes
   handleSelectAllChange() {
     this.updateSelectionCount();
-    
-    // Note: Don't update trigger label here - only update on apply
+  }
+  
+  // Get a human-readable display name for a group key
+  getGroupDisplayName(groupKey) {
+    if (!groupKey || groupKey === 'all') {
+      return 'All';
+    }
+    return groupKey
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
   
   // Update the trigger label text
@@ -518,42 +525,61 @@ class AccountGroupsFilter {
       return;
     }
     
-    // Ensure we have account data to count
+    // Ensure we have account data
     const accountsList = document.getElementById(this.options.accountsListId);
     if (!accountsList) {
-      console.warn('AccountGroupsFilter: Accounts list not found for count calculation');
+      console.warn('AccountGroupsFilter: Accounts list not found for label calculation');
       return;
     }
     
-    const groupNames = {
-      'all': 'All accounts',
-      'connected': 'Connected accounts',
-      'express': 'Express accounts',
-      'standard': 'Standard accounts',
-      'custom': 'Custom accounts',
-      'Custom': 'Custom'
-    };
+    // Get selected accounts info
+    const selectedCheckboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`);
+    const selectedCount = selectedCheckboxes.length;
     
-    // Always calculate and show the count
-    const selectedCount = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]:checked`).length;
+    // Get total accounts for this group to check if all are selected (full group)
+    const totalAccountsInGroup = document.querySelectorAll(`#${this.options.accountsListId} .account-item`).length;
+    const isFullGroupSelected = selectedCount === totalAccountsInGroup && selectedCount > 0;
     
-    const folderIcon = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px; flex-shrink: 0;">
+    // Get selected account names
+    const selectedAccountNames = Array.from(selectedCheckboxes).map(checkbox => {
+      const accountItem = checkbox.closest('.account-item');
+      const label = accountItem.querySelector('label');
+      return label ? label.textContent.trim() : '';
+    }).filter(name => name);
+    
+    const folderIcon = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px; flex-shrink: 0; color: var(--brand-600);">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M16 7.82679C16 7.94141 15.9803 8.05518 15.9417 8.16312L13.974 13.6727C13.6898 14.4687 12.9358 15 12.0906 15H2C0.895431 15 0 14.1046 0 13V3C0 1.89543 0.89543 1 2 1H4.58579C4.851 1 5.10536 1.10536 5.29289 1.29289L6 2H11C12.1046 2 13 2.89543 13 4V5H14C15.1046 5 16 5.89543 16 7V7.82679ZM3.75 6.5C3.33579 6.5 3 6.16421 3 5.75C3 5.33579 3.33579 5 3.75 5H11.5V4C11.5 3.72386 11.2761 3.5 11 3.5H6C5.60218 3.5 5.22064 3.34196 4.93934 3.06066L4.37868 2.5H2C1.72386 2.5 1.5 2.72386 1.5 3V13C1.5 13.2761 1.72386 13.5 2 13.5H12.0906C12.3019 13.5 12.4904 13.3672 12.5614 13.1682L14.5 7.74018V7C14.5 6.72386 14.2761 6.5 14 6.5H3.75Z" fill="currentColor"/>
     </svg>`;
     
-    if (this.isCustomMode) {
-      // Use innerHTML to allow styled count
-      triggerOption.innerHTML = `${folderIcon}Custom <span style="color: var(--neutral-500);">&nbsp;(${selectedCount})</span>`;
+    let displayText = '';
+    
+    if (selectedCount === 0) {
+      // No accounts selected - show default group name with folder icon
+      const groupName = this.getGroupDisplayName(groupKey);
+      displayText = `${folderIcon}<span style="color: var(--brand-600);">${groupName}</span>`;
+    } else if (isFullGroupSelected && !this.isCustomMode) {
+      // Full group selected - show folder icon + group name (no count)
+      const groupName = this.getGroupDisplayName(groupKey);
+      displayText = `${folderIcon}<span style="color: var(--brand-600);">${groupName}</span>`;
+    } else if (selectedCount === 1) {
+      // Single account selected - show account name only (no icon)
+      displayText = `<span style="color: var(--brand-600);">${selectedAccountNames[0]}</span>`;
     } else {
-      const labelText = groupNames[groupKey] || 'All accounts';
-      // Always show count for all group types
-      triggerOption.innerHTML = `${folderIcon}${labelText} <span style="color: var(--neutral-500);">&nbsp;(${selectedCount})</span>`;
+      // Multiple accounts selected but not a full group - show first account + more count (no parentheses)
+      const firstName = selectedAccountNames[0];
+      const othersCount = selectedCount - 1;
+      displayText = `<span style=\"color: var(--brand-600);\">${firstName} +${othersCount} more</span>`;
     }
     
-    // Recalculate position based on new trigger size but keep same alignment mode
+    triggerOption.innerHTML = displayText;
+    
+    // Recalculate position based on new trigger size - use setTimeout to ensure DOM has updated
     const popover = document.getElementById(this.options.popoverId);
     if (popover && popover.style.display === 'flex') {
-      this.positionPopover(false); // Don't force recalculation of alignment mode
+      setTimeout(() => {
+        // Keep alignment mode locked; only recalc position relative to current trigger size
+        this.positionPopover(false);
+      }, 10);
     }
   }
   
@@ -760,7 +786,7 @@ class AccountGroupsFilter {
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 6px; flex-shrink: 0;">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M16 7.82679C16 7.94141 15.9803 8.05518 15.9417 8.16312L13.974 13.6727C13.6898 14.4687 12.9358 15 12.0906 15H2C0.895431 15 0 14.1046 0 13V3C0 1.89543 0.89543 1 2 1H4.58579C4.851 1 5.10536 1.10536 5.29289 1.29289L6 2H11C12.1046 2 13 2.89543 13 4V5H14C15.1046 5 16 5.89543 16 7V7.82679ZM3.75 6.5C3.33579 6.5 3 6.16421 3 5.75C3 5.33579 3.33579 5 3.75 5H11.5V4C11.5 3.72386 11.2761 3.5 11 3.5H6C5.60218 3.5 5.22064 3.34196 4.93934 3.06066L4.37868 2.5H2C1.72386 2.5 1.5 2.72386 1.5 3V13C1.5 13.2761 1.72386 13.5 2 13.5H12.0906C12.3019 13.5 12.4904 13.3672 12.5614 13.1682L14.5 7.74018V7C14.5 6.72386 14.2761 6.5 14 6.5H3.75Z" fill="currentColor"/>
           </svg>
-          Account groups
+          Groups
         </div>
       `;
       groupsContainer.insertAdjacentHTML('afterbegin', headerHTML);
@@ -820,7 +846,9 @@ class AccountGroupsFilter {
         // Add active class to clicked button
         button.classList.add('active');
         
-        // Render accounts for selected group
+        // Reset custom mode and render accounts for selected group
+        this.currentGroup = groupKey;
+        this.isCustomMode = false;
         this.renderAccounts(groupKey);
       });
       
@@ -872,5 +900,26 @@ class AccountGroupsFilter {
     };
     
     return colorMap[hexColor.toUpperCase()] || null;
+  }
+  
+  checkAccountsListOverflow() {
+    // Check if the accounts list overflows and show/hide shadow accordingly
+    const accountsList = document.getElementById(this.options.accountsListId);
+    const accountsSection = accountsList?.closest('.accounts-section');
+    
+    if (!accountsList || !accountsSection) {
+      return;
+    }
+    
+    // Use setTimeout to ensure DOM has updated after rendering
+    setTimeout(() => {
+      const hasOverflow = accountsList.scrollHeight > accountsList.clientHeight;
+      
+      if (hasOverflow) {
+        accountsSection.classList.add('has-overflow');
+      } else {
+        accountsSection.classList.remove('has-overflow');
+      }
+    }, 10);
   }
 } 
