@@ -1334,7 +1334,7 @@
   
   <!-- UXR Data Management -->
   <script src="./data/organizations.js"></script>
-  <script src="./components/group-creation-modal.js"></script>
+  
   <script src="../../shared/components/modal.js"></script>
   <script src="../../shared/components/figma-group-creation-modal-v3.js"></script>
   <script src="./components/prototype-control-panel.js"></script>
@@ -1461,22 +1461,7 @@
       }
     }
 
-    function showCreateGroupModal() {
-      window.GroupCreationModal.show({
-        onComplete: (group) => {
-          loadAccountGroups(); // Refresh the groups display
-        }
-      });
-    }
-
-    function showFigmaCreateGroupModalV2() {
-      window.FigmaGroupCreationModalV2.show({
-        onComplete: (group) => {
-          console.log('Figma modal V2 - Group created:', group);
-          loadAccountGroups(); // Refresh the groups display
-        }
-      });
-    }
+    // Legacy modal handlers removed (GroupCreationModal and V2)
     
     function showFigmaCreateGroupModalV3() {
         console.log('showFigmaCreateGroupModalV3 called');
