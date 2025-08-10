@@ -1112,16 +1112,16 @@
               <a href="./financial-reports.html" class="workload-subitem">
                 <span class="nav-item-label">Reports</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Custom metrics</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Sigma</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Revenue Recognition</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Data management</span>
               </a>
             </div>
@@ -1493,15 +1493,7 @@
     // Make function globally accessible
     window.showFigmaCreateGroupModalV3 = showFigmaCreateGroupModalV3;
 
-    function getSavedGroups() {
-      try {
-        const saved = localStorage.getItem('accountGroups');
-        return saved ? JSON.parse(saved) : [];
-      } catch (error) {
-        console.error('Failed to load saved groups:', error);
-        return [];
-      }
-    }
+    // getSavedGroups function removed - now using OrgDataManager.getAccountGroups() for all group management
 
     function createGroupCard(group, accounts, isSavedGroup, showLoading = false) {
       const sanitizedGroupName = group.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
@@ -1580,9 +1572,8 @@
     }
 
     function loadAccountGroups() {
-      const managedGroups = window.OrgDataManager.getAccountGroups();
-      const savedGroups = getSavedGroups();
-      const allGroups = [...managedGroups, ...savedGroups];
+      // Use only OrgDataManager since it now handles organization-specific storage
+      const allGroups = window.OrgDataManager.getAccountGroups();
       const container = document.getElementById('groups-container');
       
       if (allGroups.length === 0) {
@@ -1793,9 +1784,7 @@
         const groups = {};
 
         // Add custom account groups created by users
-        const managedGroups = window.OrgDataManager?.getAccountGroups() || [];
-        const savedGroups = getSavedGroups();
-        const customGroups = [...managedGroups, ...savedGroups];
+        const customGroups = window.OrgDataManager?.getAccountGroups() || [];
 
         customGroups.forEach(group => {
           // Get account IDs for this group
@@ -2104,7 +2093,7 @@
         <button class="kebab-menu-item" onclick="event.stopPropagation(); copyGroupId('${groupId}')">
           Copy group ID
         </button>
-        <button class="kebab-menu-item destructive" onclick="event.stopPropagation(); deleteGroup('${groupId}', ${isSavedGroup})">
+          <button class="kebab-menu-item destructive" onclick="event.stopPropagation(); deleteGroup('${groupId}')">
           Delete group
         </button>
       `;
@@ -2174,26 +2163,13 @@
     function deleteGroup(groupId, isSavedGroup = false) {
       closeAllKebabMenus();
       if (confirm('Are you sure you want to delete this account group?')) {
-        if (isSavedGroup) {
-          // Delete from localStorage
-          try {
-            const savedGroups = getSavedGroups();
-            const updatedGroups = savedGroups.filter(group => group.id !== groupId);
-            localStorage.setItem('accountGroups', JSON.stringify(updatedGroups));
-          } catch (error) {
-            console.error('Failed to delete saved group:', error);
-            alert('Failed to delete group. Please try again.');
-            return;
-          }
+        // Use OrgDataManager for all group deletions
+        if (window.OrgDataManager && window.OrgDataManager.deleteAccountGroup) {
+          window.OrgDataManager.deleteAccountGroup(groupId);
         } else {
-          // Delete from OrgDataManager
-          if (window.OrgDataManager && window.OrgDataManager.deleteAccountGroup) {
-        window.OrgDataManager.deleteAccountGroup(groupId);
-          } else {
-            console.error('OrgDataManager.deleteAccountGroup not available');
-            alert('Cannot delete managed groups - functionality not available');
-            return;
-          }
+          console.error('OrgDataManager.deleteAccountGroup not available');
+          alert('Cannot delete account group - functionality not available');
+          return;
         }
         loadAccountGroups();
         // Refresh any existing account group filters on the page

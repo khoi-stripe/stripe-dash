@@ -709,10 +709,25 @@ class FigmaGroupCreationModalV3 {
 
     saveGroupToStorage(groupData) {
         try {
-            const existingGroups = JSON.parse(localStorage.getItem('accountGroups') || '[]');
+            // Prefer OrgDataManager as single source of truth
+            if (window.OrgDataManager && typeof window.OrgDataManager.createAccountGroup === 'function') {
+                const created = window.OrgDataManager.createAccountGroup(groupData);
+                console.log('Group saved via OrgDataManager:', created);
+                return;
+            }
+
+            // Fallback: direct localStorage (org-scoped) if OrgDataManager is unavailable
+            const currentOrg = window.OrgDataManager?.getCurrentOrganization();
+            if (!currentOrg) {
+                console.error('No current organization found');
+                alert('Unable to save group: No organization selected');
+                return;
+            }
+            const storageKey = `uxr_account_groups_${currentOrg.name}`;
+            const existingGroups = JSON.parse(localStorage.getItem(storageKey) || '[]');
             existingGroups.push(groupData);
-            localStorage.setItem('accountGroups', JSON.stringify(existingGroups));
-            console.log('Group saved successfully:', groupData);
+            localStorage.setItem(storageKey, JSON.stringify(existingGroups));
+            console.log('Group saved (fallback) for organization:', currentOrg.name, groupData);
         } catch (error) {
             console.error('Failed to save group:', error);
             alert('Failed to save group. Please try again.');

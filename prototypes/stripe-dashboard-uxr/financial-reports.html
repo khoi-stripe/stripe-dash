@@ -1130,16 +1130,16 @@
               <a href="./financial-reports.html" class="workload-subitem active">
                 <span class="nav-item-label">Reports</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Custom metrics</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Sigma</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Revenue Recognition</span>
               </a>
-              <a href="#" class="workload-subitem disabled">
+              <a href="#" class="workload-subitem">
                 <span class="nav-item-label">Data management</span>
               </a>
             </div>
@@ -1973,18 +1973,18 @@
     
     // Generate account groups from current organization data
     function generateAccountGroups() {
-      // Check if orgManager is available
-      if (typeof orgManager === 'undefined' || !orgManager) {
-        console.warn('orgManager not available, using fallback data');
+      // Prefer OrgDataManager as single source of truth
+      const manager = window.OrgDataManager;
+      if (!manager) {
+        console.warn('OrgDataManager not available, using fallback data');
         return getFallbackAccountGroups();
       }
 
       try {
-        const allAccounts = orgManager.getAllSubAccounts();
-        console.log('Loaded accounts from orgManager:', allAccounts);
+        const allAccounts = manager.getAllSubAccounts();
         
         if (!allAccounts || allAccounts.length === 0) {
-          console.warn('No accounts found in orgManager, using fallback data');
+          console.warn('No accounts found in OrgDataManager, using fallback data');
           return getFallbackAccountGroups();
         }
         
@@ -2001,7 +2001,7 @@
             type: acc.type || 'Account'
           }));
 
-        console.log('Generated account data:', `${accountData.length} accounts loaded`);
+        // account data generated
 
         // Create groups based on account type/characteristics with fallback to ensure no empty groups
         const groups = {};
@@ -2094,7 +2094,7 @@
       }
     }
 
-    // Fallback account groups in case orgManager is not available
+    // Fallback account groups in case OrgDataManager is not available
     function getFallbackAccountGroups() {
       const fallbackAccounts = [
         { name: 'Mobile App', initials: 'MA', color: 'blue', checked: true },
@@ -2493,16 +2493,16 @@
       });
     }*/
 
-    // Ensure orgManager is available (alias for OrgDataManager)
-    window.orgManager = window.OrgDataManager;
+    // Ensure OrgDataManager reference
+    const managerRef = window.OrgDataManager;
 
     // Check if filter should be visible based on current account
     function shouldShowAccountGroupsFilter() {
-      if (!window.orgManager) {
+    if (!managerRef) {
         return false; // No org manager, don't show filter
       }
       
-      const currentSubAccount = window.orgManager.getCurrentSubAccount();
+      const currentSubAccount = managerRef.getCurrentSubAccount();
       
       // Only show filter when viewing "All accounts" (aggregate view)
       return currentSubAccount && currentSubAccount.isAggregate;
@@ -2519,8 +2519,8 @@
       
       const accountDataMap = new Map();
       
-      if (window.orgManager) {
-        const accounts = window.orgManager.getAllSubAccounts();
+    if (managerRef) {
+      const accounts = managerRef.getAllSubAccounts();
         
         accounts.forEach((account, index) => {
           // Use account ID to seed random data for consistency
@@ -2764,8 +2764,8 @@
             if (accountLabel) {
               // Find matching account by name
               const accountName = accountLabel.textContent;
-              if (window.orgManager) {
-                const accounts = window.orgManager.getAllSubAccounts();
+    if (managerRef) {
+      const accounts = managerRef.getAllSubAccounts();
                 const matchingAccount = accounts.find(acc => acc.name === accountName);
                 if (matchingAccount) {
                   selectedAccountIds.push(matchingAccount.id);
@@ -2800,7 +2800,7 @@
           }
           
           // Reset to show appropriate data based on current account context
-          const currentSubAccount = window.orgManager?.getCurrentSubAccount();
+    const currentSubAccount = managerRef?.getCurrentSubAccount();
           if (currentSubAccount && !currentSubAccount.isAggregate) {
             // Show data for current individual account
             filterReportsContent([currentSubAccount.id]);
@@ -2813,7 +2813,7 @@
         };
         
         // Initialize with appropriate data based on current account context
-        const currentSubAccount = window.orgManager?.getCurrentSubAccount();
+    const currentSubAccount = managerRef?.getCurrentSubAccount();
         if (currentSubAccount && !currentSubAccount.isAggregate) {
           // Show data for current individual account
           filterReportsContent([currentSubAccount.id]);
@@ -2831,7 +2831,7 @@
         }
         
         // Show data for current individual account when filter is hidden
-        const currentSubAccount = window.orgManager?.getCurrentSubAccount();
+    const currentSubAccount = managerRef?.getCurrentSubAccount();
         if (currentSubAccount && !currentSubAccount.isAggregate) {
           filterReportsContent([currentSubAccount.id]);
           console.log('Filter hidden - showing current account:', currentSubAccount.name);
@@ -2847,8 +2847,8 @@
       let currentSubAccount = null;
       
       setInterval(() => {
-        if (window.orgManager) {
-          const newSubAccount = window.orgManager.getCurrentSubAccount();
+    if (managerRef) {
+      const newSubAccount = managerRef.getCurrentSubAccount();
           
           // Check if account has changed
           if (newSubAccount && (!currentSubAccount || currentSubAccount.id !== newSubAccount.id)) {
