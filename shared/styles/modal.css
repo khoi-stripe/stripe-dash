@@ -1,3 +1,8 @@
+:root {
+  --modal-width: 940px;
+  --modal-max-height: 640px;
+}
+
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
@@ -22,9 +27,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0.9);
-  width: 90%;
-  max-width: 520px;
-  max-height: 90vh;
+  width: min(90vw, var(--modal-width));
+  max-width: var(--modal-width);
+  max-height: min(90vh, var(--modal-max-height));
   background: white;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);

@@ -124,9 +124,9 @@ class FigmaGroupCreationModalV3 {
             console.log('modal.show() completed on existing modal');
         }
         
-        // Use the same width as Step 2 to avoid any perceived resize/transition
-        this.modal.getElement().style.width = '940px';
-        this.modal.getElement().style.maxWidth = '940px';
+        // Rely on standardized modal size from CSS variables
+        this.modal.getElement().style.width = '';
+        this.modal.getElement().style.maxWidth = '';
         this.modal.getElement().style.height = 'auto';
         this.modal.getElement().style.maxHeight = 'none';
         
@@ -222,11 +222,11 @@ class FigmaGroupCreationModalV3 {
         this.modal.setContent(this.getStep2HTML());
         this.modal.setFooterActions([]);
 
-        // Maintain same size used in step 1 to avoid visual size change
-        this.modal.getElement().style.width = '940px';
-        this.modal.getElement().style.maxWidth = '940px';
-        this.modal.getElement().style.height = '640px';
-        this.modal.getElement().style.maxHeight = '640px';
+        // Rely on standardized modal size from CSS variables
+        this.modal.getElement().style.width = '';
+        this.modal.getElement().style.maxWidth = '';
+        this.modal.getElement().style.height = '';
+        this.modal.getElement().style.maxHeight = '';
 
         this.renderAccounts();
         this.bindStep2Events();
