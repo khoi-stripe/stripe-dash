@@ -701,8 +701,18 @@
      .content-body {
        flex: 1;
        background: white;
-       overflow-y: auto;
+       overflow: hidden;
        padding: 20px 32px 32px 32px;
+       display: flex;
+       flex-direction: column;
+     }
+
+     /* Groups Container - specific styling for account groups page */
+     #groups-container {
+       flex: 1;
+       overflow-y: auto;
+       margin-bottom: 24px;
+       min-height: 0; /* Important for flex child overflow */
      }
      
      .content-placeholder {
@@ -1236,7 +1246,7 @@
        </div>
        
        <!-- Content Body -->
-       <div class="content-body" style="background: #ffffff; padding: 32px; display: flex; flex-direction: column; gap: 24px; height: 100vh; overflow: hidden;">
+       <div class="content-body" style="background: #ffffff; padding: 32px; gap: 24px;">
          <!-- Page Header Section -->
          <div style="display: flex; flex-direction: column; gap: 4px; padding: 6px 0;">
            <!-- Breadcrumb Navigation -->
@@ -1325,7 +1335,7 @@
             </div>
             
          <!-- Content Area -->
-         <div id="groups-container" style="width: 100%; flex: 1; box-sizing: border-box; padding: 0 0 24px 0; overflow-y: auto;"></div>
+         <div id="groups-container" style="width: 100%; box-sizing: border-box; padding: 0;"></div>
        </div>
      </div>
   </div>
