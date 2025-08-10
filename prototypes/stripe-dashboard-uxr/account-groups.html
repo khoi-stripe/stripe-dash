@@ -73,6 +73,7 @@
       white-space: normal;
       word-wrap: break-word;
       pointer-events: none;
+      will-change: transform, top, left;
     }
 
     /* Portal variant for fixed-position tooltips (e.g., +N more) */
@@ -83,6 +84,7 @@
       left: 0; /* controlled via JS */
       transform: none; /* neutralize default */
       margin: 0; /* handled by JS spacing */
+      will-change: transform, top, left;
     }
 
     /* Prevent positional overrides from .bottom when using portal; keep arrow-only flips */
@@ -2029,15 +2031,22 @@
       };
 
       infoContainers.forEach(container => {
-        container.addEventListener('mouseenter', () => showDesc(container));
-        container.addEventListener('mouseleave', hideDesc);
+        if (!container.__descTipBound) {
+          container.addEventListener('mouseenter', () => showDesc(container));
+          container.addEventListener('mouseleave', hideDesc);
+          container.__descTipBound = true;
+        }
       });
 
+      let rafIdDesc;
       const onReposition = () => {
-        if (getComputedStyle(descPortal).visibility === 'visible') {
-          const hovered = document.querySelector('.info-icon-container:hover');
-          if (hovered) positionDescPortal(hovered);
-        }
+        if (rafIdDesc) cancelAnimationFrame(rafIdDesc);
+        rafIdDesc = requestAnimationFrame(() => {
+          if (getComputedStyle(descPortal).visibility === 'visible') {
+            const hovered = document.querySelector('.info-icon-container:hover');
+            if (hovered) positionDescPortal(hovered);
+          }
+        });
       };
       window.addEventListener('resize', onReposition);
       window.addEventListener('scroll', onReposition, { passive: true });
@@ -2116,16 +2125,23 @@
       };
 
       moreLinks.forEach(link => {
-        link.addEventListener('mouseenter', () => showPortal(link));
-        link.addEventListener('mouseleave', hidePortal);
+        if (!link.__moreTipBound) {
+          link.addEventListener('mouseenter', () => showPortal(link));
+          link.addEventListener('mouseleave', hidePortal);
+          link.__moreTipBound = true;
+        }
       });
 
       // Reposition on scroll/resize while visible
+      let rafId;
       const onReposition = () => {
-        if (getComputedStyle(portalTip).visibility === 'visible') {
-          const hovered = document.querySelector('.group-card-more-link:hover');
-          if (hovered) positionPortal(hovered);
-        }
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          if (getComputedStyle(portalTip).visibility === 'visible') {
+            const hovered = document.querySelector('.group-card-more-link:hover');
+            if (hovered) positionPortal(hovered);
+          }
+        });
       };
       window.addEventListener('resize', onReposition);
       window.addEventListener('scroll', onReposition, { passive: true });
