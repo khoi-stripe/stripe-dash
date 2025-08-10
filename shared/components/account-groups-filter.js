@@ -90,6 +90,11 @@ class AccountGroupsFilter {
     this.lastGroupKey = this.getLastGroupKey();
     this.currentGroup = 'all';
 
+    // Ensure an 'all' group exists before first render
+    if (!this.accountGroups['all']) {
+      this.createAllAccountsGroup();
+    }
+
     // If data isn't ready yet, show loading spinner in trigger and retry until ready
     if (!this.hasAccountData()) {
       this.setTriggerLoadingState(true);
@@ -346,6 +351,17 @@ class AccountGroupsFilter {
       setTimeout(() => {
         this.checkAccountsListOverflow();
       }, 10);
+      // Defensive: if accounts list is empty, rebuild from manager to avoid blank state
+      const accountsInDom = document.querySelectorAll(`#${this.options.accountsListId} .account-item`).length;
+      if (accountsInDom === 0) {
+        if (!this.accountGroups['all']) {
+          this.createAllAccountsGroup();
+        }
+        const groupKey = this.getInitialGroupKey();
+        this.currentGroup = groupKey;
+        this.renderAccounts(groupKey);
+        this.updateTriggerLabel(groupKey);
+      }
     }
   }
   
@@ -720,6 +736,13 @@ class AccountGroupsFilter {
     
     // Update trigger label based on current selection state
     this.updateTriggerBasedOnSelection();
+
+    // Guard: if label becomes empty due to a transient render, restore current group label
+    const triggerOption = document.getElementById(this.options.triggerOptionId);
+    if (triggerOption && !triggerOption.innerHTML.trim()) {
+      const restoreKey = this.isCustomMode ? 'custom' : (this.currentGroup || 'all');
+      this.updateTriggerLabel(restoreKey);
+    }
 
     // Persist last group key only when a full group is applied
     if (!this.isCustomMode) {
