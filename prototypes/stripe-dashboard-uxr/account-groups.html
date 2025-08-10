@@ -80,8 +80,8 @@
       content: '';
       position: absolute;
       top: 100%; /* At the bottom of the tooltip */
-      left: 50%;
-      transform: translateX(-50%);
+      left: var(--arrow-left, 50%);
+      transform: var(--arrow-transform, translateX(-50%));
       width: 0;
       height: 0;
       border-left: 6px solid transparent;
@@ -94,8 +94,8 @@
       content: '';
       position: absolute;
       top: calc(100% + 1px);
-      left: 50%;
-      transform: translateX(-50%);
+      left: var(--arrow-left, 50%);
+      transform: var(--arrow-transform, translateX(-50%));
       width: 0;
       height: 0;
       border-left: 7px solid transparent;
@@ -2053,11 +2053,15 @@
             shift = -(afterRect.right - (viewportWidth - margin)); // shift left
           }
 
-          if (shift !== 0) {
-            tip.style.transform = `translateX(calc(-50% + ${Math.round(shift)}px))`;
-          } else {
-            tip.style.transform = 'translateX(-50%)';
-          }
+          const finalTransform = shift !== 0 ? `translateX(calc(-50% + ${Math.round(shift)}px))` : 'translateX(-50%)';
+          tip.style.transform = finalTransform;
+
+          // Position arrow so it points to the link center within the tooltip
+          const linkCenter = linkRect.left + linkRect.width / 2;
+          const tipLeft = afterRect.left + shift;
+          const arrowOffset = Math.max(margin + 6, Math.min(afterRect.width - (margin + 6), linkCenter - tipLeft));
+          tip.style.setProperty('--arrow-left', `${arrowOffset}px`);
+          tip.style.setProperty('--arrow-transform', 'translateX(-50%)');
         };
 
         const onEnter = () => {
