@@ -1968,55 +1968,79 @@
 
     function setupTooltipHover() {
       const infoContainers = document.querySelectorAll('.info-icon-container');
-      
-      infoContainers.forEach(container => {
+
+      // Create single portal for descriptions
+      let descPortal = document.getElementById('desc-tooltip-portal');
+      if (!descPortal) {
+        descPortal = document.createElement('div');
+        descPortal.id = 'desc-tooltip-portal';
+        descPortal.className = 'info-tooltip portal';
+        descPortal.style.position = 'fixed';
+        descPortal.style.zIndex = '2147483647';
+        descPortal.style.opacity = '0';
+        descPortal.style.visibility = 'hidden';
+        descPortal.style.margin = '0';
+        document.body.appendChild(descPortal);
+      }
+
+      const positionDescPortal = (container) => {
+        const margin = 8;
         const card = container.closest('.account-group-card');
         const tooltip = container.querySelector('.info-tooltip');
-        
-        container.addEventListener('mouseenter', () => {
-          if (!card || !tooltip) return;
+        if (!tooltip) return;
+        // Use the existing tooltip content
+        descPortal.innerHTML = tooltip.innerHTML;
 
-          // Make card appear on top
-          card.style.zIndex = '10000';
-          card.style.position = 'relative';
+        // Show to measure
+        descPortal.style.opacity = '1';
+        descPortal.style.visibility = 'visible';
 
-          // Reset position first
-          tooltip.classList.remove('bottom');
+        const rect = container.getBoundingClientRect();
+        const tipRect = descPortal.getBoundingClientRect();
 
-          // Temporarily make tooltip visible to get its actual dimensions
-          tooltip.style.opacity = '1';
-          tooltip.style.visibility = 'visible';
-          
-          // Get positioning info
-          const rect = container.getBoundingClientRect();
-          const tooltipRect = tooltip.getBoundingClientRect();
-          
-          // Hide tooltip again
-          tooltip.style.opacity = '0';
-          tooltip.style.visibility = 'hidden';
+        // Center horizontally and clamp
+        const viewportWidth = window.innerWidth;
+        let left = rect.left + rect.width / 2 - tipRect.width / 2;
+        left = Math.max(margin, Math.min(left, viewportWidth - margin - tipRect.width));
 
-          // Check if tooltip would go off the top of the viewport (with some margin)
-          const spaceAbove = rect.top;
-          const tooltipHeight = tooltipRect.height;
-          const marginBuffer = 16; // Extra buffer space
-          
-          if (spaceAbove < tooltipHeight + marginBuffer) {
-            tooltip.classList.add('bottom');
-          }
-        });
-        
-        container.addEventListener('mouseleave', () => {
-          if (card) {
-            card.style.zIndex = '1';
-          }
-          if (tooltip) {
-            // Delay hiding to allow for style changes
-            setTimeout(() => {
-              tooltip.classList.remove('bottom');
-            }, 200);
-          }
-        });
+        // Prefer above; otherwise below
+        let top = rect.top - margin - tipRect.height;
+        let placeBelow = false;
+        if (top < margin) {
+          top = rect.bottom + margin;
+          placeBelow = true;
+        }
+
+        descPortal.style.left = `${Math.round(left)}px`;
+        descPortal.style.top = `${Math.round(top)}px`;
+        if (placeBelow) descPortal.classList.add('bottom'); else descPortal.classList.remove('bottom');
+
+        // Arrow alignment
+        const linkCenter = rect.left + rect.width / 2;
+        const arrowOffset = Math.max(margin + 6, Math.min(tipRect.width - (margin + 6), linkCenter - left));
+        descPortal.style.setProperty('--arrow-left', `${arrowOffset}px`);
+        descPortal.style.setProperty('--arrow-transform', 'translateX(-50%)');
+      };
+
+      const showDesc = (container) => positionDescPortal(container);
+      const hideDesc = () => {
+        descPortal.style.opacity = '0';
+        descPortal.style.visibility = 'hidden';
+      };
+
+      infoContainers.forEach(container => {
+        container.addEventListener('mouseenter', () => showDesc(container));
+        container.addEventListener('mouseleave', hideDesc);
       });
+
+      const onReposition = () => {
+        if (getComputedStyle(descPortal).visibility === 'visible') {
+          const hovered = document.querySelector('.info-icon-container:hover');
+          if (hovered) positionDescPortal(hovered);
+        }
+      };
+      window.addEventListener('resize', onReposition);
+      window.addEventListener('scroll', onReposition, { passive: true });
     }
 
     // Tooltip for +N more showing hidden account names (portal to body to avoid clipping)
