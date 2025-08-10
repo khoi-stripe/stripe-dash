@@ -75,6 +75,24 @@
       pointer-events: none;
     }
 
+    /* Portal variant for fixed-position tooltips (e.g., +N more) */
+    .info-tooltip.portal {
+      position: fixed;
+      top: auto; /* controlled via JS */
+      bottom: auto; /* neutralize default */
+      left: 0; /* controlled via JS */
+      transform: none; /* neutralize default */
+      margin: 0; /* handled by JS spacing */
+    }
+
+    /* Prevent positional overrides from .bottom when using portal; keep arrow-only flips */
+    .info-tooltip.portal.bottom {
+      top: auto !important;
+      bottom: auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
     /* Tooltip Arrow */
     .info-tooltip::after {
       content: '';
@@ -2010,7 +2028,7 @@
       if (!portalTip) {
         portalTip = document.createElement('div');
         portalTip.id = 'more-tooltip-portal';
-        portalTip.className = 'info-tooltip';
+        portalTip.className = 'info-tooltip portal';
         portalTip.style.position = 'fixed';
         portalTip.style.zIndex = '2147483647';
         portalTip.style.opacity = '0';
