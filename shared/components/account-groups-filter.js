@@ -889,7 +889,7 @@ class AccountGroupsFilter {
     }
     
     // Check if we have any custom groups (excluding 'all')
-    const customGroupKeys = Object.keys(this.accountGroups);
+    const customGroupKeys = Object.keys(this.accountGroups).filter(key => key !== 'all');
     const hasCustomGroups = customGroupKeys.length > 0;
     
     if (!hasCustomGroups) {
