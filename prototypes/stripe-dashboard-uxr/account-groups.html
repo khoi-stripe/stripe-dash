@@ -1277,32 +1277,12 @@
             padding: 0 0 12px 0;
             border-bottom: 1px solid #d8dee4;
           ">
-            <!-- Table Filters (disabled account filter) -->
+            <!-- Account filter (active) -->
             <div style="display: flex; align-items: center; gap: 8px;">
-              <div style="
-                display: flex;
-                align-items: center;
-                height: 24px;
-                padding: 0 6px 0 12px;
-                border: 1px solid #b6c0cd;
-                border-radius: 999px;
-                background: transparent;
-                cursor: default;
-              ">
-                <span style="
-                  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
-                  font-weight: 600;
-                  font-size: 12px;
-                  line-height: 16px;
-                  color: #596171;
-                  letter-spacing: -0.024px;
-                  margin-right: 6px;
-                ">Account</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="6" cy="6" r="5" stroke="#6c7688" stroke-width="1" fill="none"/>
-                  <path d="M6 3v6M3 6h6" stroke="#6c7688" stroke-width="1" stroke-linecap="round"/>
-                  </svg>
-                </div>
+              <button id="ag-accounts-filter-trigger" style="display:flex;align-items:center;height:24px;padding:0 8px 0 12px;border:1px solid #b6c0cd;border-radius:999px;background:#fff;cursor:pointer;gap:6px;">
+                <span style="font:600 12px/16px 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;color:#596171;">Account</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="#6c7688" stroke-width="1" fill="none"/><path d="M6 3v6M3 6h6" stroke="#6c7688" stroke-width="1" stroke-linecap="round"/></svg>
+              </button>
             </div>
             
             <!-- Table Actions (enabled add group button) -->
@@ -1736,10 +1716,11 @@
         return;
       }
 
-      container.innerHTML = allGroups.map(group => {
+      const renderGroups = (groups) => groups.map(group => {
         let isSavedGroup = !!group.accountIds; // Convert to boolean: Saved groups have accountIds array
         return createGroupCard(group, [], isSavedGroup, true); // Show loading spinner
       }).join('');
+      container.innerHTML = renderGroups(allGroups);
       
       // Setup kebab event listeners immediately for the card structure
       setupKebabEventListeners();
@@ -1807,12 +1788,73 @@
             }
           }
         });
-        
+
+        // Enable account filter logic
+        setupActiveAccountFilter(allGroups);
+
         // Apply responsive badge truncation after rendering real content
     applyResponsiveBadgeTruncation();
     setupMoreHoverTooltips();
         setupTooltipHover();
       }, 300); // Show spinner for 300ms to simulate loading
+    }
+
+    // Active account filter implementation
+    function setupActiveAccountFilter(initialGroups) {
+      const trigger = document.getElementById('ag-accounts-filter-trigger');
+      if (!trigger) return;
+      let pop = null;
+      const selectedIds = new Set();
+      const applyFilter = () => {
+        const container = document.getElementById('groups-container');
+        const groups = window.OrgDataManager.getAccountGroups();
+        const predicate = (g) => {
+          if (selectedIds.size === 0) return true;
+          const ids = g.accountIds ? g.accountIds : (window.OrgDataManager.getAccountsInGroup(g.id) || []).map(a => a.id);
+          for (const id of selectedIds) if (!ids.includes(id)) return false; return true;
+        };
+        const filtered = groups.filter(predicate);
+        if (filtered.length === 0) {
+          container.innerHTML = '<div style="padding:16px;color:#596171;font: 400 14px/20px \'SF Pro Text\', -apple-system, BlinkMacSystemFont, sans-serif;">No groups match the selected account filter.</div>';
+          return;
+        }
+        container.innerHTML = filtered.map(g => createGroupCard(g, [], !!g.accountIds, true)).join('');
+        setTimeout(() => {
+          filtered.forEach(g => {
+            const accounts = g.accountIds ? g.accountIds.map(id => (window.OrgDataManager.getCurrentOrganization()?.accounts||[]).find(a=>a.id===id) || {id, name:`Account ${id}`}) : window.OrgDataManager.getAccountsInGroup(g.id);
+            const containerEl = document.querySelector(`.group-card-accounts-container[data-group-id="${g.id}"]`);
+            if (containerEl) {
+              containerEl.innerHTML = accounts.map((a,i)=>`<div class=\"group-card-account-badge\" data-account-id=\"${a.id}\" data-account-index=\"${i}\" style=\"background:#f5f6f8;display:flex;gap:6px;align-items:center;justify-content:center;padding:4px 8px;border-radius:4px;\"><div class=\"group-card-account-name\" style=\"font-family:'SF Pro Text',-apple-system,BlinkMacSystemFont,sans-serif;font-weight:600;font-size:12px;line-height:16px;color:#353a44;letter-spacing:-0.024px;margin:0;\">${a.name}</div></div>`).join('');
+              const countPill = document.querySelector(`#group-card-${g.id} .group-card-count`);
+              if (countPill) countPill.textContent = accounts.length;
+            }
+          });
+        }, 0);
+      };
+
+      trigger.addEventListener('click', () => {
+        if (pop) { document.body.removeChild(pop); pop=null; return; }
+        const rect = trigger.getBoundingClientRect();
+        pop = document.createElement('div');
+        pop.style.cssText = 'position:fixed; right:24px; top:'+(rect.bottom+8)+'px; width:320px; background:#fff; border:1px solid #d8dee4; border-radius:12px; box-shadow:0 15px 35px rgba(48,49,61,0.08), 0 5px 15px rgba(0,0,0,0.12); padding:12px; z-index:2147482000;';
+        const accounts = (window.OrgDataManager.getCurrentOrganization()?.accounts||[]).filter(a=>!a.isAggregate);
+        pop.innerHTML = `
+          <div style="font:700 14px/20px 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; color:#353a44; margin-bottom:8px;">Select accounts</div>
+          <div style="max-height:260px; overflow:auto; display:flex; flex-direction:column; gap:6px;">
+            ${accounts.map(a=>`<label style=\"display:flex;align-items:center;gap:8px;font:400 14px/20px 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;color:#353a44;\"><input type=\"checkbox\" data-id=\"${a.id}\" ${selectedIds.has(a.id)?'checked':''}/> ${a.name}</label>`).join('')}
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+            <button id=\"ag-filter-cancel\" style=\"padding:4px 8px; border:1px solid #d8dee4; border-radius:6px; background:white;\">Cancel</button>
+            <button id=\"ag-filter-apply\" style=\"padding:4px 8px; border:1px solid #675dff; border-radius:6px; background:#675dff; color:#fff;\">Apply</button>
+          </div>`;
+        document.body.appendChild(pop);
+        pop.querySelector('#ag-filter-cancel').addEventListener('click', ()=>{ document.body.removeChild(pop); pop=null; });
+        pop.querySelector('#ag-filter-apply').addEventListener('click', ()=>{ applyFilter(); document.body.removeChild(pop); pop=null; });
+        pop.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.addEventListener('change', (e)=>{
+          const id = e.target.getAttribute('data-id');
+          if (e.target.checked) selectedIds.add(id); else selectedIds.delete(id);
+        }));
+      });
     }
 
     // Make loadAccountGroups globally accessible for dynamic updates
