@@ -1679,7 +1679,12 @@
       container.style.overflow = 'auto';
       container.style.boxSizing = 'border-box';
       
-      // First render cards with loading spinners
+      // First render cards with loading spinners (or a single centered loader if no groups yet)
+      if (allGroups.length === 0) {
+        container.innerHTML = '<div style="width:100%;display:flex;justify-content:center;align-items:center;min-height:120px;"><span style="width:16px;height:16px;border:2px solid rgba(0,39,77,0.18);border-top-color:rgba(0,39,77,0.45);border-radius:50%;animation: agf_spin .6s linear infinite;"></span></div>';
+        return;
+      }
+
       container.innerHTML = allGroups.map(group => {
         let isSavedGroup = !!group.accountIds; // Convert to boolean: Saved groups have accountIds array
         return createGroupCard(group, [], isSavedGroup, true); // Show loading spinner

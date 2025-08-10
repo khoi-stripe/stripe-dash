@@ -1077,10 +1077,13 @@ document.addEventListener('DOMContentLoaded', function() {
        <div class="content-body">
          <div class="content-placeholder">
            <div class="content-placeholder-inner">
-             <div class="account-context">
-               <h2 id="account-context-title" class="account-title">Loading...</h2>
-               <p id="account-context-subtitle" class="account-subtitle">Please wait while we load your account information</p>
-             </div>
+              <div class="account-context">
+                <h2 id="account-context-title" class="account-title">
+                  <span id="acct-title-spinner" style="display:inline-block;width:12px;height:12px;border:2px solid rgba(0,39,77,0.18);border-top-color:rgba(0,39,77,0.45);border-radius:50%;animation: agf_spin .6s linear infinite;vertical-align:-1px;margin-right:6px;"></span>
+                  Loading
+                </h2>
+                <p id="account-context-subtitle" class="account-subtitle">Please wait while we load your account information</p>
+              </div>
            </div>
          </div>
        </div>
@@ -1117,7 +1120,10 @@ document.addEventListener('DOMContentLoaded', function() {
       );
       
       // Update content placeholder with account context
-      updateAccountContext();
+          updateAccountContext();
+          // Remove spinner once context is set
+          const spin = document.getElementById('acct-title-spinner');
+          if (spin) spin.remove();
 
 
 
