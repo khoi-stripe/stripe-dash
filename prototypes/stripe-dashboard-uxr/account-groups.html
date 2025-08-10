@@ -1553,7 +1553,7 @@
                     </div>
                   </div>
                 `).join('')}
-                <a class="group-card-more-link" href="#" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: #3b82f6; text-decoration: none; padding: 4px 0; display: none;">+ more</a>
+                <span class="group-card-more-link" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: var(--neutral-700); text-decoration: none; padding: 4px 0; display: none; cursor: default;">+ more</span>
               `}
                   </div>
 
@@ -1740,7 +1740,7 @@
               </div>
             `).join('');
             
-            const moreLink = `<a class="group-card-more-link" href="#" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: #3b82f6; text-decoration: none; padding: 4px 0; display: none;">+ more</a>`;
+            const moreLink = `<span class=\"group-card-more-link\" style=\"font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: var(--neutral-700); text-decoration: none; padding: 4px 0; display: none; cursor: default;\">+ more</span>`;
             
             accountsContainer.innerHTML = accountBadgesHtml + moreLink;
             
@@ -1758,7 +1758,8 @@
         });
         
         // Apply responsive badge truncation after rendering real content
-        applyResponsiveBadgeTruncation();
+    applyResponsiveBadgeTruncation();
+    setupMoreHoverTooltips();
         setupTooltipHover();
       }, 300); // Show spinner for 300ms to simulate loading
     }
@@ -1930,6 +1931,13 @@
             hiddenCount++;
             moreLink.textContent = `+ ${hiddenCount} more`;
           }
+
+          // Build tooltip with names of hidden accounts
+          const hiddenNames = Array.from(container.querySelectorAll('.group-card-account-badge'))
+            .filter(b => b.style.display === 'none')
+            .map(b => b.querySelector('.group-card-account-name')?.textContent?.trim())
+            .filter(Boolean);
+          moreLink.setAttribute('data-hidden-names', hiddenNames.join(' • '));
         }
       });
     }
@@ -1937,6 +1945,7 @@
     // Apply truncation on window resize
     window.addEventListener('resize', () => {
       applyResponsiveBadgeTruncation();
+      setupMoreHoverTooltips();
     });
 
     function setupTooltipHover() {
@@ -1988,6 +1997,40 @@
               tooltip.classList.remove('bottom');
             }, 200);
           }
+        });
+      });
+    }
+
+    // Tooltip for +N more showing hidden account names
+    function setupMoreHoverTooltips() {
+      const moreLinks = document.querySelectorAll('.group-card-more-link');
+      moreLinks.forEach(link => {
+        // create tooltip element if not exists
+        let tip = link.querySelector('.info-tooltip');
+        if (!tip) {
+          tip = document.createElement('div');
+          tip.className = 'info-tooltip';
+          tip.style.position = 'absolute';
+          tip.style.zIndex = '10002';
+          tip.style.opacity = '0';
+          tip.style.visibility = 'hidden';
+          tip.style.transition = 'opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease';
+          tip.style.transform = 'translateY(-4px)';
+          link.style.position = 'relative';
+          link.appendChild(tip);
+        }
+        link.addEventListener('mouseenter', () => {
+          const names = link.getAttribute('data-hidden-names') || '';
+          if (!names) return;
+          tip.textContent = names;
+          tip.style.opacity = '1';
+          tip.style.visibility = 'visible';
+          tip.style.bottom = '100%';
+          tip.style.left = '0';
+        });
+        link.addEventListener('mouseleave', () => {
+          tip.style.opacity = '0';
+          tip.style.visibility = 'hidden';
         });
       });
     }
