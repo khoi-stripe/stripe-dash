@@ -944,6 +944,7 @@
     <style>
     .workload-flyout-parent {
       /* No background, invisible container for event handling */
+      position: relative;
     }
     </style>
     <style>
@@ -1235,7 +1236,7 @@
        </div>
        
        <!-- Content Body -->
-       <div class="content-body" style="background: #ffffff; padding: 32px; display: flex; flex-direction: column; gap: 24px;">
+       <div class="content-body" style="background: #ffffff; padding: 32px; display: flex; flex-direction: column; gap: 24px; height: 100vh; overflow: hidden;">
          <!-- Page Header Section -->
          <div style="display: flex; flex-direction: column; gap: 4px; padding: 6px 0;">
            <!-- Breadcrumb Navigation -->
@@ -1324,7 +1325,7 @@
             </div>
             
          <!-- Content Area -->
-         <div id="groups-container" style="width: 100%; min-height: 100%; box-sizing: border-box; padding: 0;"></div>
+         <div id="groups-container" style="width: 100%; flex: 1; margin-bottom: 24px; box-sizing: border-box; padding: 0; overflow-y: auto;"></div>
        </div>
      </div>
   </div>
@@ -1334,9 +1335,9 @@
   
   <!-- UXR Data Management -->
   <script src="./data/organizations.js"></script>
-  
+  <script src="./components/group-creation-modal.js"></script>
   <script src="../../shared/components/modal.js"></script>
-  <script src="../../shared/components/group-creation-modal-v3.js"></script>
+  <script src="../../shared/components/figma-group-creation-modal-v3.js"></script>
   <script src="./components/prototype-control-panel.js"></script>
 
          <script type="module">
@@ -1461,30 +1462,45 @@
       }
     }
 
-    // Legacy modal handlers removed (GroupCreationModal and V2)
+    function showCreateGroupModal() {
+      window.GroupCreationModal.show({
+        onComplete: (group) => {
+          loadAccountGroups(); // Refresh the groups display
+        }
+      });
+    }
+
+    function showFigmaCreateGroupModalV2() {
+      window.FigmaGroupCreationModalV2.show({
+        onComplete: (group) => {
+          console.log('Figma modal V2 - Group created:', group);
+          loadAccountGroups(); // Refresh the groups display
+        }
+      });
+    }
     
     function showFigmaCreateGroupModalV3() {
         console.log('showFigmaCreateGroupModalV3 called');
         console.log('Modal class available:', typeof window.Modal);
-        console.log('GroupCreationModalV3 available:', typeof window.GroupCreationModalV3);
+        console.log('FigmaGroupCreationModalV3 available:', typeof window.FigmaGroupCreationModalV3);
         
         if (!window.Modal) {
             console.error('Modal class not available');
         return;
       }
       
-        if (!window.GroupCreationModalV3) {
-            console.error('GroupCreationModalV3 not available');
+        if (!window.FigmaGroupCreationModalV3) {
+            console.error('FigmaGroupCreationModalV3 not available');
             return;
         }
         
         try {
             console.log('About to call init()...');
-            window.GroupCreationModalV3.init();
+            window.FigmaGroupCreationModalV3.init();
             console.log('Init() completed, about to call show()...');
-            window.GroupCreationModalV3.show({
+            window.FigmaGroupCreationModalV3.show({
                 onComplete: (group) => {
-                    console.log('Group modal V3 - Group created:', group);
+                    console.log('Figma modal V3 - Group created:', group);
                     loadAccountGroups();
                 }
             });
@@ -2310,7 +2326,7 @@
       if (confirm('Are you sure you want to delete this account group?')) {
         // Use OrgDataManager for all group deletions
         if (window.OrgDataManager && window.OrgDataManager.deleteAccountGroup) {
-          window.OrgDataManager.deleteAccountGroup(groupId);
+        window.OrgDataManager.deleteAccountGroup(groupId);
         } else {
           console.error('OrgDataManager.deleteAccountGroup not available');
           alert('Cannot delete account group - functionality not available');
