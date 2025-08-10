@@ -1614,7 +1614,8 @@
         container.className = '';
         container.style.display = 'block';
         container.style.width = '100%';
-        container.style.minHeight = '100%';
+        // Leave room for the 24px spacer at the bottom so page margin is visible
+        container.style.minHeight = 'calc(100% - 24px)';
         container.style.padding = '0';
         container.style.boxSizing = 'border-box';
 
@@ -1704,7 +1705,9 @@
       container.className = 'figma-gradient-clean';
       container.style.display = 'flex';
       container.style.width = '100%';
-      container.style.minHeight = '100%';
+      // Leave room for the bottom spacer
+      container.style.minHeight = 'calc(100% - 24px)';
+      container.style.flex = '1 1 auto';
       container.style.padding = 'var(--Spacing-medium, 16px)';
       container.style.flexDirection = 'column';
       container.style.alignItems = 'flex-start';
