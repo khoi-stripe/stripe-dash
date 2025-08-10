@@ -1629,8 +1629,8 @@
         container.className = '';
         container.style.display = 'block';
         container.style.width = '100%';
-        // Leave room for the 24px spacer at the bottom so page margin is visible
-        container.style.minHeight = 'calc(100% - 24px)';
+        // Hug contents: no forced min-height
+        container.style.minHeight = 'auto';
         container.style.padding = '0';
         container.style.boxSizing = 'border-box';
 
@@ -1720,14 +1720,14 @@
       container.className = 'figma-gradient-clean';
       container.style.display = 'flex';
       container.style.width = '100%';
-      // Leave room for the bottom spacer
-      container.style.minHeight = 'calc(100% - 24px)';
-      container.style.flex = '1 1 auto';
+      // Hug contents: no min-height or flex growth
+      container.style.minHeight = 'auto';
+      container.style.flex = '0 0 auto';
       container.style.padding = 'var(--Spacing-medium, 16px)';
       container.style.flexDirection = 'column';
       container.style.alignItems = 'flex-start';
       container.style.gap = '16px';
-      container.style.overflow = 'auto';
+      container.style.overflow = 'visible';
       container.style.boxSizing = 'border-box';
       
       // First render cards with loading spinners (or a single centered loader if no groups yet)
