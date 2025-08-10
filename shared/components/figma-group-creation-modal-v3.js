@@ -316,7 +316,24 @@ class FigmaGroupCreationModalV3 {
                 .select-all .checkbox-container { width: 22px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: absolute; left: 8px; box-sizing: border-box; margin: 0; padding: 0; }
                 .select-all .account-filter-content { display: flex; align-items: center; justify-content: space-between; padding: 8px 6px; margin-left: 30px; flex: 1; box-sizing: border-box; }
                 .select-all label { font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: -0.005em; color: var(--neutral-700); cursor: pointer; }
-                .accounts-table { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+                .accounts-table { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+                /* Bottom overflow shadow anchored to the visible viewport of the list */
+                .accounts-table::after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    height: 24px;
+                    pointer-events: none;
+                    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(0,0,0,0.18) 100%);
+                    opacity: 0;
+                    transition: opacity 120ms ease;
+                    z-index: 2;
+                }
+                .accounts-table.has-overflow::after {
+                    opacity: 0.06; /* match subtlety used elsewhere */
+                }
                 .accounts-list { 
                     flex: 1; 
                     overflow-y: auto; 
@@ -573,9 +590,10 @@ class FigmaGroupCreationModalV3 {
 
     updateAccountsListOverflowShadow() {
         const list = document.getElementById('accountsList-v3');
-        if (!list) return;
+        const table = this.modal?.getElement()?.querySelector('.accounts-table');
+        if (!list || !table) return;
         const hasOverflow = (list.scrollHeight - 1) > list.clientHeight; // buffer for sub-pixel rounding
-        list.classList.toggle('has-overflow', hasOverflow);
+        table.classList.toggle('has-overflow', hasOverflow);
     }
     
     toggleAccount(accountId) {
