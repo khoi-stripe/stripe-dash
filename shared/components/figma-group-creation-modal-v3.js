@@ -124,9 +124,9 @@ class FigmaGroupCreationModalV3 {
             console.log('modal.show() completed on existing modal');
         }
         
-        // Set custom width for Step 1 (640px width, dynamic height)
-        this.modal.getElement().style.width = '640px';
-        this.modal.getElement().style.maxWidth = '640px';
+        // Use the same width as Step 2 to avoid any perceived resize/transition
+        this.modal.getElement().style.width = '940px';
+        this.modal.getElement().style.maxWidth = '940px';
         this.modal.getElement().style.height = 'auto';
         this.modal.getElement().style.maxHeight = 'none';
         
@@ -222,7 +222,7 @@ class FigmaGroupCreationModalV3 {
         this.modal.setContent(this.getStep2HTML());
         this.modal.setFooterActions([]);
 
-        // Set custom size for Step 2 (940px x 640px)
+        // Maintain same size used in step 1 to avoid visual size change
         this.modal.getElement().style.width = '940px';
         this.modal.getElement().style.maxWidth = '940px';
         this.modal.getElement().style.height = '640px';
@@ -335,12 +335,11 @@ class FigmaGroupCreationModalV3 {
                 .accounts-list::-webkit-scrollbar-thumb {
                     background: rgba(0, 0, 0, 0.15);
                     border-radius: 3px;
-                    transition: background 0.2s ease;
                 }
                 .accounts-list::-webkit-scrollbar-thumb:hover {
                     background: rgba(0, 0, 0, 0.25);
                 }
-                .account-item { display: flex; align-items: center; height: 36px; cursor: pointer; position: relative; transition: background-color 0.15s ease; }
+                .account-item { display: flex; align-items: center; height: 36px; cursor: pointer; position: relative; }
                 .account-item:hover { background: var(--neutral-25); border-radius: 6px; }
                 .checkbox-container { width: 22px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: absolute; left: 8px; box-sizing: border-box; margin: 0; padding: 0; }
                 .account-filter-content { display: flex; align-items: center; gap: 6px; padding: 8px 6px; margin-left: 30px; flex: 1; box-sizing: border-box; }
