@@ -719,11 +719,7 @@
       pointer-events: none !important;
     }
     </style>
-    <style>
-    .workload-flyout-parent {
-      /* No background, invisible container for event handling */
-    }
-    </style>
+    <!-- Removed empty ruleset to satisfy linter -->
     <style>
     .workload-flyout .workload-submenu {
       padding-left: 0 !important;
@@ -1116,22 +1112,7 @@
              </div>
            </a>
            
-           <!-- Stripe Profile -->
-           <div style="background: white; border-radius: 8px; padding: 16px 24px; cursor: pointer; width: 320px; transition: background-color 0.15s ease;" onmouseover="this.style.backgroundColor='#f5f6f8'" onmouseout="this.style.backgroundColor='white'">
-             <div style="display: flex; gap: 16px; align-items: flex-start;">
-               <div style="width: 32px; height: 32px; background: #f5f6f8; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #353a44; flex-shrink: 0;">
-                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                   <path fill-rule="evenodd" clip-rule="evenodd" d="M4 2C2.89543 2 2 2.89543 2 4V12C2 13.1046 2.89543 14 4 14H12C13.1046 14 14 13.1046 14 12V4C14 2.89543 13.1046 2 12 2H4ZM3.5 4C3.5 3.72386 3.72386 3.5 4 3.5H12C12.2761 3.5 12.5 3.72386 12.5 4V12C12.5 12.2761 12.2761 12.5 12 12.5H4C3.72386 12.5 3.5 12.2761 3.5 12V4Z" fill="currentColor"/>
-                   <path fill-rule="evenodd" clip-rule="evenodd" d="M8 5.5C7.44772 5.5 7 5.94772 7 6.5C7 7.05228 7.44772 7.5 8 7.5C8.55228 7.5 9 7.05228 9 6.5C9 5.94772 8.55228 5.5 8 5.5ZM5.5 6.5C5.5 5.11929 6.61929 4 8 4C9.38071 4 10.5 5.11929 10.5 6.5C10.5 7.88071 9.38071 9 8 9C6.61929 9 5.5 7.88071 5.5 6.5Z" fill="currentColor"/>
-                   <path fill-rule="evenodd" clip-rule="evenodd" d="M6 11.25C6 10.8358 6.33579 10.5 6.75 10.5H9.25C9.66421 10.5 10 10.8358 10 11.25C10 11.6642 9.66421 12 9.25 12H6.75C6.33579 12 6 11.6642 6 11.25Z" fill="currentColor"/>
-                 </svg>
-               </div>
-               <div style="flex: 1; min-width: 0;">
-                 <h3 style="margin: 0 0 0 0; font-size: 16px; font-weight: 700; color: #533afd; line-height: 24px; letter-spacing: -0.31px;">Stripe profile</h3>
-                 <p style="margin: 0; color: #353a44; line-height: 20px; font-size: 14px; letter-spacing: -0.15px;">Manage how you show up on the Stripe business network.</p>
-               </div>
-             </div>
-           </div>
+           
          </div>
        </div>
      </div>
