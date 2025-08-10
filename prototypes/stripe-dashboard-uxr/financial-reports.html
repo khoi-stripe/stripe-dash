@@ -1605,6 +1605,22 @@
   <script src="./data/organizations.js"></script>
   <script src="./components/group-creation-modal.js"></script>
   <script src="./components/prototype-control-panel.js"></script>
+  <script type="module">
+    import { showPageSpinner, hidePageSpinner } from '../../shared/utils/helpers.js';
+    // Global page spinner during initial data readiness
+    document.addEventListener('DOMContentLoaded', async () => {
+      showPageSpinner('Loading reports...');
+      try {
+        if (window.OrgDataManager) {
+          await window.OrgDataManager.waitForReady();
+        } else {
+          await new Promise(r => setTimeout(r, 300));
+        }
+      } finally {
+        hidePageSpinner();
+      }
+    });
+  </script>
 
                  <script>
    // Initialize UXR functionality

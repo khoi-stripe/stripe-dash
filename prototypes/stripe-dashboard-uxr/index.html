@@ -1095,8 +1095,23 @@ document.addEventListener('DOMContentLoaded', function() {
   
   <!-- UXR Data Management -->
   <script src="./data/organizations.js"></script>
-  
+  <script src="./components/group-creation-modal.js"></script>
   <script src="./components/prototype-control-panel.js"></script>
+  <script type="module">
+    import { showPageSpinner, hidePageSpinner } from '../../shared/utils/helpers.js';
+    document.addEventListener('DOMContentLoaded', async () => {
+      showPageSpinner('Loading dashboard...');
+      try {
+        if (window.OrgDataManager) {
+          await window.OrgDataManager.waitForReady();
+        } else {
+          await new Promise(r => setTimeout(r, 300));
+        }
+      } finally {
+        hidePageSpinner();
+      }
+    });
+  </script>
 
          <script type="module">
     // Initialize UXR functionality

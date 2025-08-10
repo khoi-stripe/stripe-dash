@@ -231,3 +231,44 @@ export function withLoading(element, asyncFn) {
     }
   };
 } 
+
+// Page-level spinner overlay
+export function showPageSpinner(text = '') {
+  let overlay = document.getElementById('page-spinner-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'page-spinner-overlay';
+    overlay.style.cssText = `
+      position: fixed; inset: 0; z-index: 2147483000; display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.65); backdrop-filter: saturate(180%) blur(6px);
+    `;
+    const spinner = document.createElement('div');
+    spinner.style.cssText = `
+      width: 20px; height: 20px; border: 2px solid rgba(0,39,77,0.18); border-top-color: var(--brand-600);
+      border-radius: 50%; animation: agf_spin .6s linear infinite; margin-right: ${text ? '8px' : '0'};
+    `;
+    const label = document.createElement('div');
+    label.textContent = text;
+    label.style.cssText = 'color: #353a44; font-size: 14px;';
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; align-items:center;';
+    row.appendChild(spinner);
+    if (text) row.appendChild(label);
+    overlay.appendChild(row);
+    document.body.appendChild(overlay);
+    // Keyframes if not present
+    if (!document.getElementById('agf-spinner-style')) {
+      const style = document.createElement('style');
+      style.id = 'agf-spinner-style';
+      style.textContent = '@keyframes agf_spin{to{transform:rotate(360deg)}}';
+      document.head.appendChild(style);
+    }
+  } else {
+    overlay.style.display = 'flex';
+  }
+}
+
+export function hidePageSpinner() {
+  const overlay = document.getElementById('page-spinner-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
