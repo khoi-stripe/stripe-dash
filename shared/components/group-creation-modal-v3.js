@@ -1,5 +1,5 @@
 // V3 - Refactored to use shared Modal component
-class FigmaGroupCreationModalV3 {
+class GroupCreationModalV3 {
     constructor() {
         this.modal = null;
         this.accounts = [];
@@ -39,7 +39,7 @@ class FigmaGroupCreationModalV3 {
     }
 
     show(options = {}) {
-        console.log('FigmaGroupCreationModalV3.show() called with options:', options);
+console.log('GroupCreationModalV3.show() called with options:', options);
         this.onComplete = options.onComplete;
         console.log('About to call reset()...');
         this.reset();
@@ -738,5 +738,5 @@ class FigmaGroupCreationModalV3 {
     }
 }
 
-window.FigmaGroupCreationModalV3 = new FigmaGroupCreationModalV3();
-window.figmaModalV3 = window.FigmaGroupCreationModalV3;
+window.GroupCreationModalV3 = new GroupCreationModalV3();
+window.figmaModalV3 = window.GroupCreationModalV3;

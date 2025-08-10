@@ -1336,7 +1336,7 @@
   <script src="./data/organizations.js"></script>
   
   <script src="../../shared/components/modal.js"></script>
-  <script src="../../shared/components/figma-group-creation-modal-v3.js"></script>
+  <script src="../../shared/components/group-creation-modal-v3.js"></script>
   <script src="./components/prototype-control-panel.js"></script>
 
          <script type="module">
@@ -1466,25 +1466,25 @@
     function showFigmaCreateGroupModalV3() {
         console.log('showFigmaCreateGroupModalV3 called');
         console.log('Modal class available:', typeof window.Modal);
-        console.log('FigmaGroupCreationModalV3 available:', typeof window.FigmaGroupCreationModalV3);
+        console.log('GroupCreationModalV3 available:', typeof window.GroupCreationModalV3);
         
         if (!window.Modal) {
             console.error('Modal class not available');
         return;
       }
       
-        if (!window.FigmaGroupCreationModalV3) {
-            console.error('FigmaGroupCreationModalV3 not available');
+        if (!window.GroupCreationModalV3) {
+            console.error('GroupCreationModalV3 not available');
             return;
         }
         
         try {
             console.log('About to call init()...');
-            window.FigmaGroupCreationModalV3.init();
+            window.GroupCreationModalV3.init();
             console.log('Init() completed, about to call show()...');
-            window.FigmaGroupCreationModalV3.show({
+            window.GroupCreationModalV3.show({
                 onComplete: (group) => {
-                    console.log('Figma modal V3 - Group created:', group);
+                    console.log('Group modal V3 - Group created:', group);
                     loadAccountGroups();
                 }
             });
