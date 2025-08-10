@@ -687,17 +687,18 @@ class AccountGroupsFilter {
     const folderIcon = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px; flex-shrink: 0; color: var(--brand-600);">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M16 7.82679C16 7.94141 15.9803 8.05518 15.9417 8.16312L13.974 13.6727C13.6898 14.4687 12.9358 15 12.0906 15H2C0.895431 15 0 14.1046 0 13V3C0 1.89543 0.89543 1 2 1H4.58579C4.851 1 5.10536 1.10536 5.29289 1.29289L6 2H11C12.1046 2 13 2.89543 13 4V5H14C15.1046 5 16 5.89543 16 7V7.82679ZM3.75 6.5C3.33579 6.5 3 6.16421 3 5.75C3 5.33579 3.33579 5 3.75 5H11.5V4C11.5 3.72386 11.2761 3.5 11 3.5H6C5.60218 3.5 5.22064 3.34196 4.93934 3.06066L4.37868 2.5H2C1.72386 2.5 1.5 2.72386 1.5 3V13C1.5 13.2761 1.72386 13.5 2 13.5H12.0906C12.3019 13.5 12.4904 13.3672 12.5614 13.1682L14.5 7.74018V7C14.5 6.72386 14.2761 6.5 14 6.5H3.75Z" fill="currentColor"/>
     </svg>`;
+    const hasCustomGroups = !!this.accountGroups && Object.keys(this.accountGroups).some(key => key !== 'all');
     
     let displayText = '';
     
     if (selectedCount === 0) {
-      // No accounts selected - show default group name with folder icon
+      // No accounts selected - show default group name
       const groupName = this.getGroupDisplayName(groupKey);
-      displayText = `${folderIcon}<span style="color: var(--brand-600);">${groupName}</span>`;
+      displayText = `${hasCustomGroups ? folderIcon : ''}<span style="color: var(--brand-600);">${groupName}</span>`;
     } else if (isFullGroupSelected && !this.isCustomMode) {
-      // Full group selected - show folder icon + group name (no count)
+      // Full group selected - show group name (with folder only if custom groups exist)
       const groupName = this.getGroupDisplayName(groupKey);
-      displayText = `${folderIcon}<span style="color: var(--brand-600);">${groupName}</span>`;
+      displayText = `${hasCustomGroups ? folderIcon : ''}<span style="color: var(--brand-600);">${groupName}</span>`;
     } else if (selectedCount === 1) {
       // Single account selected - show account name only (no icon)
       displayText = `<span style="color: var(--brand-600);">${selectedAccountNames[0]}</span>`;
