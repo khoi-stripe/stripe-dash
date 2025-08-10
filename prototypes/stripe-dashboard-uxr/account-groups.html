@@ -2004,34 +2004,97 @@
     // Tooltip for +N more showing hidden account names
     function setupMoreHoverTooltips() {
       const moreLinks = document.querySelectorAll('.group-card-more-link');
+
       moreLinks.forEach(link => {
         // create tooltip element if not exists
         let tip = link.querySelector('.info-tooltip');
         if (!tip) {
           tip = document.createElement('div');
           tip.className = 'info-tooltip';
-          tip.style.position = 'absolute';
-          tip.style.zIndex = '10002';
+          // Rely on CSS defaults for centering and arrow; only set visibility here
           tip.style.opacity = '0';
           tip.style.visibility = 'hidden';
-          tip.style.transition = 'opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease';
-          tip.style.transform = 'translateY(-4px)';
           link.style.position = 'relative';
           link.appendChild(tip);
         }
-        link.addEventListener('mouseenter', () => {
-          const names = link.getAttribute('data-hidden-names') || '';
-          if (!names) return;
-          tip.textContent = names;
+
+        const clampAndPosition = () => {
+          // Center by default
+          tip.classList.remove('bottom');
+          tip.style.left = '50%';
+          tip.style.right = '';
+          tip.style.transform = 'translateX(-50%)';
+
+          // Temporarily ensure visible to measure
           tip.style.opacity = '1';
           tip.style.visibility = 'visible';
-          tip.style.bottom = '100%';
-          tip.style.left = '0';
-        });
-        link.addEventListener('mouseleave', () => {
+
+          const linkRect = link.getBoundingClientRect();
+          const tipRect = tip.getBoundingClientRect();
+          const marginBuffer = 16;
+
+          // Flip vertically if not enough space above
+          if (linkRect.top < tipRect.height + marginBuffer) {
+            tip.classList.add('bottom');
+          } else {
+            tip.classList.remove('bottom');
+          }
+
+          // Recompute after potential flip
+          const afterRect = tip.getBoundingClientRect();
+
+          // Horizontal clamping to viewport
+          const viewportWidth = window.innerWidth;
+          const margin = 8;
+          let shift = 0;
+          if (afterRect.left < margin) {
+            shift = margin - afterRect.left; // shift right
+          } else if (afterRect.right > viewportWidth - margin) {
+            shift = -(afterRect.right - (viewportWidth - margin)); // shift left
+          }
+
+          if (shift !== 0) {
+            tip.style.transform = `translateX(calc(-50% + ${Math.round(shift)}px))`;
+          } else {
+            tip.style.transform = 'translateX(-50%)';
+          }
+        };
+
+        const onEnter = () => {
+          const names = link.getAttribute('data-hidden-names') || '';
+          if (!names) return;
+
+          // Elevate card to ensure tooltip isn't clipped
+          const card = link.closest('.account-group-card');
+          if (card) {
+            card.style.zIndex = '10000';
+            card.style.position = 'relative';
+          }
+
+          tip.textContent = names;
+          clampAndPosition();
+        };
+
+        const onLeave = () => {
           tip.style.opacity = '0';
           tip.style.visibility = 'hidden';
-        });
+          const card = link.closest('.account-group-card');
+          if (card) {
+            card.style.zIndex = '';
+          }
+        };
+
+        link.addEventListener('mouseenter', onEnter);
+        link.addEventListener('mouseleave', onLeave);
+
+        // Reposition on resize/scroll while visible
+        const onReposition = () => {
+          if (getComputedStyle(tip).visibility === 'visible') {
+            clampAndPosition();
+          }
+        };
+        window.addEventListener('resize', onReposition);
+        window.addEventListener('scroll', onReposition, { passive: true });
       });
     }
 
