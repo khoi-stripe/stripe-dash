@@ -297,7 +297,7 @@ class FigmaGroupCreationModalV3 {
             <style>
                 /* Add styles needed for step 2, scoping them to avoid conflicts */
                 .accounts-container { display: flex; gap: 32px; height: 400px; margin-top: 24px; min-height: 0; }
-                .accounts-left { flex: 1; display: flex; flex-direction: column; height: 400px; border-radius: 12px; overflow: hidden; }
+                .accounts-left { flex: 1; display: flex; flex-direction: column; height: 400px; border-radius: 0 0 12px 12px; overflow: hidden; }
                 .accounts-right { flex: 1; background: #f7f5fd; border-radius: 12px; padding: 16px; box-sizing: border-box; height: 400px; overflow-y: auto; }
                 .accounts-right {
                     scrollbar-width: thin;
