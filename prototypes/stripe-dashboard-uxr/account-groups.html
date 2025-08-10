@@ -708,12 +708,12 @@
      }
 
      /* Groups Container - specific styling for account groups page */
-     #groups-container {
-       flex: 1;
-       overflow-y: auto;
-       margin-bottom: 24px;
-       min-height: 0; /* Important for flex child overflow */
-     }
+    #groups-container {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 0; /* use spacer element for reliable bottom space */
+      min-height: 0; /* Important for flex child overflow */
+    }
      
      .content-placeholder {
        width: 100%;
@@ -1334,8 +1334,10 @@
               </div>
             </div>
             
-         <!-- Content Area -->
-         <div id="groups-container" style="width: 100%; box-sizing: border-box; padding: 0;"></div>
+        <!-- Content Area -->
+        <div id="groups-container" style="width: 100%; box-sizing: border-box; padding: 0;"></div>
+        <!-- Bottom spacer to guarantee 24px page margin regardless of scrolling context -->
+        <div style="height: 24px; flex: 0 0 auto;"></div>
        </div>
      </div>
   </div>
