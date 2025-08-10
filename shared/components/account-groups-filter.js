@@ -32,6 +32,7 @@ class AccountGroupsFilter {
     this.loadingRetryCount = 0; // Track data loading retries
     this.maxLoadingRetries = 10; // Max retries waiting for data
     this.isLoading = false; // Loading state for trigger label
+    this.lastGroupKey = null; // Persisted last selected group key
     
     this.init();
   }
@@ -85,6 +86,8 @@ class AccountGroupsFilter {
     }
     
     this.attachEventListeners();
+    // Load last selected group key (scoped by org + namespace)
+    this.lastGroupKey = this.getLastGroupKey();
     this.currentGroup = 'all';
 
     // If data isn't ready yet, show loading spinner in trigger and retry until ready
@@ -92,10 +95,12 @@ class AccountGroupsFilter {
       this.setTriggerLoadingState(true);
       this.retryInitializeData();
     } else {
-      this.renderAccounts('all');
+      const initialGroup = this.getInitialGroupKey();
+      this.currentGroup = initialGroup;
+      this.renderAccounts(initialGroup);
       // Set default trigger label to All with folder icon (brand-600)
       this.isCustomMode = false;
-      this.updateTriggerLabel('all');
+      this.updateTriggerLabel(initialGroup);
       this.addScrollEffect();
     }
     
@@ -103,6 +108,35 @@ class AccountGroupsFilter {
     setTimeout(() => {
       this.checkAccountsListOverflow();
     }, 50);
+  }
+
+  // Build a storage key unique to org + component namespace
+  getStorageKey() {
+    const orgName = window.OrgDataManager?.getCurrentOrganization()?.name || 'default_org';
+    const ns = this.options.namespace || 'default';
+    return `agf:last_group:${ns}:${orgName}`;
+  }
+
+  getLastGroupKey() {
+    try {
+      return localStorage.getItem(this.getStorageKey());
+    } catch (_) { return null; }
+  }
+
+  setLastGroupKey(groupKey) {
+    try {
+      localStorage.setItem(this.getStorageKey(), groupKey);
+      this.lastGroupKey = groupKey;
+    } catch (_) {}
+  }
+
+  // Decide which group to show first: last saved (if valid) else 'all'
+  getInitialGroupKey() {
+    const candidate = this.lastGroupKey;
+    if (candidate && (candidate === 'all' || this.accountGroups[candidate])) {
+      return candidate;
+    }
+    return 'all';
   }
 
   // Determine if account data is available for initial render
@@ -131,9 +165,11 @@ class AccountGroupsFilter {
 
     if (this.hasAccountData()) {
       this.setTriggerLoadingState(false);
-      this.renderAccounts('all');
+      const initialGroup = this.getInitialGroupKey();
+      this.currentGroup = initialGroup;
+      this.renderAccounts(initialGroup);
       this.isCustomMode = false;
-      this.updateTriggerLabel('all');
+      this.updateTriggerLabel(initialGroup);
       this.addScrollEffect();
       this.loadingRetryCount = 0;
       return;
@@ -684,6 +720,11 @@ class AccountGroupsFilter {
     
     // Update trigger label based on current selection state
     this.updateTriggerBasedOnSelection();
+
+    // Persist last group key only when a full group is applied
+    if (!this.isCustomMode) {
+      this.setLastGroupKey(this.currentGroup || 'all');
+    }
     this.togglePopover();
     // Override this method in implementations for custom behavior
   }
