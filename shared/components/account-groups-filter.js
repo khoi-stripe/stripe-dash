@@ -849,8 +849,23 @@ class AccountGroupsFilter {
     if (this.options.generateAccountGroups) {
       try {
         this.accountGroups = this.options.generateAccountGroups();
+        // Ensure we have an 'all' group if none provided
+        if (!this.accountGroups['all']) {
+          this.createAllAccountsGroup();
+        }
         this.rebuildGroupButtons();
-        this.renderAccounts(this.currentGroup);
+
+        // If we were loading, clear spinner now
+        if (this.isLoading && this.hasAccountData()) {
+          this.setTriggerLoadingState(false);
+        }
+
+        // Use persisted last group or fall back to 'all'
+        const initialGroup = this.getInitialGroupKey();
+        this.currentGroup = initialGroup;
+        this.renderAccounts(initialGroup);
+        this.isCustomMode = false;
+        this.updateTriggerLabel(initialGroup);
       } catch (error) {
         console.error('Error refreshing account groups:', error);
       }
