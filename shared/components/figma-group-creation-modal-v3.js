@@ -87,7 +87,7 @@ class FigmaGroupCreationModalV3 {
                 <div class="step1-form">
                     <div class="step1-field">
                         <label class="step1-label" for="groupName-v3">Group name</label>
-                        <input type="text" id="groupName-v3" class="step1-input" placeholder="Group name" value="${this.groupData.name || ''}" maxlength="150" />
+                        <input type="text" id="groupName-v3" class="step1-input" placeholder="Group name" value="${this.groupData.name || ''}" maxlength="150" autofocus />
                     </div>
                     <div class="step1-field-with-helper">
                         <label class="step1-label-optional" for="groupDescription-v3">Description</label>
@@ -194,6 +194,10 @@ class FigmaGroupCreationModalV3 {
         setTimeout(() => {
             const nameField = document.getElementById('groupName-v3');
             const nextButton = document.getElementById('step1-next-button');
+            // Ensure autofocus works reliably after modal mounts
+            if (nameField) {
+                try { nameField.focus(); } catch (e) {}
+            }
             
             function updateButtonState() {
                 if (nameField && nextButton) {
