@@ -2386,7 +2386,7 @@
           scrollTimeout = setTimeout(() => {
             this.classList.remove('scrolling');
           }, 300); // 300ms delay after scrolling stops
-        });
+        }, { passive: true });
       }
     }
 
@@ -2483,14 +2483,14 @@
         if (popover && popover.style.display === 'flex') {
           positionReportsPopover();
         }
-      });
+      }, { passive: true });
       
       window.addEventListener('scroll', function() {
         const popover = document.getElementById('reportsFilterPopover');
         if (popover && popover.style.display === 'flex') {
           positionReportsPopover();
         }
-      });
+      }, { passive: true });
     }*/
 
     // Ensure OrgDataManager reference

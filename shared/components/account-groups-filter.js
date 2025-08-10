@@ -494,7 +494,7 @@ class AccountGroupsFilter {
           this.positionPopover(true);
         }
       }, 100);
-    });
+    }, { passive: true });
     
     let scrollTimeout;
     window.addEventListener('scroll', () => {
@@ -506,7 +506,7 @@ class AccountGroupsFilter {
           this.positionPopover(false);
         }
       }, 50);
-    });
+    }, { passive: true });
   }
   
   attachCheckboxListeners() {
@@ -627,7 +627,7 @@ class AccountGroupsFilter {
         scrollTimeout = setTimeout(() => {
           this.classList.remove('scrolling');
         }, 300); // 300ms delay after scrolling stops
-      });
+      }, { passive: true });
     }
   }
   

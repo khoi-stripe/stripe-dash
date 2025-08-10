@@ -1753,13 +1753,13 @@ class AccountSwitcher {
       if (this.isOpen) {
         this.positionDropdown();
       }
-    });
+    }, { passive: true });
     
     window.addEventListener('scroll', () => {
       if (this.isOpen) {
         this.positionDropdown();
       }
-    });
+    }, { passive: true });
     
     // Mark events as bound
     this.eventsBound = true;

@@ -198,13 +198,13 @@ class Popover {
       if (this.isOpen) {
         this.position();
       }
-    });
+    }, { passive: true });
     
     window.addEventListener('scroll', () => {
       if (this.isOpen) {
         this.position();
       }
-    });
+    }, { passive: true });
   }
   
   // Update content dynamically
