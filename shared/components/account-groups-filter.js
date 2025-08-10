@@ -29,6 +29,9 @@ class AccountGroupsFilter {
     this.alignmentLocked = false; // Whether alignment mode has been determined
     this.retryCount = 0; // Track initialization retries
     this.maxRetries = 3; // Maximum number of initialization retries
+    this.loadingRetryCount = 0; // Track data loading retries
+    this.maxLoadingRetries = 10; // Max retries waiting for data
+    this.isLoading = false; // Loading state for trigger label
     
     this.init();
   }
@@ -83,16 +86,89 @@ class AccountGroupsFilter {
     
     this.attachEventListeners();
     this.currentGroup = 'all';
-    this.renderAccounts('all');
-    // Set default trigger label to All with folder icon (brand-600)
-    this.isCustomMode = false;
-    this.updateTriggerLabel('all');
-    this.addScrollEffect();
+
+    // If data isn't ready yet, show loading spinner in trigger and retry until ready
+    if (!this.hasAccountData()) {
+      this.setTriggerLoadingState(true);
+      this.retryInitializeData();
+    } else {
+      this.renderAccounts('all');
+      // Set default trigger label to All with folder icon (brand-600)
+      this.isCustomMode = false;
+      this.updateTriggerLabel('all');
+      this.addScrollEffect();
+    }
     
     // Check for overflow after initial render
     setTimeout(() => {
       this.checkAccountsListOverflow();
     }, 50);
+  }
+
+  // Determine if account data is available for initial render
+  hasAccountData() {
+    if (!this.accountGroups || Object.keys(this.accountGroups).length === 0) return false;
+    const allGroup = this.accountGroups['all'];
+    return Array.isArray(allGroup) && allGroup.length > 0;
+  }
+
+  // Retry generating data until OrgDataManager or generator provides accounts
+  retryInitializeData() {
+    // Try to (re)generate account groups
+    try {
+      if (this.options.generateAccountGroups) {
+        const next = this.options.generateAccountGroups();
+        if (next && Object.keys(next).length > 0) {
+          this.accountGroups = next;
+        }
+      } else if (!this.accountGroups['all']) {
+        // Try to build from OrgDataManager if available
+        this.createAllAccountsGroup();
+      }
+    } catch (e) {
+      // swallow and retry
+    }
+
+    if (this.hasAccountData()) {
+      this.setTriggerLoadingState(false);
+      this.renderAccounts('all');
+      this.isCustomMode = false;
+      this.updateTriggerLabel('all');
+      this.addScrollEffect();
+      this.loadingRetryCount = 0;
+      return;
+    }
+
+    if (this.loadingRetryCount >= this.maxLoadingRetries) {
+      // Give up gracefully and leave trigger blank
+      this.setTriggerLoadingState(false, true);
+      return;
+    }
+
+    this.loadingRetryCount += 1;
+    const delay = Math.min(100 * this.loadingRetryCount, 800);
+    setTimeout(() => this.retryInitializeData(), delay);
+  }
+
+  // Show spinner in trigger while loading
+  setTriggerLoadingState(isLoading, leaveEmpty = false) {
+    const triggerOption = document.getElementById(this.options.triggerOptionId);
+    if (!triggerOption) return;
+    this.isLoading = isLoading;
+
+    if (isLoading) {
+      // Inject spinner keyframes once
+      const styleId = 'agf-spinner-style';
+      if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = '@keyframes agf_spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(style);
+      }
+      triggerOption.innerHTML = '<span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(0,39,77,0.18);border-top-color:rgba(0,39,77,0.45);border-radius:50%;animation:agf_spin .6s linear infinite;vertical-align:-1px;"></span>';
+    } else if (leaveEmpty) {
+      triggerOption.innerHTML = '';
+    }
   }
   
   calculateTriggerDimensions() {
