@@ -326,13 +326,13 @@ class FigmaGroupCreationModalV3 {
                     bottom: 0;
                     height: 24px;
                     pointer-events: none;
-                    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(0,0,0,0.18) 100%);
+                    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(0,0,0,0.25) 100%);
                     opacity: 0;
                     transition: opacity 120ms ease;
                     z-index: 2;
                 }
                 .accounts-table.has-overflow::after {
-                    opacity: 0.06; /* match subtlety used elsewhere */
+                    opacity: 0.10; /* slightly stronger for visibility in modal context */
                 }
                 .accounts-list { 
                     flex: 1; 
@@ -594,6 +594,16 @@ class FigmaGroupCreationModalV3 {
         if (!list || !table) return;
         const hasOverflow = (list.scrollHeight - 1) > list.clientHeight; // buffer for sub-pixel rounding
         table.classList.toggle('has-overflow', hasOverflow);
+
+        // Also update on scroll to show only when not at the very bottom
+        const onScroll = () => {
+            const nearingBottom = (list.scrollTop + list.clientHeight) >= (list.scrollHeight - 1);
+            table.classList.toggle('has-overflow', !nearingBottom && ((list.scrollHeight - 1) > list.clientHeight));
+        };
+        // Remove any prior scroll handler
+        if (this._listScrollHandler) list.removeEventListener('scroll', this._listScrollHandler);
+        this._listScrollHandler = onScroll;
+        list.addEventListener('scroll', onScroll, { passive: true });
     }
     
     toggleAccount(accountId) {
