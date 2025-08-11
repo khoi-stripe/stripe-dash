@@ -127,15 +127,14 @@ class FigmaGroupCreationModalV3 {
             <div class="step1-content">
                 <div class="step1-header">
                     <h1 class="step1-title">${this.isEditMode ? 'Edit account group' : 'Create an account group'}</h1>
-                    <p class="step1-subtitle">Lorem ipsum dolor</p>
                 </div>
                 <div class="step1-form">
                     <div class="step1-field">
                         <label class="step1-label" for="groupName-v3">Group name</label>
-                        <input type="text" id="groupName-v3" class="step1-input" placeholder="Group name" value="${this.groupData.name || ''}" maxlength="150" autofocus />
+                        <input type="text" id="groupName-v3" class="step1-input" value="${this.groupData.name || ''}" maxlength="150" autofocus />
                     </div>
                     <div class="step1-field-with-helper">
-                        <label class="step1-label-optional" for="groupDescription-v3">Description</label>
+                        <label class="step1-label" for="groupDescription-v3">Description (optional)</label>
                         <textarea id="groupDescription-v3" class="step1-textarea" placeholder="e.g. Reporting" maxlength="150">${this.groupData.description || ''}</textarea>
                         <p class="step1-helper">0/150</p>
                     </div>
