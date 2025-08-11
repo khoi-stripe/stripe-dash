@@ -6,6 +6,8 @@ class FigmaGroupCreationModalV3 {
         this.selectedAccounts = new Set();
         this.groupData = {};
         this.onComplete = null;
+        this.isEditMode = false;
+        this.editingGroupId = null;
     }
 
     init() {
@@ -41,16 +43,59 @@ class FigmaGroupCreationModalV3 {
     show(options = {}) {
         console.log('FigmaGroupCreationModalV3.show() called with options:', options);
         this.onComplete = options.onComplete;
+        this.isEditMode = !!options.editMode;
+        this.editingGroupId = options.editingGroupId || null;
+        
+        console.log('About to call init()...');
+        this.init(); // Initialize accounts from the current organization
+        
         console.log('About to call reset()...');
         this.reset();
+        
+        // If editing mode, load existing group data
+        if (this.isEditMode && this.editingGroupId) {
+            this.loadGroupDataForEditing(this.editingGroupId);
+        }
+        
         console.log('Reset completed, about to call showStep1()...');
         this.showStep1();
         console.log('showStep1() completed');
     }
     
     reset() {
+        if (!this.isEditMode) {
+            this.selectedAccounts.clear();
+            this.groupData = {};
+        }
+    }
+
+    loadGroupDataForEditing(groupId) {
+        if (!window.OrgDataManager) {
+            console.error('OrgDataManager not available');
+            return;
+        }
+
+        const group = window.OrgDataManager.getAccountGroupById(groupId);
+        if (!group) {
+            console.error('Group not found:', groupId);
+            return;
+        }
+
+        // Load group data
+        this.groupData = {
+            name: group.name,
+            description: group.description || ''
+        };
+
+        // Load selected accounts
         this.selectedAccounts.clear();
-        this.groupData = {};
+        if (group.accountIds) {
+            group.accountIds.forEach(accountId => {
+                this.selectedAccounts.add(accountId);
+            });
+        }
+
+        console.log('Loaded group data for editing:', this.groupData, 'Selected accounts:', Array.from(this.selectedAccounts));
     }
 
     showStep1() {
@@ -81,7 +126,7 @@ class FigmaGroupCreationModalV3 {
             </style>
             <div class="step1-content">
                 <div class="step1-header">
-                    <h1 class="step1-title">Create an account group</h1>
+                    <h1 class="step1-title">${this.isEditMode ? 'Edit account group' : 'Create an account group'}</h1>
                     <p class="step1-subtitle">Lorem ipsum dolor</p>
                 </div>
                 <div class="step1-form">
@@ -105,10 +150,19 @@ class FigmaGroupCreationModalV3 {
             console.log('Creating new modal...');
             console.log('Modal class:', window.Modal);
             this.modal = new Modal({
-                title: '',
+                title: ' ', // Use a space to ensure header is visible
                 content: content,
                 size: 'large',
-                footerActions: []
+                footerActions: [],
+                showHeader: true,
+                closable: true,
+                onHide: () => {
+                    // Reset edit mode when modal is closed
+                    this.isEditMode = false;
+                    this.editingGroupId = null;
+                    this.selectedAccounts.clear();
+                    this.groupData = {};
+                }
             });
             console.log('Modal created:', this.modal);
             console.log('About to call modal.show()...');
@@ -264,7 +318,7 @@ class FigmaGroupCreationModalV3 {
         if (!customFooter) {
             customFooter = document.createElement('div');
             customFooter.className = 'custom-modal-footer modal-footer';
-            customFooter.innerHTML = '<button class="modal-button modal-button-primary" onclick="window.figmaModalV3.createGroup()">Done</button>';
+            customFooter.innerHTML = `<button class="modal-button modal-button-primary" onclick="window.figmaModalV3.createGroup()">${this.isEditMode ? 'Save changes' : 'Done'}</button>`;
             modalElement.appendChild(customFooter);
         }
         
@@ -356,12 +410,12 @@ class FigmaGroupCreationModalV3 {
                     bottom: 0;
                     height: 24px;
                     pointer-events: none;
-                    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(0,0,0,0.18) 100%);
+                    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(0,0,0,0.3) 100%);
                     opacity: 0;
                     transition: opacity 120ms ease;
                 }
                 .accounts-list.has-overflow::after {
-                    opacity: 0.06; /* match subtlety used elsewhere */
+                    opacity: 0.12; /* Darkened for better visibility */
                 }
                 /* Webkit scrollbar styling (Chrome, Safari, Edge) */
                 .accounts-list::-webkit-scrollbar {
@@ -738,16 +792,41 @@ class FigmaGroupCreationModalV3 {
             return;
         }
 
-        const groupData = {
-            id: Date.now().toString(), // Simple ID generation
-            name: this.groupData.name,
-            description: this.groupData.description,
-            accountIds: Array.from(this.selectedAccounts),
-            createdAt: new Date().toISOString()
-        };
-        
-        // Save to localStorage
-        this.saveGroupToStorage(groupData);
+        if (this.isEditMode && this.editingGroupId) {
+            // Update existing group
+            const updates = {
+                name: this.groupData.name,
+                description: this.groupData.description,
+                accountIds: Array.from(this.selectedAccounts)
+            };
+
+            if (window.OrgDataManager && window.OrgDataManager.updateAccountGroup) {
+                const updatedGroup = window.OrgDataManager.updateAccountGroup(this.editingGroupId, updates);
+                if (updatedGroup && this.onComplete) {
+                    this.onComplete(updatedGroup);
+                }
+            } else {
+                console.error('OrgDataManager.updateAccountGroup not available');
+                alert('Failed to update account group');
+                return;
+            }
+        } else {
+            // Create new group
+            const groupData = {
+                id: Date.now().toString(), // Simple ID generation
+                name: this.groupData.name,
+                description: this.groupData.description,
+                accountIds: Array.from(this.selectedAccounts),
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            this.saveGroupToStorage(groupData);
+            
+            if (this.onComplete) {
+                this.onComplete(groupData);
+            }
+        }
         
         // Update page content immediately if we're on the account groups page
         if (window.location.pathname.includes('account-groups.html')) {
@@ -764,10 +843,6 @@ class FigmaGroupCreationModalV3 {
                 window.refreshAccountGroupFilters();
             }
             return; // Exit early since we've updated the page
-        }
-        
-        if (this.onComplete) {
-            this.onComplete(groupData);
         }
 
         this.modal.hide();

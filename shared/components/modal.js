@@ -59,10 +59,10 @@ class Modal {
     this.modal = document.createElement('div');
     this.modal.className = `modal ${this.options.className}`;
     
-    // Apply standardized size by default; allow override via inline styles if needed
-    this.modal.style.width = 'min(90vw, var(--modal-width))';
-    this.modal.style.maxWidth = 'var(--modal-width)';
-    this.modal.style.maxHeight = 'min(90vh, var(--modal-max-height))';
+    // Apply size class
+    if (this.options.size) {
+      this.modal.classList.add(`modal-${this.options.size}`);
+    }
 
     this.updateContent();
     document.body.appendChild(this.modal);

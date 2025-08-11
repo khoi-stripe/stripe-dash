@@ -425,6 +425,10 @@ class OrganizationDataManager {
     return group;
   }
 
+  getAccountGroupById(groupId) {
+    return this.accountGroups.find(g => g.id === groupId) || null;
+  }
+
   updateAccountGroup(groupId, updates) {
     const index = this.accountGroups.findIndex(g => g.id === groupId);
     if (index !== -1) {

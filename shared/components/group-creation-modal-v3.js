@@ -1,5 +1,5 @@
 // V3 - Refactored to use shared Modal component
-class GroupCreationModalV3 {
+class FigmaGroupCreationModalV3 {
     constructor() {
         this.modal = null;
         this.accounts = [];
@@ -39,7 +39,7 @@ class GroupCreationModalV3 {
     }
 
     show(options = {}) {
-console.log('GroupCreationModalV3.show() called with options:', options);
+        console.log('FigmaGroupCreationModalV3.show() called with options:', options);
         this.onComplete = options.onComplete;
         console.log('About to call reset()...');
         this.reset();
@@ -105,10 +105,12 @@ console.log('GroupCreationModalV3.show() called with options:', options);
             console.log('Creating new modal...');
             console.log('Modal class:', window.Modal);
             this.modal = new Modal({
-                title: '',
+                title: ' ', // Use a space to ensure header is visible
                 content: content,
                 size: 'large',
-                footerActions: []
+                footerActions: [],
+                showHeader: true,
+                closable: true
             });
             console.log('Modal created:', this.modal);
             console.log('About to call modal.show()...');
@@ -295,24 +297,6 @@ console.log('GroupCreationModalV3.show() called with options:', options);
                 .accounts-container { display: flex; gap: 32px; height: 400px; margin-top: 24px; min-height: 0; }
                 .accounts-left { flex: 1; display: flex; flex-direction: column; height: 400px; }
                 .accounts-right { flex: 1; background: #f7f5fd; border-radius: 12px; padding: 16px; box-sizing: border-box; height: 400px; overflow-y: auto; }
-                /* Bottom scroll shadow for accounts-right when content overflows */
-                .accounts-right { position: relative; }
-                .accounts-right::after {
-                    content: '';
-                    position: absolute;
-                    bottom: 16px; /* above bottom padding */
-                    left: 16px; /* align with inner padding */
-                    right: 16px;
-                    height: 24px;
-                    opacity: 0;
-                    background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, #000 100%);
-                    pointer-events: none;
-                    z-index: 1;
-                    transition: opacity 0.2s ease;
-                    border-bottom-left-radius: 12px;
-                    border-bottom-right-radius: 12px;
-                }
-                .accounts-right.has-overflow::after { opacity: 0.04; }
                 .accounts-right {
                     scrollbar-width: thin;
                     scrollbar-color: var(--neutral-400) transparent;
@@ -494,15 +478,6 @@ console.log('GroupCreationModalV3.show() called with options:', options);
             </div>
         `).join('');
         this.updatePreview();
-
-        // Toggle bottom shadow based on overflow in right pane
-        const rightPane = this.modal.getElement().querySelector('.accounts-right');
-        if (rightPane) {
-            requestAnimationFrame(() => {
-                const hasOverflow = rightPane.scrollHeight > rightPane.clientHeight + 1;
-                rightPane.classList.toggle('has-overflow', hasOverflow);
-            });
-        }
     }
     
     bindStep2Events() {
@@ -532,19 +507,6 @@ console.log('GroupCreationModalV3.show() called with options:', options);
         }
 
         this.bindAccountEvents();
-
-        // Recompute overflow shadow on scroll and resize
-        const rightPane = this.modal.getElement().querySelector('.accounts-right');
-        if (rightPane && !rightPane.__overflowBound) {
-            const updateOverflow = () => {
-                const hasOverflow = rightPane.scrollHeight > rightPane.clientHeight + 1;
-                rightPane.classList.toggle('has-overflow', hasOverflow);
-            };
-            rightPane.addEventListener('scroll', () => requestAnimationFrame(updateOverflow), { passive: true });
-            window.addEventListener('resize', () => requestAnimationFrame(updateOverflow), { passive: true });
-            rightPane.__overflowBound = true;
-            requestAnimationFrame(updateOverflow);
-        }
     }
     
     bindAccountEvents() {
@@ -778,5 +740,5 @@ console.log('GroupCreationModalV3.show() called with options:', options);
     }
 }
 
-window.GroupCreationModalV3 = new GroupCreationModalV3();
-window.figmaModalV3 = window.GroupCreationModalV3;
+window.FigmaGroupCreationModalV3 = new FigmaGroupCreationModalV3();
+window.figmaModalV3 = window.FigmaGroupCreationModalV3;

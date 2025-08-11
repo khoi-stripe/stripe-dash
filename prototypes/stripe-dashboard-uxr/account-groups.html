@@ -713,7 +713,7 @@
       overflow-y: auto;
       margin-bottom: 0; /* use spacer element for reliable bottom space */
       min-height: 0; /* Important for flex child overflow */
-    }
+     }
      
      .content-placeholder {
        width: 100%;
@@ -2310,9 +2310,24 @@
 
     function manageGroup(groupId, isSavedGroup) {
       closeAllKebabMenus();
-      // TODO: Implement manage group functionality
       console.log('Manage group:', groupId, 'isSaved:', isSavedGroup);
-      alert('Manage group functionality coming soon!');
+      
+      // Open the group creation modal in edit mode
+      if (window.figmaModalV3) {
+        window.figmaModalV3.show({
+          editMode: true,
+          editingGroupId: groupId,
+          onComplete: (updatedGroup) => {
+            console.log('Group updated:', updatedGroup);
+            // Refresh the page to show updated data
+            loadAccountGroups();
+            refreshAccountGroupFilters();
+          }
+        });
+      } else {
+        console.error('Group creation modal not available');
+        alert('Manage group functionality not available');
+      }
     }
 
     function copyGroupId(groupId) {
