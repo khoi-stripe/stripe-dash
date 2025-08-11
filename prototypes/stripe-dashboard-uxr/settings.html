@@ -22,6 +22,53 @@
       overflow: hidden;
     }
 
+    /* Wireframe bar styles to match text layout */
+    .wireframe-title {
+      height: 24px;
+      display: flex;
+      align-items: center;
+      margin: 0;
+    }
+    
+    .wireframe-description {
+      height: 20px;
+      display: flex;
+      align-items: center;
+      margin: 0;
+    }
+    
+    .wireframe-bar {
+      background: #E8EAED;
+      border-radius: 8px;
+      height: 8px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .wireframe-bar.brand {
+      background: var(--brand-300);
+    }
+    
+    .wireframe-bar.short {
+      width: 48px;
+    }
+    
+    .wireframe-bar.medium {
+      width: 96px;
+    }
+    
+    .wireframe-bar.long {
+      width: 128px;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
     .layout-container {
       display: flex;
       height: 100vh;
@@ -1027,8 +1074,15 @@
                 </svg>
               </div>
               <div style="flex: 1; min-width: 0;">
-                <h3 style="margin: 0 0 0 0; font-size: 16px; font-weight: 700; color: #533afd; line-height: 24px; letter-spacing: -0.31px;">Personal details</h3>
-                <p style="margin: 0; color: #353a44; line-height: 20px; font-size: 14px; letter-spacing: -0.15px;">Personal details, password, communication preferences, and your active sessions.</p>
+                <div class="wireframe-title">
+                  <div class="wireframe-bar medium brand"></div>
+                </div>
+                <div class="wireframe-description">
+                  <div class="wireframe-bar long"></div>
+                </div>
+                <div class="wireframe-description">
+                  <div class="wireframe-bar medium"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1043,8 +1097,15 @@
                 </svg>
               </div>
               <div style="flex: 1; min-width: 0;">
-                <h3 style="margin: 0 0 0 0; font-size: 16px; font-weight: 700; color: #533afd; line-height: 24px; letter-spacing: -0.31px;">Communication preferences</h3>
-                <p style="margin: 0; color: #353a44; line-height: 20px; font-size: 14px; letter-spacing: -0.15px;">Manage the emails you receive for accounts in your organization.</p>
+                <div class="wireframe-title">
+                  <div class="wireframe-bar long brand"></div>
+                </div>
+                <div class="wireframe-description">
+                  <div class="wireframe-bar medium"></div>
+                </div>
+                <div class="wireframe-description">
+                  <div class="wireframe-bar short"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1060,8 +1121,15 @@
                 </svg>
               </div>
               <div style="flex: 1; min-width: 0;">
-                <h3 style="margin: 0 0 0 0; font-size: 16px; font-weight: 700; color: #533afd; line-height: 24px; letter-spacing: -0.31px;">Developers</h3>
-                <p style="margin: 0; color: #353a44; line-height: 20px; font-size: 14px; letter-spacing: -0.15px;">View and manage your Workbench settings.</p>
+                <div class="wireframe-title">
+                  <div class="wireframe-bar short brand"></div>
+                </div>
+                <div class="wireframe-description">
+                  <div class="wireframe-bar medium"></div>
+                </div>
+                <div class="wireframe-description">
+                  <div class="wireframe-bar long"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1087,8 +1155,15 @@
                  </svg>
                </div>
                <div style="flex: 1; min-width: 0;">
-                 <h3 style="margin: 0 0 0 0; font-size: 16px; font-weight: 700; color: #533afd; line-height: 24px; letter-spacing: -0.31px;">Organization management</h3>
-                 <p style="margin: 0; color: #353a44; line-height: 20px; font-size: 14px; letter-spacing: -0.15px;">View and manage your accounts.</p>
+                 <div class="wireframe-title">
+                   <div class="wireframe-bar long brand"></div>
+                 </div>
+                 <div class="wireframe-description">
+                   <div class="wireframe-bar short"></div>
+                 </div>
+                 <div class="wireframe-description">
+                   <div class="wireframe-bar medium"></div>
+                 </div>
                </div>
              </div>
            </div>
@@ -1103,8 +1178,15 @@
                  </svg>
                </div>
                <div style="flex: 1; min-width: 0;">
-                 <h3 style="margin: 0 0 0 0; font-size: 16px; font-weight: 700; color: #533afd; line-height: 24px; letter-spacing: -0.31px;">Team and security</h3>
-                 <p style="margin: 0; color: #353a44; line-height: 20px; font-size: 14px; letter-spacing: -0.15px;">Team members, roles, and account security.</p>
+                 <div class="wireframe-title">
+                   <div class="wireframe-bar medium brand"></div>
+                 </div>
+                 <div class="wireframe-description">
+                   <div class="wireframe-bar long"></div>
+                 </div>
+                 <div class="wireframe-description">
+                   <div class="wireframe-bar short"></div>
+                 </div>
                </div>
              </div>
            </div>
