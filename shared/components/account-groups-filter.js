@@ -995,8 +995,15 @@ class AccountGroupsFilter {
     // Set current group to 'all' by default
     this.currentGroup = 'all';
     
-    // Create buttons for each custom account group
-    customGroupKeys.forEach((groupKey) => {
+    // Create buttons for each custom account group (sorted alphabetically)
+    const sortedCustomGroupKeys = customGroupKeys.sort((a, b) => {
+      // Get group names for comparison
+      const nameA = this.accountGroups[a]?.[0]?.groupName || a;
+      const nameB = this.accountGroups[b]?.[0]?.groupName || b;
+      return nameA.localeCompare(nameB);
+    });
+    
+    sortedCustomGroupKeys.forEach((groupKey) => {
       const button = document.createElement('button');
       button.className = 'group-item';
       button.setAttribute('data-group', groupKey);
