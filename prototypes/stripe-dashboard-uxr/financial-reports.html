@@ -784,6 +784,14 @@
     
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+  // Ensure spinner keyframes exist for initial trigger spinner
+  const styleId = 'agf-spinner-style';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = '@keyframes agf_spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(style);
+  }
         const navPanel = document.getElementById('navPanel');
         const collapseHandle = document.querySelector('.collapse-handle');
         const tooltip = document.querySelector('.collapse-tooltip');
@@ -985,7 +993,7 @@
     </style>
     <style>
     .workload-flyout-parent {
-      /* No background, invisible container for event handling */
+      position: relative; /* ensure element can host positioning for flyout anchors */
     }
     </style>
     <style>
@@ -1292,11 +1300,13 @@
 
           <!-- Account Groups Filter (only shown when viewing "All accounts") - Positioned between title and metrics -->
           <div style="display: flex; align-items: center; gap: 8px; margin: 16px 0 24px 0;">
-            <div class="account-groups-filter-container" style="position: relative; display: none;">
+            <div class="account-groups-filter-container" style="position: relative; display: block;">
             <button class="account-groups-trigger" id="reportsFilterTrigger">
               <span class="trigger-show">Accounts</span>
               <span class="trigger-separator">|</span>
-              <span class="trigger-option" id="reportsFilterOption">All</span>
+              <span class="trigger-option" id="reportsFilterOption">
+                <span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(0,39,77,0.18);border-top-color:rgba(0,39,77,0.45);border-radius:50%;animation:agf_spin .6s linear infinite;vertical-align:-1px;"></span>
+              </span>
               <svg class="trigger-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M2.16699 4.375C2.39082 4.15117 2.75918 4.15117 2.98301 4.375L6 7.39199L9.01699 4.375C9.24082 4.15117 9.60918 4.15117 9.83301 4.375C10.0568 4.59883 10.0568 4.96719 9.83301 5.19102L6.40801 8.61602C6.18418 8.83984 5.81582 8.83984 5.59199 8.61602L2.16699 5.19102C1.94316 4.96719 1.94316 4.59883 2.16699 4.375Z" fill="currentColor"/>
               </svg>
@@ -1404,8 +1414,8 @@
             <div class="metric-card accounts-card">
               <div class="metric-header">
                 <h3 class="metric-title">Accounts</h3>
-                <div class="metric-badge metric-badge--neutral">
-                  <span id="filtered-accounts-count">All</span>
+                <div class="metric-badge metric-badge--neutral" id="filtered-accounts-badge" style="display: none;">
+                  <span id="filtered-accounts-count"></span>
                 </div>
               </div>
               <div class="metric-value" id="active-accounts">
@@ -2409,19 +2419,6 @@
           const groupKey = this.getAttribute('data-group');
           reportsCurrentGroup = groupKey;
           
-          // Update trigger label
-          const triggerOption = document.getElementById('reportsFilterOption');
-          if (triggerOption) {
-            const groupLabels = {
-              'all': 'All accounts',
-              'connected': 'Connected accounts',
-              'express': 'Express accounts',
-              'standard': 'Standard accounts',
-              'custom': 'Custom accounts'
-            };
-            triggerOption.textContent = groupLabels[groupKey] || 'All accounts';
-          }
-          
           // Clear search when switching groups
           if (searchInput) {
             searchInput.value = '';
@@ -2576,7 +2573,7 @@
       // Update metrics cards
       updateMetricCard('total-revenue', `$${totalRevenue.toLocaleString()}`, avgRevenueGrowth);
       updateMetricCard('total-transactions', totalTransactions.toLocaleString(), avgTransactionGrowth);
-      updateActiveAccountsCard(activeAccountsCount, selectedAccountIds ? 'Filtered' : 'All');
+      updateActiveAccountsCard(activeAccountsCount, selectedAccountIds && selectedAccountIds.length > 0 ? 'Filtered' : 'All');
       
       // Update account breakdown
       updateAccountBreakdown(filteredData);
@@ -2611,14 +2608,22 @@
     
     function updateActiveAccountsCard(count, filterType) {
       const element = document.getElementById('active-accounts');
+      const badgeContainer = document.getElementById('filtered-accounts-badge');
       const badgeElement = document.getElementById('filtered-accounts-count');
       
       if (element) {
         element.textContent = count.toString();
       }
       
-      if (badgeElement) {
-        badgeElement.textContent = filterType;
+      if (badgeElement && badgeContainer) {
+        if (filterType === 'Filtered') {
+          badgeElement.textContent = 'Filtered';
+          badgeContainer.style.display = 'inline-flex';
+        } else {
+          // Hide the badge entirely when not filtered, including any remnant dash
+          badgeElement.textContent = '';
+          badgeContainer.style.display = 'none';
+        }
       }
     }
     

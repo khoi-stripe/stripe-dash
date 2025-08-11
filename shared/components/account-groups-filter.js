@@ -207,8 +207,23 @@ class AccountGroupsFilter {
         document.head.appendChild(style);
       }
       triggerOption.innerHTML = '<span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(0,39,77,0.18);border-top-color:rgba(0,39,77,0.45);border-radius:50%;animation:agf_spin .6s linear infinite;vertical-align:-1px;"></span>';
+      // Visually disable trigger while loading
+      const triggerBtn = document.getElementById(this.options.triggerId);
+      if (triggerBtn) {
+        triggerBtn.classList.add('is-loading');
+        triggerBtn.style.pointerEvents = 'none';
+        triggerBtn.setAttribute('aria-busy', 'true');
+        triggerBtn.setAttribute('aria-disabled', 'true');
+      }
     } else if (leaveEmpty) {
       triggerOption.innerHTML = '';
+      const triggerBtn = document.getElementById(this.options.triggerId);
+      if (triggerBtn) {
+        triggerBtn.classList.remove('is-loading');
+        triggerBtn.style.pointerEvents = '';
+        triggerBtn.removeAttribute('aria-busy');
+        triggerBtn.removeAttribute('aria-disabled');
+      }
     }
   }
   
@@ -447,13 +462,23 @@ class AccountGroupsFilter {
       trigger.addEventListener('click', () => this.togglePopover());
     }
     
-    // Search functionality
+    // Search functionality (debounced to reduce work on large lists)
     const searchInput = document.getElementById(this.options.searchInputId);
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        this.searchTerm = e.target.value;
+      const debounce = (fn, delay = 200) => {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn.apply(this, args), delay);
+        };
+      };
+
+      const onSearch = debounce((e) => {
+        this.searchTerm = e.target.value || '';
         this.filterAccountsBySearch(this.searchTerm);
-      });
+      }, 200);
+
+      searchInput.addEventListener('input', onSearch);
     }
     
     // Group selection functionality
@@ -510,28 +535,33 @@ class AccountGroupsFilter {
   }
   
   attachCheckboxListeners() {
-    // Add change listeners to checkboxes (only in scrollable accounts list)
-    document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]`).forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        this.handleAccountCheckboxChange();
-      });
-    });
-    
-    // Make entire account row clickable (only in scrollable accounts list)
-    document.querySelectorAll(`#${this.options.accountsListId} .account-item`).forEach(accountItem => {
-      accountItem.addEventListener('click', (e) => {
-        // Don't trigger if clicking directly on the checkbox (to avoid double-toggling)
-        if (e.target.type === 'checkbox') {
-          return;
-        }
-        
-        const checkbox = accountItem.querySelector('input[type="checkbox"]');
+    const accountsListEl = document.getElementById(this.options.accountsListId);
+    if (!accountsListEl) return;
+
+    // Bind once via delegation
+    if (!this._delegatedAccountsBound) {
+      // Toggle row by clicking anywhere in the row (except the checkbox itself)
+      accountsListEl.addEventListener('click', (e) => {
+        const item = e.target.closest('.account-item');
+        if (!item || !accountsListEl.contains(item)) return;
+        if (e.target && e.target.type === 'checkbox') return;
+        const checkbox = item.querySelector('input[type="checkbox"]');
         if (checkbox) {
           checkbox.checked = !checkbox.checked;
-          checkbox.dispatchEvent(new Event('change'));
+          // Trigger change to update counts/state
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
         }
       });
-    });
+
+      // Checkbox changes
+      accountsListEl.addEventListener('change', (e) => {
+        if (e.target && e.target.matches('input[type="checkbox"]')) {
+          this.handleAccountCheckboxChange();
+        }
+      });
+
+      this._delegatedAccountsBound = true;
+    }
   }
   
   attachSelectAllListener() {

@@ -114,6 +114,9 @@
       transform: none; /* neutralize default */
       margin: 0; /* handled by JS spacing */
       will-change: transform, top, left;
+      max-width: 400px;
+      max-height: 320px;
+      overflow: auto;
     }
 
     /* Prevent positional overrides from .bottom when using portal; keep arrow-only flips */
@@ -2151,54 +2154,122 @@
 
     function applyResponsiveBadgeTruncation() {
       const accountContainers = document.querySelectorAll('.group-card-accounts-container');
-      
-      accountContainers.forEach(container => {
-        const badges = container.querySelectorAll('.group-card-account-badge');
-        const moreLink = container.querySelector('.group-card-more-link');
-        
-        if (badges.length === 0) return;
-        
-        // Reset visibility
-        badges.forEach(badge => badge.style.display = 'flex');
-        moreLink.style.display = 'none';
-        
-        // Get container dimensions
-        const containerHeight = container.offsetHeight;
-        const maxHeight = 64; // Approximately 2 rows (32px each)
-        
-        if (containerHeight > maxHeight) {
-          // Find the cutoff point
-          let visibleCount = badges.length;
-          let hiddenCount = 0;
-          
-          // Hide badges from the end until we fit within maxHeight
-          for (let i = badges.length - 1; i >= 0; i--) {
-            badges[i].style.display = 'none';
-            hiddenCount++;
-            visibleCount--;
-            
-            // Check if we now fit (accounting for the "+N more" link)
-            moreLink.textContent = `+ ${hiddenCount} more`;
-            moreLink.style.display = 'inline-flex';
-            
-            if (container.offsetHeight <= maxHeight) {
-              break;
-            }
-          }
-          
-          // If we still don't fit, hide one more badge to make room for "+N more"
-          if (container.offsetHeight > maxHeight && visibleCount > 0) {
-            badges[visibleCount - 1].style.display = 'none';
-            hiddenCount++;
-            moreLink.textContent = `+ ${hiddenCount} more`;
-          }
 
-          // Build tooltip with names of hidden accounts
-          const hiddenNames = Array.from(container.querySelectorAll('.group-card-account-badge'))
-            .filter(b => b.style.display === 'none')
+      const GAP_PX = 6;          // matches inline style gap on container
+      const MAX_ROWS = 2;         // keep badges within two rows
+      const MIN_SHOWN = 4;        // never show fewer than this when possible
+      const MAX_TOOLTIP_NAMES = 50;
+
+      const median = (arr) => {
+        if (!arr.length) return 0;
+        const sorted = [...arr].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+      };
+
+      const layoutContainer = (container) => {
+        const badges = Array.from(container.querySelectorAll('.group-card-account-badge'));
+        const moreLink = container.querySelector('.group-card-more-link');
+        if (!badges.length || !moreLink) return;
+
+        // Reset visibility before measuring
+        badges.forEach(b => { b.style.display = 'flex'; });
+        moreLink.style.display = 'none';
+        moreLink.removeAttribute('data-hidden-names');
+
+        const containerWidth = Math.floor(container.getBoundingClientRect().width);
+        if (containerWidth <= 0) return; // nothing to do yet
+
+        // Estimate average badge width using median of first few samples
+        const sample = badges.slice(0, Math.min(8, badges.length));
+        const sampleWidths = sample.map(b => Math.ceil(b.getBoundingClientRect().width));
+        const estimatedBadge = Math.max(1, median(sampleWidths));
+
+        // Compute how many badges fit per row with gap
+        const perRow = Math.max(1, Math.floor((containerWidth + GAP_PX) / (estimatedBadge + GAP_PX)));
+        let maxShown = Math.max(MIN_SHOWN, Math.min(badges.length, perRow * MAX_ROWS));
+
+        // Apply initial show/hide based on computed cap
+        badges.forEach((badge, idx) => {
+          badge.style.display = idx < maxShown ? 'flex' : 'none';
+        });
+
+        // Safety pass: ensure we truly fit within two rows; hide 1–3 more if necessary
+        const firstVisible = badges.find(b => b.style.display !== 'none');
+        const rowH = firstVisible ? Math.ceil(firstVisible.getBoundingClientRect().height) : 24;
+        const maxHeight = (rowH * MAX_ROWS) + GAP_PX; // two rows + gap
+        let tries = 3;
+        while (tries-- > 0 && container.getBoundingClientRect().height > maxHeight && maxShown > MIN_SHOWN) {
+          maxShown -= 1;
+          badges[maxShown].style.display = 'none';
+        }
+
+        // Compute hidden count and ensure "+N more" fits in the last row.
+        // Treat the +N chip as taking one badge slot; if last row is full, free one slot.
+        let hiddenCount = Math.max(0, badges.length - maxShown);
+        if (hiddenCount > 0) {
+          const lastRowCount = maxShown % perRow || perRow; // if divisible, it's a full row
+          if (lastRowCount === perRow && maxShown > MIN_SHOWN) {
+            // Free a spot for the +N chip so it doesn't wrap to its own row
+            maxShown -= 1;
+            badges[maxShown].style.display = 'none';
+            hiddenCount = Math.max(0, badges.length - maxShown);
+          }
+        }
+        if (hiddenCount > 0) {
+          // Prepare tooltip content from data
+          const hiddenNames = badges
+            .slice(maxShown)
             .map(b => b.querySelector('.group-card-account-name')?.textContent?.trim())
             .filter(Boolean);
-          moreLink.setAttribute('data-hidden-names', hiddenNames.join(' • '));
+          const tooltipNames = hiddenNames.slice(0, MAX_TOOLTIP_NAMES);
+          const extra = hiddenNames.length - tooltipNames.length;
+          const tooltip = extra > 0 ? `${tooltipNames.join(' • ')} • and ${extra} more` : tooltipNames.join(' • ');
+          moreLink.setAttribute('data-hidden-names', tooltip);
+
+          // Show +N chip for measurement
+          moreLink.style.display = 'inline-flex';
+          moreLink.textContent = `+ ${hiddenCount} more`;
+
+          // Ensure the +N chip fits on the last row. If not, hide a few more badges.
+          const fitPlusChip = () => {
+            const visibleBadges = badges.filter(b => b.style.display !== 'none');
+            if (visibleBadges.length === 0) return;
+            const tops = visibleBadges.map(b => Math.round(b.getBoundingClientRect().top));
+            const lastTop = Math.max(...tops);
+            const lastRow = visibleBadges.filter((b, i) => Math.round(b.getBoundingClientRect().top) === lastTop);
+            const lastRowWidth = lastRow.reduce((sum, b) => sum + Math.ceil(b.getBoundingClientRect().width), 0) + GAP_PX * Math.max(0, lastRow.length - 1);
+            const chipWidth = Math.ceil(moreLink.getBoundingClientRect().width);
+            const need = lastRowWidth + GAP_PX + chipWidth - containerWidth;
+            return need <= 0;
+          };
+
+          let guard = 6; // hide at most 6 extra badges to fit the chip
+          while (guard-- > 0 && !fitPlusChip() && maxShown > MIN_SHOWN) {
+            maxShown -= 1;
+            const toHide = badges[maxShown];
+            if (toHide) toHide.style.display = 'none';
+            hiddenCount = Math.max(0, badges.length - maxShown);
+            moreLink.textContent = `+ ${hiddenCount} more`;
+          }
+        }
+
+        // Ensure portal tooltips are bound for any newly shown +N links
+        setupMoreHoverTooltips();
+      };
+
+      accountContainers.forEach(container => {
+        layoutContainer(container);
+
+        // Attach a ResizeObserver per container for precise relayouts
+        if (!container.__badgesResizeObserver) {
+          const ro = new ResizeObserver(() => {
+            // Use rAF to coalesce rapid size changes
+            if (container.__layoutRaf) cancelAnimationFrame(container.__layoutRaf);
+            container.__layoutRaf = requestAnimationFrame(() => layoutContainer(container));
+          });
+          ro.observe(container);
+          container.__badgesResizeObserver = ro;
         }
       });
     }

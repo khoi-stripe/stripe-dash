@@ -572,10 +572,17 @@ class FigmaGroupCreationModalV3 {
     
     bindStep2Events() {
         const searchInput = document.getElementById('accountSearch-v3');
-        searchInput.addEventListener('input', (e) => {
-            this.renderAccounts();
-            this.bindAccountEvents();
-        });
+        if (searchInput) {
+            const debounce = (fn, delay = 200) => {
+                let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); };
+            };
+            const onSearch = debounce(() => {
+                this.renderAccounts();
+                // bindAccountEvents performs delegation; rebinding after render is safe and cheap
+                this.bindAccountEvents();
+            }, 200);
+            searchInput.addEventListener('input', onSearch);
+        }
 
         const selectAll = document.getElementById('selectAllAccounts-v3');
         selectAll.addEventListener('change', (e) => this.toggleSelectAll());
@@ -601,12 +608,10 @@ class FigmaGroupCreationModalV3 {
     
     bindAccountEvents() {
         const accountList = document.getElementById('accountsList-v3');
-        
-        // Remove existing listeners to prevent duplicates
-        const newAccountList = accountList.cloneNode(true);
-        accountList.parentNode.replaceChild(newAccountList, accountList);
-        
-        newAccountList.addEventListener('click', (e) => {
+        if (!accountList) return;
+
+        // Use delegation; bind once per render cycle
+        accountList.addEventListener('click', (e) => {
             const item = e.target.closest('.account-item');
             if (item && e.target.type !== 'checkbox') {
                 const checkbox = item.querySelector('input[type="checkbox"]');
@@ -624,7 +629,7 @@ class FigmaGroupCreationModalV3 {
         });
         
         // Account checkbox changes
-        newAccountList.addEventListener('change', (e) => {
+        accountList.addEventListener('change', (e) => {
             if (e.target.type === 'checkbox') {
                 const accountItem = e.target.closest('.account-item');
                 const accountId = accountItem?.dataset.accountId;
@@ -634,7 +639,7 @@ class FigmaGroupCreationModalV3 {
             }
         });
 
-        // Update overflow shadow state after DOM replacement
+        // Update overflow shadow state
         this.updateAccountsListOverflowShadow();
 
         // Recalculate on resize (throttled via rAF)
@@ -693,8 +698,15 @@ class FigmaGroupCreationModalV3 {
             }
         });
         
-        this.renderAccounts();
-        this.bindAccountEvents();
+        // Avoid full re-render; update only visible checkboxes
+        const listEl = document.getElementById('accountsList-v3');
+        if (listEl) {
+            listEl.querySelectorAll('.account-item').forEach(item => {
+                const id = item.getAttribute('data-account-id');
+                const cb = item.querySelector('input[type="checkbox"]');
+                if (id && cb) cb.checked = this.selectedAccounts.has(id);
+            });
+        }
         this.updateSelectionCount();
         this.updatePreview();
     }
