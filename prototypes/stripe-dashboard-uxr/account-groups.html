@@ -730,7 +730,7 @@
      .content-body {
        flex: 1;
        background: white;
-       overflow: hidden;
+       overflow-y: auto;
        padding: 20px 32px 32px 32px;
        display: flex;
        flex-direction: column;
@@ -738,10 +738,9 @@
 
      /* Groups Container - specific styling for account groups page */
     #groups-container {
-      flex: 1;
-      overflow-y: auto;
+      flex: 0 0 auto; /* Hug content instead of growing */
+      overflow: visible; /* Allow content to expand naturally */
       margin-bottom: 0; /* use spacer element for reliable bottom space */
-      min-height: 0; /* Important for flex child overflow */
      }
      
      .content-placeholder {
@@ -1352,7 +1351,7 @@
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 2.5V9.5M2.5 6H9.5" stroke="#ffffff" stroke-width="1" stroke-linecap="round"/>
                 </svg>
-                Create group
+                  Create group
                 </button>
               </div>
             </div>
