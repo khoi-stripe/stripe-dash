@@ -1221,18 +1221,27 @@
            <div class="settings-section" style="flex: 1 1 100%; margin-top: 8px;">
              <div style="font-weight: 600; margin-bottom: 8px;">Hosted data source</div>
              <div class="field-row">
-               <input id="orgs-remote-url" type="text" placeholder="Paste a public CSV or JSON URL (e.g. GitHub raw, Gist, Google Sheets CSV export)" />
+               <input id="orgs-remote-url" type="text" placeholder="Paste a public CSV or JSON URL (GitHub raw, Gist, or Google Sheets CSV export)" />
                <select id="orgs-remote-format" class="btn" style="height:36px;">
+                 <option value="auto">Auto</option>
                  <option value="csv">CSV</option>
                  <option value="json">JSON</option>
                </select>
                <button id="btn-apply-remote" class="btn primary">Apply</button>
              </div>
-             <div class="helper" style="margin-top:6px;">After applying, use the generated link below to share. Anyone visiting will load your organizations.</div>
+             <div class="helper" style="margin-top:6px;">Apply loads and validates your data now. Use the link below to share—anyone visiting will see your organizations.</div>
+             <div class="helper" id="orgs-remote-hint" style="margin-top:6px;">
+               Tip: For Google Sheets, use File → Share → Anyone with the link (Viewer), then File → Share → Publish to web → CSV, and paste the CSV link here.
+             </div>
              <div class="field-row" style="margin-top:8px;">
                <input id="orgs-share-link" type="text" readonly placeholder="Shareable link appears here" />
                <button id="btn-copy-link" class="btn">Copy</button>
              </div>
+             <div class="field-row" style="margin-top:8px;">
+               <button id="btn-apply-to-all" class="btn">Generate links for all pages</button>
+               <button id="btn-reset-remote" class="btn" title="Clear remote data and revert to local sample">Clear</button>
+             </div>
+             <div id="orgs-status" class="helper" style="margin-top:6px; display:none;"></div>
            </div>
 
            
@@ -1269,7 +1278,7 @@
         if (urlInput && formatSelect && applyBtn && shareInput && copyBtn) {
           const params = new URLSearchParams(window.location.search);
           const existingUrl = params.get('orgsUrl') || params.get('dataUrl');
-          const existingFormat = (params.get('format') || 'csv').toLowerCase();
+          const existingFormat = (params.get('format') || 'auto').toLowerCase();
           if (existingUrl) urlInput.value = existingUrl;
           if (existingFormat) formatSelect.value = existingFormat;
 
@@ -1290,10 +1299,10 @@
 
               // Reload data immediately
               await window.OrgDataManager.init();
-              alert('Remote data applied. Use the generated share link to share this prototype with data.');
+              showStatus('Remote data applied and validated.');
             } catch (e) {
               console.error(e);
-              alert('Failed to load remote data. Ensure the URL is public and CORS-enabled.');
+              showStatus('Failed to load remote data. Ensure the URL is public and CORS-enabled.', true);
             }
           });
 
@@ -1308,6 +1317,53 @@
               document.execCommand('copy');
             }
           });
+
+          // Generate links for key pages with current params
+          const applyAllBtn = document.getElementById('btn-apply-to-all');
+          if (applyAllBtn) {
+            applyAllBtn.addEventListener('click', () => {
+              const remoteUrl = urlInput.value.trim();
+              const format = formatSelect.value;
+              if (!remoteUrl) return;
+              const pages = ['index.html', 'financial-reports.html', 'account-groups.html', 'settings.html'];
+              const base = window.location.href.replace(/settings\.html.*$/, '');
+              const links = pages.map(p => {
+                const u = new URL(base + p);
+                u.searchParams.set('orgsUrl', remoteUrl);
+                u.searchParams.set('format', format);
+                return u.toString();
+              }).join('\n');
+              shareInput.value = links;
+              showStatus('Generated page links. Copy and share as needed.');
+            });
+          }
+
+          // Clear remote and revert to local sample
+          const resetBtn = document.getElementById('btn-reset-remote');
+          if (resetBtn) {
+            resetBtn.addEventListener('click', async () => {
+              const u = new URL(window.location.href);
+              u.searchParams.delete('orgsUrl');
+              u.searchParams.delete('dataUrl');
+              u.searchParams.delete('format');
+              window.history.replaceState({}, '', u.toString());
+              localStorage.removeItem('uxr_organizations_data');
+              localStorage.removeItem('uxr_csv_data');
+              await window.OrgDataManager.resetAllData();
+              urlInput.value = '';
+              shareInput.value = '';
+              formatSelect.value = 'auto';
+              showStatus('Cleared. Reverted to local sample data.');
+            });
+          }
+
+          function showStatus(text, isError = false) {
+            const el = document.getElementById('orgs-status');
+            if (!el) return;
+            el.style.display = 'block';
+            el.textContent = text;
+            el.style.color = isError ? '#dc2626' : 'var(--neutral-500)';
+          }
         }
       } finally {
         hidePageSpinner();
