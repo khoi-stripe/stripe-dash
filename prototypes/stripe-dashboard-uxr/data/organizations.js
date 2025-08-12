@@ -169,11 +169,27 @@ class OrganizationDataManager {
   }
 
   async init() {
-    // Try to load from saved organizations data (with colors), then CSV, then defaults
+    // Try URL-provided dataset first (enables hosted/shareable data)
+    const urlParams = new URLSearchParams(window.location.search);
+    const remoteUrl = urlParams.get('orgsUrl') || urlParams.get('dataUrl');
+    const remoteFormat = (urlParams.get('format') || 'csv').toLowerCase();
+
+    if (remoteUrl) {
+      try {
+        this.organizations = await this.loadFromRemoteUrl(remoteUrl, remoteFormat);
+        // Persist for navigation between pages within the prototype
+        this.saveOrganizations();
+      } catch (error) {
+        console.warn('Failed to load organizations from remote URL, falling back to saved/local data:', error);
+      }
+    }
+
+    // If not populated by remote, try to load from saved organizations data (with colors), then CSV, then defaults
     const savedOrganizationsData = localStorage.getItem('uxr_organizations_data');
     const savedCsvData = localStorage.getItem('uxr_csv_data');
     
-    if (savedOrganizationsData) {
+    if (!this.organizations || this.organizations.length === 0) {
+      if (savedOrganizationsData) {
       try {
         this.organizations = JSON.parse(savedOrganizationsData);
       } catch (error) {
@@ -235,6 +251,37 @@ class OrganizationDataManager {
     if (this.isReady) return true;
     await this.initPromise;
     return this.isReady;
+  }
+
+  /**
+   * Load organizations from a remote URL.
+   * Supports format "csv" (default) or "json".
+   * For json, expected shape: [{ name, accounts: [{ id, name, type?, color?, isAggregate? }] }]
+   */
+  async loadFromRemoteUrl(url, format = 'csv') {
+    const resolvedFormat = (format || 'csv').toLowerCase();
+    if (resolvedFormat === 'csv') {
+      const response = await fetch(url, { cache: 'no-cache' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const csvText = await response.text();
+      return this.spreadsheetLoader.loadFromCSV(csvText);
+    }
+    if (resolvedFormat === 'json') {
+      const response = await fetch(url, { cache: 'no-cache' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (!Array.isArray(data)) throw new Error('Invalid JSON: expected an array of organizations');
+      return data;
+    }
+    throw new Error(`Unsupported format: ${format}`);
+  }
+
+  /** Build a shareable link that loads organizations from a given URL */
+  buildShareLink(remoteUrl, format = 'csv') {
+    const url = new URL(window.location.href);
+    url.searchParams.set('orgsUrl', remoteUrl);
+    url.searchParams.set('format', (format || 'csv').toLowerCase());
+    return url.toString();
   }
 
   // Spreadsheet integration methods

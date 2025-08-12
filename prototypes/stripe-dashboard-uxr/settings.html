@@ -568,6 +568,17 @@
         width: 64px;
       }
     }
+    .settings-section {
+      background: white;
+      border: 1px solid rgba(0, 39, 77, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .field-row { display: flex; gap: 8px; align-items: center; }
+    .field-row input[type="text"] { flex: 1; height: 36px; padding: 0 10px; border: 1px solid var(--neutral-200); border-radius: 8px; }
+    .btn { height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--neutral-200); background: white; cursor: pointer; }
+    .btn.primary { background: var(--brand-600); color: white; border-color: var(--brand-600); }
+    .helper { color: var(--neutral-500); font-size: 12px; }
   </style>
     
     <script>
@@ -1206,6 +1217,24 @@
              </div>
            </a>
            
+           <!-- Hosted data source (shareable) -->
+           <div class="settings-section" style="flex: 1 1 100%; margin-top: 8px;">
+             <div style="font-weight: 600; margin-bottom: 8px;">Hosted data source</div>
+             <div class="field-row">
+               <input id="orgs-remote-url" type="text" placeholder="Paste a public CSV or JSON URL (e.g. GitHub raw, Gist, Google Sheets CSV export)" />
+               <select id="orgs-remote-format" class="btn" style="height:36px;">
+                 <option value="csv">CSV</option>
+                 <option value="json">JSON</option>
+               </select>
+               <button id="btn-apply-remote" class="btn primary">Apply</button>
+             </div>
+             <div class="helper" style="margin-top:6px;">After applying, use the generated link below to share. Anyone visiting will load your organizations.</div>
+             <div class="field-row" style="margin-top:8px;">
+               <input id="orgs-share-link" type="text" readonly placeholder="Shareable link appears here" />
+               <button id="btn-copy-link" class="btn">Copy</button>
+             </div>
+           </div>
+
            
          </div>
        </div>
@@ -1228,6 +1257,57 @@
           await window.OrgDataManager.waitForReady();
         } else {
           await new Promise(r => setTimeout(r, 300));
+        }
+
+        // Hosted data source UI wiring
+        const urlInput = document.getElementById('orgs-remote-url');
+        const formatSelect = document.getElementById('orgs-remote-format');
+        const applyBtn = document.getElementById('btn-apply-remote');
+        const shareInput = document.getElementById('orgs-share-link');
+        const copyBtn = document.getElementById('btn-copy-link');
+
+        if (urlInput && formatSelect && applyBtn && shareInput && copyBtn) {
+          const params = new URLSearchParams(window.location.search);
+          const existingUrl = params.get('orgsUrl') || params.get('dataUrl');
+          const existingFormat = (params.get('format') || 'csv').toLowerCase();
+          if (existingUrl) urlInput.value = existingUrl;
+          if (existingFormat) formatSelect.value = existingFormat;
+
+          applyBtn.addEventListener('click', async () => {
+            const remoteUrl = urlInput.value.trim();
+            const format = formatSelect.value;
+            if (!remoteUrl) return;
+            try {
+              // Build shareable link and show it
+              const link = window.OrgDataManager.buildShareLink(remoteUrl, format);
+              shareInput.value = link;
+
+              // Update current page URL so navigation keeps dataset
+              const newUrl = new URL(window.location.href);
+              newUrl.searchParams.set('orgsUrl', remoteUrl);
+              newUrl.searchParams.set('format', format);
+              window.history.replaceState({}, '', newUrl.toString());
+
+              // Reload data immediately
+              await window.OrgDataManager.init();
+              alert('Remote data applied. Use the generated share link to share this prototype with data.');
+            } catch (e) {
+              console.error(e);
+              alert('Failed to load remote data. Ensure the URL is public and CORS-enabled.');
+            }
+          });
+
+          copyBtn.addEventListener('click', async () => {
+            if (!shareInput.value) return;
+            try {
+              await navigator.clipboard.writeText(shareInput.value);
+              copyBtn.textContent = 'Copied';
+              setTimeout(() => (copyBtn.textContent = 'Copy'), 1200);
+            } catch {
+              shareInput.select();
+              document.execCommand('copy');
+            }
+          });
         }
       } finally {
         hidePageSpinner();
