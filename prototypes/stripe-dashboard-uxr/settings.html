@@ -568,17 +568,6 @@
         width: 64px;
       }
     }
-    .settings-section {
-      background: white;
-      border: 1px solid rgba(0, 39, 77, 0.08);
-      border-radius: 12px;
-      padding: 16px;
-    }
-    .field-row { display: flex; gap: 8px; align-items: center; }
-    .field-row input[type="text"] { flex: 1; height: 36px; padding: 0 10px; border: 1px solid var(--neutral-200); border-radius: 8px; }
-    .btn { height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--neutral-200); background: white; cursor: pointer; }
-    .btn.primary { background: var(--brand-600); color: white; border-color: var(--brand-600); }
-    .helper { color: var(--neutral-500); font-size: 12px; }
   </style>
     
     <script>
@@ -1217,33 +1206,6 @@
              </div>
            </a>
            
-           <!-- Hosted data source (shareable) -->
-           <div class="settings-section" style="flex: 1 1 100%; margin-top: 8px;">
-             <div style="font-weight: 600; margin-bottom: 8px;">Hosted data source</div>
-             <div class="field-row">
-               <input id="orgs-remote-url" type="text" placeholder="Paste a public CSV or JSON URL (GitHub raw, Gist, or Google Sheets CSV export)" />
-               <select id="orgs-remote-format" class="btn" style="height:36px;">
-                 <option value="auto">Auto</option>
-                 <option value="csv">CSV</option>
-                 <option value="json">JSON</option>
-               </select>
-               <button id="btn-apply-remote" class="btn primary">Apply</button>
-             </div>
-             <div class="helper" style="margin-top:6px;">Apply loads and validates your data now. Use the link below to share—anyone visiting will see your organizations.</div>
-             <div class="helper" id="orgs-remote-hint" style="margin-top:6px;">
-               Tip: For Google Sheets, use File → Share → Anyone with the link (Viewer), then File → Share → Publish to web → CSV, and paste the CSV link here.
-             </div>
-             <div class="field-row" style="margin-top:8px;">
-               <input id="orgs-share-link" type="text" readonly placeholder="Shareable link appears here" />
-               <button id="btn-copy-link" class="btn">Copy</button>
-             </div>
-             <div class="field-row" style="margin-top:8px;">
-               <button id="btn-apply-to-all" class="btn">Generate links for all pages</button>
-               <button id="btn-reset-remote" class="btn" title="Clear remote data and revert to local sample">Clear</button>
-             </div>
-             <div id="orgs-status" class="helper" style="margin-top:6px; display:none;"></div>
-           </div>
-
            
          </div>
        </div>
@@ -1266,104 +1228,6 @@
           await window.OrgDataManager.waitForReady();
         } else {
           await new Promise(r => setTimeout(r, 300));
-        }
-
-        // Hosted data source UI wiring
-        const urlInput = document.getElementById('orgs-remote-url');
-        const formatSelect = document.getElementById('orgs-remote-format');
-        const applyBtn = document.getElementById('btn-apply-remote');
-        const shareInput = document.getElementById('orgs-share-link');
-        const copyBtn = document.getElementById('btn-copy-link');
-
-        if (urlInput && formatSelect && applyBtn && shareInput && copyBtn) {
-          const params = new URLSearchParams(window.location.search);
-          const existingUrl = params.get('orgsUrl') || params.get('dataUrl');
-          const existingFormat = (params.get('format') || 'auto').toLowerCase();
-          if (existingUrl) urlInput.value = existingUrl;
-          if (existingFormat) formatSelect.value = existingFormat;
-
-          applyBtn.addEventListener('click', async () => {
-            const remoteUrl = urlInput.value.trim();
-            const format = formatSelect.value;
-            if (!remoteUrl) return;
-            try {
-              // Build shareable link and show it
-              const link = window.OrgDataManager.buildShareLink(remoteUrl, format);
-              shareInput.value = link;
-
-              // Update current page URL so navigation keeps dataset
-              const newUrl = new URL(window.location.href);
-              newUrl.searchParams.set('orgsUrl', remoteUrl);
-              newUrl.searchParams.set('format', format);
-              window.history.replaceState({}, '', newUrl.toString());
-
-              // Reload data immediately
-              await window.OrgDataManager.init();
-              showStatus('Remote data applied and validated.');
-            } catch (e) {
-              console.error(e);
-              showStatus('Failed to load remote data. Ensure the URL is public and CORS-enabled.', true);
-            }
-          });
-
-          copyBtn.addEventListener('click', async () => {
-            if (!shareInput.value) return;
-            try {
-              await navigator.clipboard.writeText(shareInput.value);
-              copyBtn.textContent = 'Copied';
-              setTimeout(() => (copyBtn.textContent = 'Copy'), 1200);
-            } catch {
-              shareInput.select();
-              document.execCommand('copy');
-            }
-          });
-
-          // Generate links for key pages with current params
-          const applyAllBtn = document.getElementById('btn-apply-to-all');
-          if (applyAllBtn) {
-            applyAllBtn.addEventListener('click', () => {
-              const remoteUrl = urlInput.value.trim();
-              const format = formatSelect.value;
-              if (!remoteUrl) return;
-              const pages = ['index.html', 'financial-reports.html', 'account-groups.html', 'settings.html'];
-              const base = window.location.href.replace(/settings\.html.*$/, '');
-              const links = pages.map(p => {
-                const u = new URL(base + p);
-                u.searchParams.set('orgsUrl', remoteUrl);
-                u.searchParams.set('format', format);
-                return u.toString();
-              }).join('\n');
-              shareInput.value = links;
-              showStatus('Generated page links. Copy and share as needed.');
-            });
-          }
-
-          // Clear remote and revert to local sample
-          const resetBtn = document.getElementById('btn-reset-remote');
-          if (resetBtn) {
-            resetBtn.addEventListener('click', async () => {
-              const u = new URL(window.location.href);
-              u.searchParams.delete('orgsUrl');
-              u.searchParams.delete('dataUrl');
-              u.searchParams.delete('format');
-              window.history.replaceState({}, '', u.toString());
-              localStorage.removeItem('uxr_organizations_data');
-              localStorage.removeItem('uxr_csv_data');
-              await window.OrgDataManager.resetAllData();
-              urlInput.value = '';
-              shareInput.value = '';
-              formatSelect.value = 'auto';
-              showStatus('Cleared. Reverted to local sample data.');
-            });
-          }
-
-          function showStatus(text, isError = false) {
-            const el = document.getElementById('orgs-status');
-            if (!el) return;
-            el.style.display = 'block';
-            el.textContent = text;
-            el.style.color = isError ? '#dc2626' : 'var(--neutral-500)';
-          }
         }
       } finally {
         hidePageSpinner();
