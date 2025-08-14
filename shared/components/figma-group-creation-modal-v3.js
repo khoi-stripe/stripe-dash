@@ -286,7 +286,11 @@ class FigmaGroupCreationModalV3 {
         this.modal.getElement().style.maxHeight = '640px';
 
         this.renderAccounts();
-        this.bindStep2Events();
+        
+        // Use setTimeout to ensure DOM is fully updated before binding events
+        setTimeout(() => {
+            this.bindStep2Events();
+        }, 0);
         
         // Adjust modal content padding for Step 2 custom layout  
         const modalContent = this.modal.getElement().querySelector('.modal-content');
@@ -607,10 +611,15 @@ class FigmaGroupCreationModalV3 {
         
         // Add close button event listener
         const closeButton = document.getElementById('step2-close-button');
+        console.log('Looking for step2-close-button:', closeButton);
         if (closeButton) {
+            console.log('Found step2-close-button, adding event listener');
             closeButton.addEventListener('click', () => {
+                console.log('Step2 close button clicked, calling this.close()');
                 this.close();
             });
+        } else {
+            console.error('step2-close-button not found in DOM');
         }
     }
     
