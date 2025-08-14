@@ -2626,6 +2626,10 @@
       // Add event listeners to each button
       const buttons = menu.querySelectorAll('.kebab-menu-item');
       buttons.forEach(button => {
+        // Remove any existing onclick handlers
+        button.onclick = null;
+        button.removeAttribute('onclick');
+        
         button.addEventListener('click', (event) => {
           event.stopPropagation();
           const action = button.dataset.action;
@@ -2674,8 +2678,26 @@
       const allMenus = document.querySelectorAll('.kebab-menu');
       console.log('🧹 Force clearing', allMenus.length, 'cached kebab menus');
       allMenus.forEach(menu => {
+        // Remove any onclick handlers from menu items before removing
+        const menuItems = menu.querySelectorAll('.kebab-menu-item');
+        menuItems.forEach(item => {
+          item.onclick = null;
+          item.removeAttribute('onclick');
+        });
+        
         if (menu.parentNode) {
           menu.parentNode.removeChild(menu);
+        }
+      });
+      
+      // Also clear any orphaned menu items that might be floating around
+      const orphanedItems = document.querySelectorAll('.kebab-menu-item');
+      console.log('🧹 Force clearing', orphanedItems.length, 'orphaned kebab menu items');
+      orphanedItems.forEach(item => {
+        item.onclick = null;
+        item.removeAttribute('onclick');
+        if (item.parentNode && !item.closest('.kebab-menu')) {
+          item.parentNode.removeChild(item);
         }
       });
     }
