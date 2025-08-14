@@ -80,17 +80,17 @@ class PrototypeShare {
       } else {
         // GitHub issue creation failed, fall back to URL encoding
         console.warn('GitHub issue creation failed, using URL fallback');
-        return this.createUrlShare(shareData, shareId);
+        return this.createUrlShareWithData(shareData, shareId);
       }
     } catch (error) {
       // Network or other error, fall back to URL encoding
       console.warn('GitHub API unavailable, using URL fallback:', error.message);
-      return this.createUrlShare(shareData, shareId);
+      return this.createUrlShareWithData(shareData, shareId);
     }
   }
 
   createUrlShare(shareData, shareId) {
-    // Fallback: store data in localStorage with expiry
+    // Store locally for the creator's browser
     const shareKey = `prototype_share_${shareId}`;
     const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
     
@@ -100,7 +100,7 @@ class PrototypeShare {
       createdAt: new Date().toISOString()
     };
     
-    // Store in localStorage
+    // Store in localStorage for this browser session
     localStorage.setItem(shareKey, JSON.stringify(storeData));
     
     // Clean up old shares while we're at it
@@ -115,6 +115,30 @@ class PrototypeShare {
       issueNumber: null,
       issueUrl: null
     };
+  }
+
+  createUrlShareWithData(shareData, shareId) {
+    // Fallback: encode data directly in URL for cross-browser sharing
+    try {
+      const compressedData = btoa(JSON.stringify({
+        data: shareData,
+        createdAt: new Date().toISOString()
+      }));
+      
+      const shareUrl = `${window.location.origin}${window.location.pathname}?data=${compressedData}`;
+      
+      return {
+        shareId,
+        shareUrl,
+        method: 'url',
+        issueNumber: null,
+        issueUrl: null
+      };
+    } catch (error) {
+      console.error('Failed to create URL share:', error);
+      // Ultra fallback - just return a simple localStorage version
+      return this.createUrlShare(shareData, shareId);
+    }
   }
 
   formatIssueBody(shareData, shareId) {
@@ -186,8 +210,10 @@ ${JSON.stringify(shareData, null, 2)}
       const shareKey = `prototype_share_${shareId}`;
       const storedData = localStorage.getItem(shareKey);
       
+      console.log(`Looking for share: ${shareKey}`, storedData ? 'found' : 'not found');
+      
       if (!storedData) {
-        return { success: false, error: 'Share not found' };
+        return { success: false, error: 'Share not found in localStorage' };
       }
       
       const storeData = JSON.parse(storedData);
@@ -195,8 +221,11 @@ ${JSON.stringify(shareData, null, 2)}
       // Check if expired
       if (Date.now() > storeData.expiresAt) {
         localStorage.removeItem(shareKey);
+        console.log(`Share ${shareId} expired, removed from localStorage`);
         return { success: false, error: 'Share expired' };
       }
+      
+      console.log(`Loading share ${shareId} from localStorage`);
       
       // Import the shared data
       await this.importSharedState(storeData.data);

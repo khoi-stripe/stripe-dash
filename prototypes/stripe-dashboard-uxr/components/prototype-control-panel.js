@@ -1368,7 +1368,8 @@ class PrototypeControlPanel {
           Anyone with this URL will see your current prototype data (organizations, accounts, and groups).
           ${method === 'github' && issueNumber ? 
             `<br><small>Stored as <a href="https://github.com/khoi-stripe/stripe-dash/issues/${issueNumber}" target="_blank" style="color: #675dff;">GitHub Issue #${issueNumber}</a></small>` : 
-            method === 'localStorage' ? '<br><small>Data stored locally (expires in 24 hours)</small>' : ''}
+            method === 'localStorage' ? '<br><small>⚠️ Data stored locally - only works on this device/browser (expires in 24 hours)</small>' : 
+            method === 'url' ? '<br><small>Data encoded in URL - works across devices but URL may be very long</small>' : ''}
         </p>
         <div style="
           background: #f9fafb;
