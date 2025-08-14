@@ -2620,11 +2620,15 @@
       }
       
       if (badgeElement && badgeContainer) {
-        if (filterType === 'Filtered') {
+        // Check if we're in a filtered state (not 'all' group and has selected accounts)
+        const currentGroup = window.reportsFilter?.currentGroup;
+        const isFilteredGroup = currentGroup && currentGroup !== 'all';
+        
+        if (filterType === 'Filtered' && isFilteredGroup) {
           badgeElement.textContent = 'Filtered';
           badgeContainer.style.display = 'inline-flex';
         } else {
-          // Hide the badge entirely when not filtered, including any remnant dash
+          // Hide the badge entirely when not filtered (either 'all' group or no selection)
           badgeElement.textContent = '';
           badgeContainer.style.display = 'none';
         }
