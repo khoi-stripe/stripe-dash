@@ -1705,7 +1705,7 @@
                     </div>
                   </div>
                 `).join('')}
-                <span class="group-card-more-link" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: var(--neutral-700); text-decoration: none; padding: 4px 0; display: none; cursor: default;">+ more</span>
+                <span class="group-card-more-link" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: var(--neutral-700); text-decoration: none; padding: 4px 0; display: none; cursor: pointer;">+ more</span>
               `}
                   </div>
 
@@ -1958,8 +1958,8 @@
         return createGroupCard(group, [], isSavedGroup, true); // Show loading spinner
       }).join('');
       
-      // Setup kebab event listeners immediately for the card structure
-      setupKebabEventListeners();
+      // Setup all event listeners immediately for the card structure
+      setupAllEventHandlers();
       
       // Then replace with real account data after a brief delay
       setTimeout(() => {
@@ -2027,7 +2027,7 @@
         
         // Apply responsive badge truncation after rendering real content
     applyResponsiveBadgeTruncation();
-    setupMoreHoverTooltips();
+    setupAllEventHandlers();
         setupTooltipHover();
       }, 300); // Show spinner for 300ms to simulate loading
     }
@@ -2160,9 +2160,8 @@
       const accountContainers = document.querySelectorAll('.group-card-accounts-container');
 
       const GAP_PX = 6;          // matches inline style gap on container
-      const MAX_ROWS = 2;         // keep badges within two rows
+      const MAX_ROWS = 2;         // keep badges within two rows when collapsed
       const MIN_SHOWN = 4;        // never show fewer than this when possible
-      const MAX_TOOLTIP_NAMES = 50;
 
       const median = (arr) => {
         if (!arr.length) return 0;
@@ -2176,10 +2175,20 @@
         const moreLink = container.querySelector('.group-card-more-link');
         if (!badges.length || !moreLink) return;
 
-        // Reset visibility before measuring
+        // Check if this container is in expanded state
+        const isExpanded = container.dataset.expanded === 'true';
+        
+        if (isExpanded) {
+          // When expanded, show all badges and "Show less" link
+          badges.forEach(b => { b.style.display = 'flex'; });
+          moreLink.style.display = 'inline-flex';
+          moreLink.textContent = 'Show less';
+          return;
+        }
+
+        // Reset visibility before measuring (collapsed state)
         badges.forEach(b => { b.style.display = 'flex'; });
         moreLink.style.display = 'none';
-        moreLink.removeAttribute('data-hidden-names');
 
         const containerWidth = Math.floor(container.getBoundingClientRect().width);
         if (containerWidth <= 0) return; // nothing to do yet
@@ -2220,20 +2229,11 @@
             hiddenCount = Math.max(0, badges.length - maxShown);
           }
         }
+        
         if (hiddenCount > 0) {
-          // Prepare tooltip content from data
-          const hiddenNames = badges
-            .slice(maxShown)
-            .map(b => b.querySelector('.group-card-account-name')?.textContent?.trim())
-            .filter(Boolean);
-          const tooltipNames = hiddenNames.slice(0, MAX_TOOLTIP_NAMES);
-          const extra = hiddenNames.length - tooltipNames.length;
-          const tooltip = extra > 0 ? `${tooltipNames.join(' • ')} • and ${extra} more` : tooltipNames.join(' • ');
-          moreLink.setAttribute('data-hidden-names', tooltip);
-
           // Show +N chip for measurement
           moreLink.style.display = 'inline-flex';
-          moreLink.textContent = `+ ${hiddenCount} more`;
+          moreLink.textContent = `+${hiddenCount} more`;
 
           // Ensure the +N chip fits on the last row. If not, hide a few more badges.
           const fitPlusChip = () => {
@@ -2254,12 +2254,9 @@
             const toHide = badges[maxShown];
             if (toHide) toHide.style.display = 'none';
             hiddenCount = Math.max(0, badges.length - maxShown);
-            moreLink.textContent = `+ ${hiddenCount} more`;
+            moreLink.textContent = `+${hiddenCount} more`;
           }
         }
-
-        // Ensure portal tooltips are bound for any newly shown +N links
-        setupMoreHoverTooltips();
       };
 
       accountContainers.forEach(container => {
@@ -2281,7 +2278,6 @@
     // Apply truncation on window resize
     window.addEventListener('resize', () => {
       applyResponsiveBadgeTruncation();
-      setupMoreHoverTooltips();
     });
 
     function setupTooltipHover() {
@@ -2559,6 +2555,44 @@
     // Make function globally accessible
     window.toggleKebabMenu = toggleKebabMenu;
 
+    // Set up expand/collapse functionality for badge containers
+    function setupExpandCollapseHandlers() {
+      const moreLinks = document.querySelectorAll('.group-card-more-link');
+      
+      moreLinks.forEach(moreLink => {
+        // Remove any existing listeners to prevent duplicates
+        const newMoreLink = moreLink.cloneNode(true);
+        moreLink.parentNode.replaceChild(newMoreLink, moreLink);
+        
+        newMoreLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const container = newMoreLink.closest('.group-card-accounts-container');
+          if (!container) return;
+          
+          const isExpanded = container.dataset.expanded === 'true';
+          
+          if (isExpanded) {
+            // Collapse: go back to truncated view
+            container.dataset.expanded = 'false';
+          } else {
+            // Expand: show all badges
+            container.dataset.expanded = 'true';
+          }
+          
+          // Re-layout the container
+          applyResponsiveBadgeTruncation();
+        });
+      });
+    }
+
+    // Call setup after cards are rendered
+    function setupAllEventHandlers() {
+      setupKebabEventListeners();
+      setupExpandCollapseHandlers();
+    }
+
     function createKebabMenu(groupId, isSavedGroup) {
       const menu = document.createElement('div');
       menu.className = 'kebab-menu';
@@ -2661,7 +2695,7 @@
       showDeleteConfirmation(groupName, () => {
         // Use OrgDataManager for all group deletions
         if (window.OrgDataManager && window.OrgDataManager.deleteAccountGroup) {
-          window.OrgDataManager.deleteAccountGroup(groupId);
+        window.OrgDataManager.deleteAccountGroup(groupId);
         } else {
           console.error('OrgDataManager.deleteAccountGroup not available');
           alert('Cannot delete account group - functionality not available');
