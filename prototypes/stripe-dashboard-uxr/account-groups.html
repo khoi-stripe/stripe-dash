@@ -1424,6 +1424,7 @@
   
   <!-- Prototype Sharing -->
   <script src="../../shared/utils/share.js"></script>
+  <script src="../../api/share.js"></script>
   <script type="module">
     import { showPageSpinner, hidePageSpinner } from '../../shared/utils/helpers.js';
     document.addEventListener('DOMContentLoaded', async () => {
@@ -2652,10 +2653,15 @@
 
     function deleteGroup(groupId, isSavedGroup = false) {
       closeAllKebabMenus();
-      if (confirm('Are you sure you want to delete this account group?')) {
+      
+      // Get the group name for the confirmation dialog
+      const group = window.OrgDataManager.getAccountGroups().find(g => g.id === groupId);
+      const groupName = group ? group.name : 'this group';
+      
+      showDeleteConfirmation(groupName, () => {
         // Use OrgDataManager for all group deletions
         if (window.OrgDataManager && window.OrgDataManager.deleteAccountGroup) {
-        window.OrgDataManager.deleteAccountGroup(groupId);
+          window.OrgDataManager.deleteAccountGroup(groupId);
         } else {
           console.error('OrgDataManager.deleteAccountGroup not available');
           alert('Cannot delete account group - functionality not available');
@@ -2664,7 +2670,156 @@
         loadAccountGroups();
         // Refresh any existing account group filters on the page
         refreshAccountGroupFilters();
-      }
+      });
+    }
+
+    function showDeleteConfirmation(groupName, onConfirm) {
+      // Create modal overlay
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      `;
+      
+      // Create modal content
+      modal.innerHTML = `
+        <div style="
+          background: white;
+          border-radius: 12px;
+          padding: 32px;
+          max-width: 480px;
+          width: 90%;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          position: relative;
+          transform: scale(0.95);
+          transition: transform 0.2s ease;
+        ">
+          <button style="
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+          " onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'" onclick="this.closest('[style*=fixed]').remove()">
+            ×
+          </button>
+          
+          <h2 style="
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.2;
+          ">Delete ${groupName}?</h2>
+          
+          <p style="
+            margin: 0 0 32px 0;
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.5;
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+          ">This action cannot be undone.</p>
+          
+          <div style="
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+          ">
+            <button onclick="this.closest('[style*=fixed]').remove()" style="
+              padding: 12px 24px;
+              border: 1px solid #d1d5db;
+              background: white;
+              color: #374151;
+              border-radius: 8px;
+              font-size: 16px;
+              font-weight: 500;
+              cursor: pointer;
+              font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+              transition: all 0.2s ease;
+            " onmouseover="this.style.backgroundColor='#f9fafb'; this.style.borderColor='#9ca3af'" onmouseout="this.style.backgroundColor='white'; this.style.borderColor='#d1d5db'">
+              Cancel
+            </button>
+            <button onclick="
+              this.closest('[style*=fixed]').remove();
+              (${onConfirm.toString()})();
+            " style="
+              padding: 12px 24px;
+              border: 1px solid #dc2626;
+              background: #dc2626;
+              color: white;
+              border-radius: 8px;
+              font-size: 16px;
+              font-weight: 500;
+              cursor: pointer;
+              font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+              transition: all 0.2s ease;
+            " onmouseover="this.style.backgroundColor='#b91c1c'; this.style.borderColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'; this.style.borderColor='#dc2626'">
+              Delete
+            </button>
+          </div>
+        </div>
+      `;
+      
+      // Add to page
+      document.body.appendChild(modal);
+      
+      // Animate in
+      requestAnimationFrame(() => {
+        modal.style.opacity = '1';
+        modal.querySelector('div').style.transform = 'scale(1)';
+      });
+      
+      // Close on backdrop click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.remove();
+        }
+      });
+      
+      // Close on escape key
+      const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+          modal.remove();
+          document.removeEventListener('keydown', handleEscape);
+        }
+      };
+      document.addEventListener('keydown', handleEscape);
+      
+      // Clean up event listener when modal is removed
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.removedNodes.forEach((node) => {
+            if (node === modal) {
+              document.removeEventListener('keydown', handleEscape);
+              observer.disconnect();
+            }
+          });
+        });
+      });
+      observer.observe(document.body, { childList: true });
     }
 
     // Initialize expandable workload items

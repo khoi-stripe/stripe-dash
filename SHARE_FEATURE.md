@@ -1,7 +1,7 @@
 # Prototype Data Sharing Feature
 
 ## Overview
-The Stripe Dashboard UXR prototype now supports **shareable URLs** powered by **GitHub Issues API** that allow you to share your configured prototype data (organizations, accounts, and groups) with others.
+The Stripe Dashboard UXR prototype now supports **shareable URLs** that allow you to share your configured prototype data (organizations, accounts, and groups) with others.
 
 ## How to Use
 
@@ -24,10 +24,8 @@ The Stripe Dashboard UXR prototype now supports **shareable URLs** powered by **
 ## Technical Details
 
 ### Data Storage
-- Uses **GitHub Issues** as a distributed key-value store
-- Data is stored as JSON in GitHub issue bodies
-- Issues are automatically labeled with `prototype-share` and `auto-generated`
-- Data persists indefinitely (or until issues are manually closed)
+- Uses a key-value store approach for clean, short URLs
+- Data is stored temporarily (30-day expiration)
 - No personal information is stored, only prototype configuration
 
 ### URL Format
@@ -53,14 +51,14 @@ https://your-prototype-url.com/prototypes/stripe-dashboard-uxr/?share=abc12345
 - No external dependencies required for development
 
 ### Production Deployment
-- **GitHub Pages compatible** - no backend infrastructure required
-- Uses GitHub's public API for reading/writing issues
-- Works from any static hosting provider (GitHub Pages, Netlify, Vercel, etc.)
-- Zero server costs - leverages GitHub's free issue storage
+- Supports Netlify Functions out of the box
+- Can be adapted for Vercel, AWS Lambda, or other serverless platforms
+- Requires minimal backend infrastructure
 
 ### Files Added
-- `shared/utils/share.js` - Core sharing functionality with GitHub Issues API integration
-- `package.json` - Project metadata for easy deployment
+- `shared/utils/share.js` - Core sharing functionality
+- `api/share.js` - Backend API (serverless function)
+- `netlify.toml` - Deployment configuration
 
 ### Integration Points
 - Prototype Control Panel: Share button in footer
@@ -68,16 +66,7 @@ https://your-prototype-url.com/prototypes/stripe-dashboard-uxr/?share=abc12345
 - Notification system: Success/error messages for sharing
 
 ## Security & Privacy
-- No authentication required for reading public GitHub issues
-- Data persists as GitHub issues (can be manually deleted if needed)
-- URLs are not discoverable (random 8-character IDs mapped to issue titles)
+- No authentication required
+- Data expires automatically (30 days)
+- URLs are not discoverable (random 8-character IDs)
 - Only prototype configuration data is shared, no real user data
-- Issues are clearly labeled as auto-generated prototype shares
-- Leverages GitHub's infrastructure security and reliability
-
-## GitHub Integration Benefits
-- **Transparency**: All shared data is visible as GitHub issues
-- **Auditability**: Track when shares were created and by whom
-- **Management**: Easily close/delete shares via GitHub UI
-- **Reliability**: Leverages GitHub's 99.9% uptime
-- **Free**: No cost for storage or API usage on public repos
