@@ -2608,16 +2608,42 @@
       const menu = document.createElement('div');
       menu.className = 'kebab-menu';
       menu.innerHTML = `
-        <button class="kebab-menu-item" onclick="event.stopPropagation(); manageGroup('${groupId}', ${isSavedGroup})">
+        <button class="kebab-menu-item" data-action="manage" data-group-id="${groupId}" data-is-saved="${isSavedGroup}">
           Manage group
         </button>
-        <button class="kebab-menu-item" onclick="event.stopPropagation(); copyGroupId('${groupId}')">
+        <button class="kebab-menu-item" data-action="copy" data-group-id="${groupId}">
           Copy group ID
         </button>
-          <button class="kebab-menu-item destructive" onclick="event.stopPropagation(); deleteGroup('${groupId}')">
+        <button class="kebab-menu-item destructive" data-action="delete" data-group-id="${groupId}">
           Delete group
         </button>
       `;
+      
+      // Add event listeners to each button
+      const buttons = menu.querySelectorAll('.kebab-menu-item');
+      buttons.forEach(button => {
+        button.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const action = button.dataset.action;
+          const groupIdFromData = button.dataset.groupId;
+          const isSavedFromData = button.dataset.isSaved === 'true';
+          
+          console.log('🎯 Kebab menu action:', action, 'groupId:', groupIdFromData);
+          
+          switch (action) {
+            case 'manage':
+              manageGroup(groupIdFromData, isSavedFromData);
+              break;
+            case 'copy':
+              copyGroupId(groupIdFromData);
+              break;
+            case 'delete':
+              deleteGroup(groupIdFromData);
+              break;
+          }
+        });
+      });
+      
       return menu;
     }
 

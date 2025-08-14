@@ -17,7 +17,8 @@ function generateShareId() {
 }
 
 // Netlify Function format
-exports.handler = async (event, context) => {
+if (typeof exports !== 'undefined') {
+  exports.handler = async (event, context) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -113,6 +114,7 @@ exports.handler = async (event, context) => {
     };
   }
 };
+}
 
 // For local development/testing
 if (typeof window !== 'undefined') {
