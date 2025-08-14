@@ -1311,7 +1311,7 @@ class PrototypeControlPanel {
         this.showStatus('✅ Shareable URL copied to clipboard!', 'success');
         
         // Show URL in a nice modal/alert
-        this.showShareUrlModal(result.shareUrl, result.shareId, result.issueNumber);
+        this.showShareUrlModal(result.shareUrl, result.shareId, result.issueNumber, result.method);
         
       } else {
         throw new Error(result.error || 'Failed to generate share URL');
@@ -1333,7 +1333,7 @@ class PrototypeControlPanel {
     }
   }
 
-  showShareUrlModal(shareUrl, shareId, issueNumber) {
+  showShareUrlModal(shareUrl, shareId, issueNumber, method) {
     const modal = document.createElement('div');
     modal.style.cssText = `
       position: fixed;
@@ -1366,7 +1366,9 @@ class PrototypeControlPanel {
         </h3>
         <p style="margin: 0 0 16px 0; color: #6b7280; font-size: 14px; line-height: 1.5;">
           Anyone with this URL will see your current prototype data (organizations, accounts, and groups).
-          ${issueNumber ? `<br><small>Stored as <a href="https://github.com/khoi-stripe/stripe-dash/issues/${issueNumber}" target="_blank" style="color: #675dff;">GitHub Issue #${issueNumber}</a></small>` : ''}
+          ${method === 'github' && issueNumber ? 
+            `<br><small>Stored as <a href="https://github.com/khoi-stripe/stripe-dash/issues/${issueNumber}" target="_blank" style="color: #675dff;">GitHub Issue #${issueNumber}</a></small>` : 
+            method === 'url' ? '<br><small>Data encoded in URL (no GitHub authentication needed)</small>' : ''}
         </p>
         <div style="
           background: #f9fafb;

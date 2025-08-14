@@ -48,37 +48,58 @@ class PrototypeShare {
     const issueTitle = `[Prototype Share] ${shareId}`;
     const issueBody = this.formatIssueBody(shareData, shareId);
     
-    // Create GitHub issue
+    // Try to create GitHub issue
     const issueUrl = `${this.github.apiUrl}/repos/${this.github.owner}/${this.github.repo}/issues`;
     
-    const response = await fetch(issueUrl, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-        // Note: For public repos, we can create issues without authentication
-        // For private repos, you'd need a token
-      },
-      body: JSON.stringify({
-        title: issueTitle,
-        body: issueBody,
-        labels: ['prototype-share', 'auto-generated']
-      })
-    });
+    try {
+      const response = await fetch(issueUrl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: issueTitle,
+          body: issueBody,
+          labels: ['prototype-share', 'auto-generated']
+        })
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`GitHub API error: ${response.status} - ${errorText}`);
+      if (response.ok) {
+        // GitHub issue creation succeeded
+        const issue = await response.json();
+        const shareUrl = `${window.location.origin}${window.location.pathname}?share=${shareId}`;
+        
+        return {
+          shareId,
+          shareUrl,
+          issueNumber: issue.number,
+          issueUrl: issue.html_url,
+          method: 'github'
+        };
+      } else {
+        // GitHub issue creation failed, fall back to URL encoding
+        console.warn('GitHub issue creation failed, using URL fallback');
+        return this.createUrlShare(shareData, shareId);
+      }
+    } catch (error) {
+      // Network or other error, fall back to URL encoding
+      console.warn('GitHub API unavailable, using URL fallback:', error.message);
+      return this.createUrlShare(shareData, shareId);
     }
+  }
 
-    const issue = await response.json();
-    const shareUrl = `${window.location.origin}${window.location.pathname}?share=${shareId}`;
+  createUrlShare(shareData, shareId) {
+    // Fallback: encode data in URL parameter
+    const encodedData = btoa(JSON.stringify(shareData));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
     
     return {
       shareId,
       shareUrl,
-      issueNumber: issue.number,
-      issueUrl: issue.html_url
+      method: 'url',
+      issueNumber: null,
+      issueUrl: null
     };
   }
 
@@ -280,9 +301,10 @@ ${JSON.stringify(shareData, null, 2)}
   async checkForSharedData() {
     const urlParams = new URLSearchParams(window.location.search);
     const shareId = urlParams.get('share');
+    const encodedData = urlParams.get('data');
     
     if (shareId) {
-      console.log('Loading shared prototype:', shareId);
+      console.log('Loading shared prototype via ID:', shareId);
       const result = await this.loadSharedPrototype(shareId);
       
       if (result.success) {
@@ -299,9 +321,51 @@ ${JSON.stringify(shareData, null, 2)}
       }
       
       return result.success;
+    } else if (encodedData) {
+      console.log('Loading shared prototype via URL data');
+      const result = await this.loadEncodedData(encodedData);
+      
+      if (result.success) {
+        // Clean URL to remove data parameter
+        const cleanUrl = new URL(window.location);
+        cleanUrl.searchParams.delete('data');
+        window.history.replaceState({}, document.title, cleanUrl);
+        
+        // Show success message
+        this.showShareLoadMessage(result.createdAt);
+      } else {
+        // Show error message
+        this.showShareErrorMessage(result.error);
+      }
+      
+      return result.success;
     }
     
     return false;
+  }
+
+  async loadEncodedData(encodedData) {
+    try {
+      // Decode the base64 data
+      const jsonData = atob(encodedData);
+      const shareData = JSON.parse(jsonData);
+      
+      // Import the shared data
+      await this.importSharedState(shareData);
+      
+      return {
+        success: true,
+        data: shareData,
+        createdAt: shareData.timestamp || new Date().toISOString()
+      };
+      
+    } catch (error) {
+      console.error('Failed to load encoded data:', error);
+      return {
+        success: false,
+        error: 'Invalid share URL format'
+      };
+    }
   }
 
   showShareLoadMessage(createdAt, issueUrl) {
