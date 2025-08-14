@@ -2207,7 +2207,9 @@
         
         // Get actual row heights after layout
         const getBadgeRows = () => {
-          const tops = badges.map(b => Math.round(b.getBoundingClientRect().top));
+          const visibleBadges = badges.filter(b => b.style.display !== 'none');
+          if (visibleBadges.length === 0) return 0;
+          const tops = visibleBadges.map(b => Math.round(b.getBoundingClientRect().top));
           const uniqueTops = [...new Set(tops)].sort((a, b) => a - b);
           return uniqueTops.length;
         };
@@ -2215,22 +2217,48 @@
         let maxShown = badges.length;
         let hiddenCount = 0;
         
-        // If we have more than 2 rows of badges, start truncating
+        // Check if all badges fit within MAX_ROWS (2 rows)
         if (getBadgeRows() > MAX_ROWS) {
-          // Estimate how many badges to show for 2 rows, leaving space for +N more
+          // Too many rows - need to truncate
+          
+          // Start with estimated capacity for 2 rows, leaving room for +N more
           maxShown = Math.max(MIN_SHOWN, Math.min(badges.length, (perRow * MAX_ROWS) - 1));
           
-          // Apply truncation and show +N more link
+          // Hide excess badges and show +N more
           badges.forEach((badge, idx) => {
             badge.style.display = idx < maxShown ? 'flex' : 'none';
           });
           
           hiddenCount = badges.length - maxShown;
-          if (hiddenCount > 0) {
+          moreLink.style.display = 'inline-flex';
+          moreLink.textContent = `+${hiddenCount} more`;
+          
+          // Fine-tune: if +N more causes overflow to 3rd row, reduce further
+          let tries = 5;
+          while (tries-- > 0 && getBadgeRows() > MAX_ROWS && maxShown > MIN_SHOWN) {
+            maxShown -= 1;
+            badges[maxShown].style.display = 'none';
+            hiddenCount = badges.length - maxShown;
+            moreLink.textContent = `+${hiddenCount} more`;
+          }
+        } else if (badges.length > (perRow * MAX_ROWS)) {
+          // All badges fit in <= 2 rows but we have more badges than 2 rows should hold
+          // This means the container is wide enough - try to fit more badges up to the estimated 2-row limit
+          
+          const estimatedCapacity = perRow * MAX_ROWS;
+          if (badges.length > estimatedCapacity) {
+            // Show as many as estimated to fit in 2 rows, with +N more
+            maxShown = Math.max(MIN_SHOWN, estimatedCapacity - 1);
+            
+            badges.forEach((badge, idx) => {
+              badge.style.display = idx < maxShown ? 'flex' : 'none';
+            });
+            
+            hiddenCount = badges.length - maxShown;
             moreLink.style.display = 'inline-flex';
             moreLink.textContent = `+${hiddenCount} more`;
             
-            // Check if the +N more link causes wrapping to a third row
+            // Check if this causes overflow and adjust
             let tries = 3;
             while (tries-- > 0 && getBadgeRows() > MAX_ROWS && maxShown > MIN_SHOWN) {
               maxShown -= 1;
