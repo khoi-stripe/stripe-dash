@@ -1654,8 +1654,8 @@
           data-group-name="${sanitizedGroupName}" 
           data-group-type="${groupType}"
           data-account-count="${accounts.length}"
-          style="backdrop-filter: blur(0px); background: #ffffff; display: flex; flex-direction: column; gap: 0; width: 100%; height: 96px; padding: 16px; border-radius: 12px; box-shadow: 0px 2px 5px 0px rgba(48,49,61,0.08), 0px 1px 1px 0px rgba(0,0,0,0.12); box-sizing: border-box;">
-          <div class="group-card-row" style="display: flex; flex-direction: row; align-items: flex-start; gap: 16px; width: 100%; height: 100%;">
+          style="backdrop-filter: blur(0px); background: #ffffff; display: flex; flex-direction: column; gap: 0; width: 100%; min-height: 96px; padding: 16px; border-radius: 12px; box-shadow: 0px 2px 5px 0px rgba(48,49,61,0.08), 0px 1px 1px 0px rgba(0,0,0,0.12); box-sizing: border-box;">
+          <div class="group-card-row" style="display: flex; flex-direction: row; align-items: flex-start; gap: 16px; width: 100%; min-height: 64px;">
             <!-- Title + count container -->
             <div class="group-card-title-count-container" style="display: flex; flex-direction: row; gap: 16px; align-items: flex-start; width: 240px;">
               <!-- Title and Created Date -->
@@ -2200,61 +2200,44 @@
 
         // Compute how many badges fit per row with gap
         const perRow = Math.max(1, Math.floor((containerWidth + GAP_PX) / (estimatedBadge + GAP_PX)));
-        let maxShown = Math.max(MIN_SHOWN, Math.min(badges.length, perRow * MAX_ROWS));
-
-        // Apply initial show/hide based on computed cap
-        badges.forEach((badge, idx) => {
-          badge.style.display = idx < maxShown ? 'flex' : 'none';
-        });
-
-        // Safety pass: ensure we truly fit within two rows; hide 1–3 more if necessary
-        const firstVisible = badges.find(b => b.style.display !== 'none');
-        const rowH = firstVisible ? Math.ceil(firstVisible.getBoundingClientRect().height) : 24;
-        const maxHeight = (rowH * MAX_ROWS) + GAP_PX; // two rows + gap
-        let tries = 3;
-        while (tries-- > 0 && container.getBoundingClientRect().height > maxHeight && maxShown > MIN_SHOWN) {
-          maxShown -= 1;
-          badges[maxShown].style.display = 'none';
-        }
-
-        // Compute hidden count and ensure "+N more" fits in the last row.
-        // Treat the +N chip as taking one badge slot; if last row is full, free one slot.
-        let hiddenCount = Math.max(0, badges.length - maxShown);
-        if (hiddenCount > 0) {
-          const lastRowCount = maxShown % perRow || perRow; // if divisible, it's a full row
-          if (lastRowCount === perRow && maxShown > MIN_SHOWN) {
-            // Free a spot for the +N chip so it doesn't wrap to its own row
-            maxShown -= 1;
-            badges[maxShown].style.display = 'none';
-            hiddenCount = Math.max(0, badges.length - maxShown);
-          }
-        }
         
-        if (hiddenCount > 0) {
-          // Show +N chip for measurement
-          moreLink.style.display = 'inline-flex';
-          moreLink.textContent = `+${hiddenCount} more`;
-
-          // Ensure the +N chip fits on the last row. If not, hide a few more badges.
-          const fitPlusChip = () => {
-            const visibleBadges = badges.filter(b => b.style.display !== 'none');
-            if (visibleBadges.length === 0) return;
-            const tops = visibleBadges.map(b => Math.round(b.getBoundingClientRect().top));
-            const lastTop = Math.max(...tops);
-            const lastRow = visibleBadges.filter((b, i) => Math.round(b.getBoundingClientRect().top) === lastTop);
-            const lastRowWidth = lastRow.reduce((sum, b) => sum + Math.ceil(b.getBoundingClientRect().width), 0) + GAP_PX * Math.max(0, lastRow.length - 1);
-            const chipWidth = Math.ceil(moreLink.getBoundingClientRect().width);
-            const need = lastRowWidth + GAP_PX + chipWidth - containerWidth;
-            return need <= 0;
-          };
-
-          let guard = 6; // hide at most 6 extra badges to fit the chip
-          while (guard-- > 0 && !fitPlusChip() && maxShown > MIN_SHOWN) {
-            maxShown -= 1;
-            const toHide = badges[maxShown];
-            if (toHide) toHide.style.display = 'none';
-            hiddenCount = Math.max(0, badges.length - maxShown);
+        // Start with all badges visible to measure actual layout
+        badges.forEach(b => { b.style.display = 'flex'; });
+        moreLink.style.display = 'none';
+        
+        // Get actual row heights after layout
+        const getBadgeRows = () => {
+          const tops = badges.map(b => Math.round(b.getBoundingClientRect().top));
+          const uniqueTops = [...new Set(tops)].sort((a, b) => a - b);
+          return uniqueTops.length;
+        };
+        
+        let maxShown = badges.length;
+        let hiddenCount = 0;
+        
+        // If we have more than 2 rows of badges, start truncating
+        if (getBadgeRows() > MAX_ROWS) {
+          // Estimate how many badges to show for 2 rows, leaving space for +N more
+          maxShown = Math.max(MIN_SHOWN, Math.min(badges.length, (perRow * MAX_ROWS) - 1));
+          
+          // Apply truncation and show +N more link
+          badges.forEach((badge, idx) => {
+            badge.style.display = idx < maxShown ? 'flex' : 'none';
+          });
+          
+          hiddenCount = badges.length - maxShown;
+          if (hiddenCount > 0) {
+            moreLink.style.display = 'inline-flex';
             moreLink.textContent = `+${hiddenCount} more`;
+            
+            // Check if the +N more link causes wrapping to a third row
+            let tries = 3;
+            while (tries-- > 0 && getBadgeRows() > MAX_ROWS && maxShown > MIN_SHOWN) {
+              maxShown -= 1;
+              badges[maxShown].style.display = 'none';
+              hiddenCount = badges.length - maxShown;
+              moreLink.textContent = `+${hiddenCount} more`;
+            }
           }
         }
       };
