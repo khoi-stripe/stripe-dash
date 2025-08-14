@@ -2482,6 +2482,19 @@
       let menu = button.querySelector('.kebab-menu');
       console.log('📍 Found existing menu:', menu);
       
+      // Always remove and recreate the menu to ensure no old onclick handlers
+      if (menu) {
+        console.log('🗑️ Removing existing menu to prevent old handlers');
+        // Remove any onclick handlers from the old menu
+        const oldMenuItems = menu.querySelectorAll('.kebab-menu-item');
+        oldMenuItems.forEach(item => {
+          item.onclick = null;
+          item.removeAttribute('onclick');
+        });
+        menu.remove();
+        menu = null;
+      }
+      
       if (!menu) {
         console.log('🆕 Creating new menu...');
         // Create menu if it doesn't exist
