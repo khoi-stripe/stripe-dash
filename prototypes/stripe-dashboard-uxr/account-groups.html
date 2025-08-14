@@ -2485,7 +2485,9 @@
       if (!menu) {
         console.log('🆕 Creating new menu...');
         // Create menu if it doesn't exist
+        console.log('🛠️ About to call createKebabMenu with:', groupId, isSavedGroup);
         menu = createKebabMenu(groupId, isSavedGroup);
+        console.log('🛠️ createKebabMenu returned:', menu);
         button.appendChild(menu);
         console.log('✅ Menu created and appended:', menu);
       }
@@ -2632,6 +2634,8 @@
         
         button.addEventListener('click', (event) => {
           event.stopPropagation();
+          event.stopImmediatePropagation(); // Stop other handlers from running
+          event.preventDefault(); // Prevent any default behavior
           const action = button.dataset.action;
           const groupIdFromData = button.dataset.groupId;
           const isSavedFromData = button.dataset.isSaved === 'true';
