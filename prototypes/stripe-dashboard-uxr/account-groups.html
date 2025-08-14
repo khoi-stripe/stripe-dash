@@ -1467,6 +1467,9 @@
       // Set up navigation panel collapse (matching dash-chrome)
       setupNavCollapse();
       
+      // Clear any cached kebab menus from previous page loads
+      clearAllKebabMenus();
+      
       // Initialize account groups page
       loadAccountGroups();
       
@@ -2605,6 +2608,7 @@
     }
 
     function createKebabMenu(groupId, isSavedGroup) {
+      console.log('🔧 createKebabMenu called with:', groupId, isSavedGroup);
       const menu = document.createElement('div');
       menu.className = 'kebab-menu';
       menu.innerHTML = `
@@ -2649,6 +2653,7 @@
 
     function closeAllKebabMenus() {
       const openMenus = document.querySelectorAll('.kebab-menu');
+      console.log('🧹 Closing', openMenus.length, 'kebab menus');
       openMenus.forEach(menu => {
         menu.classList.remove('show');
         menu.style.display = 'none';
@@ -2660,6 +2665,17 @@
         const card = menu.closest('.account-group-card');
         if (card) {
           card.style.zIndex = '';
+        }
+      });
+    }
+
+    // Force clear any cached kebab menus on page load
+    function clearAllKebabMenus() {
+      const allMenus = document.querySelectorAll('.kebab-menu');
+      console.log('🧹 Force clearing', allMenus.length, 'cached kebab menus');
+      allMenus.forEach(menu => {
+        if (menu.parentNode) {
+          menu.parentNode.removeChild(menu);
         }
       });
     }
