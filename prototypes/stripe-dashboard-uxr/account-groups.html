@@ -2706,15 +2706,23 @@
       showDeleteConfirmation(groupName, () => {
         // Use OrgDataManager for all group deletions
         if (window.OrgDataManager && window.OrgDataManager.deleteAccountGroup) {
-        window.OrgDataManager.deleteAccountGroup(groupId);
+          console.log('🗑️ Deleting group:', groupId);
+          console.log('Groups before deletion:', window.OrgDataManager.getAccountGroups().map(g => ({id: g.id, name: g.name})));
+          
+          window.OrgDataManager.deleteAccountGroup(groupId);
+          
+          console.log('Groups after deletion:', window.OrgDataManager.getAccountGroups().map(g => ({id: g.id, name: g.name})));
+          console.log('🔄 Reloading account groups...');
+          
+          loadAccountGroups();
+          
+          // Refresh any existing account group filters on the page
+          refreshAccountGroupFilters();
         } else {
           console.error('OrgDataManager.deleteAccountGroup not available');
           alert('Cannot delete account group - functionality not available');
           return;
         }
-        loadAccountGroups();
-        // Refresh any existing account group filters on the page
-        refreshAccountGroupFilters();
       });
     }
 
