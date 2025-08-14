@@ -148,7 +148,9 @@ class AccountGroupsFilter {
   hasAccountData() {
     if (!this.accountGroups || Object.keys(this.accountGroups).length === 0) return false;
     const allGroup = this.accountGroups['all'];
-    return Array.isArray(allGroup) && allGroup.length > 0;
+    // Handle both new structure (with accounts array) and legacy array format
+    const allAccounts = allGroup?.accounts || allGroup;
+    return Array.isArray(allAccounts) && allAccounts.length > 0;
   }
 
   // Retry generating data until OrgDataManager or generator provides accounts
@@ -383,7 +385,8 @@ class AccountGroupsFilter {
   renderAccounts(groupKey) {
     const selectAllContainer = document.getElementById(this.options.selectAllContainerId);
     const accountsList = document.getElementById(this.options.accountsListId);
-    const accounts = this.accountGroups[groupKey] || [];
+    const groupData = this.accountGroups[groupKey];
+    const accounts = groupData?.accounts || groupData || []; // Handle both new structure and legacy array format
     
     if (!selectAllContainer || !accountsList) {
       console.warn('AccountGroupsFilter: Required containers not found for renderAccounts');
@@ -677,6 +680,14 @@ class AccountGroupsFilter {
     if (!groupKey || groupKey === 'all') {
       return 'All';
     }
+    
+    // Check if we have the original name stored in the group data
+    const groupData = this.accountGroups[groupKey];
+    if (groupData && groupData.originalName) {
+      return groupData.originalName;
+    }
+    
+    // Fallback to title case conversion for backwards compatibility
     return groupKey
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -999,7 +1010,8 @@ class AccountGroupsFilter {
     allButton.setAttribute('data-group', 'all');
     
     // Get count for All group
-    const allAccountsCount = this.accountGroups['all'] ? this.accountGroups['all'].length : 0;
+    const allGroupData = this.accountGroups['all'];
+    const allAccountsCount = allGroupData?.accounts ? allGroupData.accounts.length : (allGroupData?.length || 0);
     
     allButton.innerHTML = `
       <span class="group-label">All</span>
@@ -1038,13 +1050,12 @@ class AccountGroupsFilter {
       button.className = 'group-item';
       button.setAttribute('data-group', groupKey);
       
-      // Capitalize group name for display
-      const displayName = groupKey.split('_').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' ');
+      // Use consistent display name function
+      const displayName = this.getGroupDisplayName(groupKey);
       
       // Get count for this group
-      const groupAccountsCount = this.accountGroups[groupKey] ? this.accountGroups[groupKey].length : 0;
+      const groupData = this.accountGroups[groupKey];
+      const groupAccountsCount = groupData?.accounts ? groupData.accounts.length : (groupData?.length || 0);
       
       button.innerHTML = `
         <span class="group-label">${displayName}</span>

@@ -54,7 +54,10 @@ function generateCustomAccountGroups() {
       if (groupAccounts.length > 0) {
         // Create a safe key for the group (remove special characters)
         const groupKey = group.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        groups[groupKey] = groupAccounts;
+        groups[groupKey] = {
+          accounts: groupAccounts,
+          originalName: group.name // Preserve the original case
+        };
       }
     });
 
