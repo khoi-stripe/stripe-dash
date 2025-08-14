@@ -1705,22 +1705,7 @@
                     </div>
                   </div>
                 `).join('')}
-                <span class="group-card-more-link" style="
-                  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; 
-                  font-weight: 500; 
-                  font-size: 12px; 
-                  line-height: 16px; 
-                  color: var(--brand-600, #675dff); 
-                  background: var(--brand-50, #f6f5ff);
-                  border: 1px solid var(--brand-200, #d1ccff);
-                  border-radius: 4px;
-                  padding: 2px 6px; 
-                  display: none; 
-                  cursor: pointer;
-                  transition: all 0.15s ease;
-                  user-select: none;
-                  white-space: nowrap;
-                " onmouseover="this.style.background='var(--brand-100, #ede9ff)'; this.style.borderColor='var(--brand-300, #b8b0ff)'" onmouseout="this.style.background='var(--brand-50, #f6f5ff)'; this.style.borderColor='var(--brand-200, #d1ccff)'">+ more</span>
+                <span class="group-card-more-link" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: var(--brand-600); text-decoration: none; padding: 4px 0; display: none; cursor: pointer;">+ more</span>
               `}
                   </div>
 
@@ -2023,22 +2008,7 @@
               </div>
             `).join('');
             
-            const moreLink = `<span class=\"group-card-more-link\" style=\"
-              font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; 
-              font-weight: 500; 
-              font-size: 12px; 
-              line-height: 16px; 
-              color: var(--brand-600, #675dff); 
-              background: var(--brand-50, #f6f5ff);
-              border: 1px solid var(--brand-200, #d1ccff);
-              border-radius: 4px;
-              padding: 2px 6px; 
-              display: none; 
-              cursor: pointer;
-              transition: all 0.15s ease;
-              user-select: none;
-              white-space: nowrap;
-            \" onmouseover=\"this.style.background='var(--brand-100, #ede9ff)'; this.style.borderColor='var(--brand-300, #b8b0ff)'\" onmouseout=\"this.style.background='var(--brand-50, #f6f5ff)'; this.style.borderColor='var(--brand-200, #d1ccff)'\">+ more</span>`;
+            const moreLink = `<span class=\"group-card-more-link\" style=\"font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: var(--neutral-700); text-decoration: none; padding: 4px 0; display: none; cursor: default;\">+ more</span>`;
             
             accountsContainer.innerHTML = accountBadgesHtml + moreLink;
             
