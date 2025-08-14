@@ -904,7 +904,7 @@ class FigmaGroupCreationModalV3 {
     }
 
     close() {
-        this.modal.close();
+        this.modal.hide();
     }
 }
 
