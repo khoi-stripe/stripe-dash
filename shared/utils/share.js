@@ -90,14 +90,28 @@ class PrototypeShare {
   }
 
   createUrlShare(shareData, shareId) {
-    // Fallback: encode data in URL parameter
-    const encodedData = btoa(JSON.stringify(shareData));
-    const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
+    // Fallback: store data in localStorage with expiry
+    const shareKey = `prototype_share_${shareId}`;
+    const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+    
+    const storeData = {
+      data: shareData,
+      expiresAt: expiryTime,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Store in localStorage
+    localStorage.setItem(shareKey, JSON.stringify(storeData));
+    
+    // Clean up old shares while we're at it
+    this.cleanupExpiredShares();
+    
+    const shareUrl = `${window.location.origin}${window.location.pathname}?share=${shareId}`;
     
     return {
       shareId,
       shareUrl,
-      method: 'url',
+      method: 'localStorage',
       issueNumber: null,
       issueUrl: null
     };
@@ -132,11 +146,17 @@ ${JSON.stringify(shareData, null, 2)}
 
   async loadSharedPrototype(shareId) {
     try {
-      // Find the GitHub issue with this share ID
+      // First try localStorage
+      const localResult = await this.loadFromLocalStorage(shareId);
+      if (localResult.success) {
+        return localResult;
+      }
+      
+      // Fall back to GitHub Issues API
       const issueData = await this.findGitHubIssue(shareId);
       
       if (!issueData) {
-        throw new Error('Shared prototype not found');
+        throw new Error('Share not found or expired');
       }
       
       // Extract prototype data from issue body
@@ -158,6 +178,39 @@ ${JSON.stringify(shareData, null, 2)}
         success: false,
         error: error.message
       };
+    }
+  }
+
+  async loadFromLocalStorage(shareId) {
+    try {
+      const shareKey = `prototype_share_${shareId}`;
+      const storedData = localStorage.getItem(shareKey);
+      
+      if (!storedData) {
+        return { success: false, error: 'Share not found' };
+      }
+      
+      const storeData = JSON.parse(storedData);
+      
+      // Check if expired
+      if (Date.now() > storeData.expiresAt) {
+        localStorage.removeItem(shareKey);
+        return { success: false, error: 'Share expired' };
+      }
+      
+      // Import the shared data
+      await this.importSharedState(storeData.data);
+      
+      return {
+        success: true,
+        data: storeData.data,
+        createdAt: storeData.createdAt,
+        source: 'localStorage'
+      };
+      
+    } catch (error) {
+      console.error('Failed to load from localStorage:', error);
+      return { success: false, error: error.message };
     }
   }
 
@@ -314,7 +367,7 @@ ${JSON.stringify(shareData, null, 2)}
         window.history.replaceState({}, document.title, cleanUrl);
         
         // Show success message
-        this.showShareLoadMessage(result.createdAt, result.issueUrl);
+        this.showShareLoadMessage(result.createdAt, result.issueUrl, result.source);
       } else {
         // Show error message
         this.showShareErrorMessage(result.error);
@@ -368,9 +421,10 @@ ${JSON.stringify(shareData, null, 2)}
     }
   }
 
-  showShareLoadMessage(createdAt, issueUrl) {
+  showShareLoadMessage(createdAt, issueUrl, source) {
     const date = new Date(createdAt).toLocaleDateString();
-    const message = `✅ Loaded shared prototype data from ${date} (via GitHub)`;
+    const sourceText = source === 'localStorage' ? '(stored locally)' : '(via GitHub)';
+    const message = `✅ Loaded shared prototype data from ${date} ${sourceText}`;
     this.showNotification(message, 'success');
     
     // Log the GitHub issue URL for reference
@@ -425,6 +479,31 @@ ${JSON.stringify(shareData, null, 2)}
         }
       }, 300);
     }, 5000);
+  }
+
+  cleanupExpiredShares() {
+    // Clean up expired localStorage shares
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('prototype_share_')) {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          if (data.expiresAt && Date.now() > data.expiresAt) {
+            keysToRemove.push(key);
+          }
+        } catch (error) {
+          // Invalid data, remove it
+          keysToRemove.push(key);
+        }
+      }
+    }
+    
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    if (keysToRemove.length > 0) {
+      console.log(`Cleaned up ${keysToRemove.length} expired shares`);
+    }
   }
 }
 
