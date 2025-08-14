@@ -341,7 +341,7 @@ class FigmaGroupCreationModalV3 {
                     <h2 style="margin: 0; font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 24px; font-weight: 700; line-height: 32px; color: #21252c; letter-spacing: 0.3px;">Add accounts</h2>
                     <p style="margin: 0; font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; color: #353a44; letter-spacing: -0.31px;">Select accounts from your business to add to this group.</p>
                 </div>
-                <button style="background: none; border: none; padding: 8px; margin: -8px -8px 0 0; cursor: pointer; color: #6c7688;" onclick="window.figmaModalV3.close()">
+                <button id="step2-close-button" style="background: none; border: none; padding: 8px; margin: -8px -8px 0 0; cursor: pointer; color: #6c7688;">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -604,6 +604,14 @@ class FigmaGroupCreationModalV3 {
         }
 
         this.bindAccountEvents();
+        
+        // Add close button event listener
+        const closeButton = document.getElementById('step2-close-button');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                this.close();
+            });
+        }
     }
     
     bindAccountEvents() {
