@@ -2780,9 +2780,14 @@
     function deleteGroup(groupId, isSavedGroup = false) {
       closeAllKebabMenus();
       
+      console.log('🗑️ deleteGroup called with groupId:', groupId);
+      
       // Get the group name for the confirmation dialog
       const group = window.OrgDataManager.getAccountGroups().find(g => g.id === groupId);
       const groupName = group ? group.name : 'this group';
+      
+      console.log('🗑️ Found group for deletion:', group);
+      console.log('🗑️ About to show delete confirmation for:', groupName);
       
       showDeleteConfirmation(groupName, () => {
         // Use OrgDataManager for all group deletions
@@ -2808,6 +2813,9 @@
     }
 
     function showDeleteConfirmation(groupName, onConfirm) {
+      console.log('🚨 showDeleteConfirmation called for:', groupName);
+      console.log('🚨 onConfirm function:', onConfirm);
+      
       // Create modal overlay
       const modal = document.createElement('div');
       modal.style.cssText = `
