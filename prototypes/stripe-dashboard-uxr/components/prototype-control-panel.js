@@ -180,6 +180,14 @@ class PrototypeControlPanel {
       </div>
       
       <div class="panel-footer">
+        <div class="footer-left">
+          <button class="btn btn-text share-btn" onclick="window.prototypePanel.sharePrototype()" title="Generate shareable URL with current data">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.5 4.5C11.6046 4.5 12.5 3.60457 12.5 2.5C12.5 1.39543 11.6046 0.5 10.5 0.5C9.39543 0.5 8.5 1.39543 8.5 2.5C8.5 2.83289 8.58289 3.14675 8.72842 3.42264L5.77158 5.32736C5.39806 4.88364 4.82608 4.6 4.2 4.6C3.14772 4.6 2.3 5.44772 2.3 6.5C2.3 7.55228 3.14772 8.4 4.2 8.4C4.82608 8.4 5.39806 8.11636 5.77158 7.67264L8.72842 9.57736C8.58289 9.85325 8.5 10.1671 8.5 10.5C8.5 11.6046 9.39543 12.5 10.5 12.5C11.6046 12.5 12.5 11.6046 12.5 10.5C12.5 9.39543 11.6046 8.5 10.5 8.5C9.87392 8.5 9.30194 8.78364 8.92842 9.22736L5.97158 7.32264C6.11711 7.04675 6.2 6.73289 6.2 6.4C6.2 6.2 6.17158 6.00736 6.12842 5.82264L9.07158 3.92736C9.44806 4.36364 10.0201 4.6 10.5 4.5Z" fill="currentColor"/>
+            </svg>
+            Share prototype
+          </button>
+        </div>
         <div class="footer-actions">
           <button class="btn btn-destructive" onclick="window.prototypePanel.resetAllData()">
             Reset Data
@@ -461,12 +469,51 @@ class PrototypeControlPanel {
         background: white;
         border-top: none;
         flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .footer-left {
+        display: flex;
+        align-items: center;
       }
       
       .footer-actions {
         display: flex;
         gap: 8px;
         justify-content: flex-end;
+      }
+      
+      .share-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #6b7280;
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+      }
+      
+      .share-btn:hover {
+        background: #f3f4f6;
+        color: #374151;
+      }
+      
+      .share-btn:active {
+        background: #e5e7eb;
+      }
+      
+      .share-btn svg {
+        transition: transform 0.2s ease;
+      }
+      
+      .share-btn:hover svg {
+        transform: scale(1.1);
       }
       
       .btn {
@@ -1231,6 +1278,144 @@ class PrototypeControlPanel {
     } catch (error) {
       this.showStatus(`❌ Error: ${error.message}`, 'error');
     }
+  }
+
+  async sharePrototype() {
+    try {
+      // Show loading state
+      const shareBtn = this.panel.querySelector('.share-btn');
+      const originalText = shareBtn.innerHTML;
+      shareBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1" fill="none" opacity="0.3"/>
+          <path d="M7 1v6l3-3m-3 3L4 4" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+        </svg>
+        Generating...
+      `;
+      shareBtn.disabled = true;
+      
+      this.showStatus('🔗 Generating shareable URL...', 'loading');
+      
+      // Initialize share utility if not already done
+      if (!window.prototypeShare) {
+        window.prototypeShare = new window.PrototypeShare();
+      }
+      
+      // Generate shareable URL
+      const result = await window.prototypeShare.sharePrototype();
+      
+      if (result.success) {
+        // Copy to clipboard
+        await navigator.clipboard.writeText(result.shareUrl);
+        
+        this.showStatus('✅ Shareable URL copied to clipboard!', 'success');
+        
+        // Show URL in a nice modal/alert
+        this.showShareUrlModal(result.shareUrl, result.shareId, result.issueNumber);
+        
+      } else {
+        throw new Error(result.error || 'Failed to generate share URL');
+      }
+      
+    } catch (error) {
+      console.error('Share failed:', error);
+      this.showStatus(`❌ Failed to share: ${error.message}`, 'error');
+    } finally {
+      // Restore button state
+      const shareBtn = this.panel.querySelector('.share-btn');
+      shareBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.5 4.5C11.6046 4.5 12.5 3.60457 12.5 2.5C12.5 1.39543 11.6046 0.5 10.5 0.5C9.39543 0.5 8.5 1.39543 8.5 2.5C8.5 2.83289 8.58289 3.14675 8.72842 3.42264L5.77158 5.32736C5.39806 4.88364 4.82608 4.6 4.2 4.6C3.14772 4.6 2.3 5.44772 2.3 6.5C2.3 7.55228 3.14772 8.4 4.2 8.4C4.82608 8.4 5.39806 8.11636 5.77158 7.67264L8.72842 9.57736C8.58289 9.85325 8.5 10.1671 8.5 10.5C8.5 11.6046 9.39543 12.5 10.5 12.5C11.6046 12.5 12.5 11.6046 12.5 10.5C12.5 9.39543 11.6046 8.5 10.5 8.5C9.87392 8.5 9.30194 8.78364 8.92842 9.22736L5.97158 7.32264C6.11711 7.04675 6.2 6.73289 6.2 6.4C6.2 6.2 6.17158 6.00736 6.12842 5.82264L9.07158 3.92736C9.44806 4.36364 10.0201 4.6 10.5 4.5Z" fill="currentColor"/>
+        </svg>
+        Share prototype
+      `;
+      shareBtn.disabled = false;
+    }
+  }
+
+  showShareUrlModal(shareUrl, shareId, issueNumber) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+      <div style="
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      ">
+        <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 18px; font-weight: 600;">
+          🔗 Prototype Ready to Share
+        </h3>
+        <p style="margin: 0 0 16px 0; color: #6b7280; font-size: 14px; line-height: 1.5;">
+          Anyone with this URL will see your current prototype data (organizations, accounts, and groups).
+          ${issueNumber ? `<br><small>Stored as <a href="https://github.com/khoi-stripe/stripe-dash/issues/${issueNumber}" target="_blank" style="color: #675dff;">GitHub Issue #${issueNumber}</a></small>` : ''}
+        </p>
+        <div style="
+          background: #f9fafb;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          padding: 12px;
+          margin: 16px 0;
+          font-family: monospace;
+          font-size: 13px;
+          word-break: break-all;
+          color: #374151;
+        ">${shareUrl}</div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px;">
+          <button onclick="this.closest('[style*=fixed]').remove()" style="
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+          ">Close</button>
+          <button onclick="navigator.clipboard.writeText('${shareUrl}'); this.textContent = 'Copied!'; setTimeout(() => this.textContent = 'Copy URL', 2000)" style="
+            padding: 8px 16px;
+            border: 1px solid #675dff;
+            background: #675dff;
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+          ">Copy URL</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+      modal.style.opacity = '1';
+      modal.querySelector('div').style.transform = 'scale(1)';
+    });
+    
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
   }
 
   showStatus(message, type) {
