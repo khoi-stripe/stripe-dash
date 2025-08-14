@@ -2882,7 +2882,7 @@
             gap: 12px;
             justify-content: flex-end;
           ">
-            <button onclick="this.closest('[style*=fixed]').remove()" style="
+            <button id="cancel-delete-btn" style="
               padding: 12px 24px;
               border: 1px solid #d1d5db;
               background: white;
@@ -2896,10 +2896,7 @@
             " onmouseover="this.style.backgroundColor='#f9fafb'; this.style.borderColor='#9ca3af'" onmouseout="this.style.backgroundColor='white'; this.style.borderColor='#d1d5db'">
               Cancel
             </button>
-            <button onclick="
-              this.closest('[style*=fixed]').remove();
-              (${onConfirm.toString()})();
-            " style="
+            <button id="confirm-delete-btn" style="
               padding: 12px 24px;
               border: 1px solid #dc2626;
               background: #dc2626;
@@ -2919,6 +2916,21 @@
       
       // Add to page
       document.body.appendChild(modal);
+      
+      // Add event listeners to buttons
+      const cancelBtn = modal.querySelector('#cancel-delete-btn');
+      const confirmBtn = modal.querySelector('#confirm-delete-btn');
+      
+      cancelBtn.addEventListener('click', () => {
+        console.log('🚫 Delete cancelled');
+        modal.remove();
+      });
+      
+      confirmBtn.addEventListener('click', () => {
+        console.log('✅ Delete confirmed, calling onConfirm function');
+        modal.remove();
+        onConfirm(); // Call the function directly (no string conversion!)
+      });
       
       // Animate in
       requestAnimationFrame(() => {
