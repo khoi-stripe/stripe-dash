@@ -155,26 +155,27 @@ class PrototypeShare {
       if (window.OrgDataManager) {
         // Set organizations directly
         window.OrgDataManager.organizations = sharedData.organizations;
-        window.OrgDataManager.accountGroups = sharedData.accountGroups || [];
 
         // Save to localStorage FIRST for persistence
         localStorage.setItem('uxr_organizations_data', JSON.stringify(sharedData.organizations));
         
-        // Save account groups per organization
+        // Save account groups per organization to localStorage
         if (sharedData.accountGroups && sharedData.accountGroups.length > 0) {
+          console.log('💾 Saving account groups to localStorage:', sharedData.accountGroups.length, 'total groups');
           sharedData.organizations.forEach(org => {
             const orgGroups = sharedData.accountGroups.filter(g => 
               g.organizationName === org.name
             );
             if (orgGroups.length > 0) {
-              localStorage.setItem(`uxr_account_groups_${org.name}`, JSON.stringify(orgGroups));
+              const storageKey = `uxr_account_groups_${org.name}`;
+              localStorage.setItem(storageKey, JSON.stringify(orgGroups));
+              console.log(`💾 Saved ${orgGroups.length} groups for org "${org.name}" to key "${storageKey}"`);
+            } else {
+              console.log(`⚠️ No groups found for organization "${org.name}"`);
             }
           });
-          
-          // Also trigger the account groups save method if available
-          if (window.OrgDataManager.saveAccountGroups) {
-            window.OrgDataManager.saveAccountGroups();
-          }
+        } else {
+          console.log('⚠️ No account groups in shared data to save');
         }
 
         // Restore current state if provided
@@ -186,12 +187,29 @@ class PrototypeShare {
             if (org) {
               window.OrgDataManager.setCurrentOrganization(org);
               
+              // AFTER setting current organization, load account groups for that org
+              if (window.OrgDataManager.loadAccountGroups) {
+                console.log('🔄 Loading account groups for organization:', org.name);
+                window.OrgDataManager.loadAccountGroups();
+                console.log('📊 Account groups loaded:', window.OrgDataManager.accountGroups?.length || 0);
+              }
+              
               if (subAccountId) {
                 const account = window.OrgDataManager.getSubAccountById(subAccountId);
                 if (account) {
                   window.OrgDataManager.setCurrentSubAccount(account);
                 }
               }
+            }
+          }
+        } else {
+          // If no current state, set to first organization and load its groups
+          if (sharedData.organizations.length > 0) {
+            window.OrgDataManager.setCurrentOrganization(sharedData.organizations[0]);
+            if (window.OrgDataManager.loadAccountGroups) {
+              console.log('🔄 Loading account groups for first organization:', sharedData.organizations[0].name);
+              window.OrgDataManager.loadAccountGroups();
+              console.log('📊 Account groups loaded:', window.OrgDataManager.accountGroups?.length || 0);
             }
           }
         }
