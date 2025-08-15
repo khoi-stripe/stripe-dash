@@ -146,11 +146,36 @@ class PrototypeShare {
         throw new Error('Invalid shared data format');
       }
 
+      // Wait for OrgDataManager to be ready
+      if (window.OrgDataManager && window.OrgDataManager.initPromise) {
+        await window.OrgDataManager.initPromise;
+      }
+
       // Import organizations
       if (window.OrgDataManager) {
         // Set organizations directly
         window.OrgDataManager.organizations = sharedData.organizations;
         window.OrgDataManager.accountGroups = sharedData.accountGroups || [];
+
+        // Save to localStorage FIRST for persistence
+        localStorage.setItem('uxr_organizations_data', JSON.stringify(sharedData.organizations));
+        
+        // Save account groups per organization
+        if (sharedData.accountGroups && sharedData.accountGroups.length > 0) {
+          sharedData.organizations.forEach(org => {
+            const orgGroups = sharedData.accountGroups.filter(g => 
+              g.organizationName === org.name
+            );
+            if (orgGroups.length > 0) {
+              localStorage.setItem(`uxr_account_groups_${org.name}`, JSON.stringify(orgGroups));
+            }
+          });
+          
+          // Also trigger the account groups save method if available
+          if (window.OrgDataManager.saveAccountGroups) {
+            window.OrgDataManager.saveAccountGroups();
+          }
+        }
 
         // Restore current state if provided
         if (sharedData.currentState) {
@@ -169,20 +194,6 @@ class PrototypeShare {
               }
             }
           }
-        }
-
-        // Save to localStorage for persistence
-        localStorage.setItem('uxr_organizations_data', JSON.stringify(sharedData.organizations));
-        if (sharedData.accountGroups.length > 0) {
-          // Save account groups per organization
-          sharedData.organizations.forEach(org => {
-            const orgGroups = sharedData.accountGroups.filter(g => 
-              g.organizationName === org.name
-            );
-            if (orgGroups.length > 0) {
-              localStorage.setItem(`uxr_account_groups_${org.name}`, JSON.stringify(orgGroups));
-            }
-          });
         }
 
         // Trigger data refresh on current page
@@ -295,6 +306,11 @@ if (typeof window !== 'undefined') {
   
   // Auto-check for shared data when DOM is ready
   document.addEventListener('DOMContentLoaded', async () => {
+    // Wait for OrgDataManager to be available and ready
+    if (window.OrgDataManager) {
+      await window.OrgDataManager.waitForReady();
+    }
+    
     const share = new PrototypeShare();
     await share.checkForSharedData();
   });
