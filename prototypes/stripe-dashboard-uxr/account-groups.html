@@ -24,6 +24,11 @@
       overflow: hidden;
     }
 
+    /* Ensure proper font loading for all text elements */
+    * {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
     /* Wireframe bar styles to match Figma design */
     .wireframe-bar {
       background: #E8EAED;
@@ -1287,7 +1292,7 @@
          <div style="display: flex; flex-direction: column; gap: 4px; padding: 6px 0;">
            <!-- Breadcrumb Navigation -->
            <div style="display: flex; align-items: center; gap: 8px;">
-             <a href="./settings.html" style="font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: #533afd; letter-spacing: -0.024px; text-decoration: none; cursor: pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Organization settings</a>
+             <a href="./settings.html" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; color: #533afd; letter-spacing: -0.024px; text-decoration: none; cursor: pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Organization settings</a>
              <div style="width: 8px; height: 8px; display: flex; align-items: center; justify-content: center;">
                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                  <path d="M2 1.5L5.5 4L2 6.5" stroke="#6c7688" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2795,12 +2800,12 @@
           console.log('🗑️ Deleting group:', groupId);
           console.log('Groups before deletion:', window.OrgDataManager.getAccountGroups().map(g => ({id: g.id, name: g.name})));
           
-          window.OrgDataManager.deleteAccountGroup(groupId);
+        window.OrgDataManager.deleteAccountGroup(groupId);
           
           console.log('Groups after deletion:', window.OrgDataManager.getAccountGroups().map(g => ({id: g.id, name: g.name})));
           console.log('🔄 Reloading account groups...');
           
-          loadAccountGroups();
+        loadAccountGroups();
           
           // Refresh any existing account group filters on the page
           refreshAccountGroupFilters();
