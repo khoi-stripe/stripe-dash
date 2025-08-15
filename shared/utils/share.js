@@ -122,11 +122,17 @@ class PrototypeShare {
     const currentOrg = window.OrgDataManager?.getCurrentOrganization();
     const currentAccount = window.OrgDataManager?.getCurrentSubAccount();
     
+    // Get account groups and add organizationName to each group
+    const accountGroups = (window.OrgDataManager?.getAccountGroups() || []).map(group => ({
+      ...group,
+      organizationName: currentOrg?.name || 'Unknown'
+    }));
+    
     return {
       version: '1.0',
       timestamp: new Date().toISOString(),
       organizations: window.OrgDataManager?.organizations || [],
-      accountGroups: window.OrgDataManager?.getAccountGroups() || [],
+      accountGroups: accountGroups,
       currentState: {
         organizationName: currentOrg?.name,
         subAccountId: currentAccount?.id
