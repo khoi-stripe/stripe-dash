@@ -46,13 +46,18 @@ if (typeof exports !== 'undefined') {
       
       dataStore.set(shareId, record);
       
+      // Get the current page path from the shared data, or default to prototype page
+      const currentPath = data.metadata?.url ? 
+        new URL(data.metadata.url).pathname : 
+        '/prototypes/stripe-dashboard-uxr/';
+      
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
           success: true,
           shareId,
-          shareUrl: `${event.headers.origin}?share=${shareId}`
+          shareUrl: `${event.headers.origin}${currentPath}?share=${shareId}`
         })
       };
       
