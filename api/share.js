@@ -57,7 +57,7 @@ if (typeof exports !== 'undefined') {
         body: JSON.stringify({
           success: true,
           shareId,
-          shareUrl: `${event.headers.origin}${currentPath}?share=${shareId}`
+          shareUrl: `${event.headers.origin}${currentPath}?share=${shareId}&participant=true`
         })
       };
       
@@ -138,7 +138,7 @@ if (typeof window !== 'undefined') {
       return {
         success: true,
         shareId,
-        shareUrl: `${window.location.origin}${window.location.pathname}?share=${shareId}`
+        shareUrl: `${window.location.origin}${window.location.pathname}?share=${shareId}&participant=true`
       };
     },
     

@@ -1475,6 +1475,9 @@
       // Clear any cached kebab menus from previous page loads
       clearAllKebabMenus();
       
+      // Check for participant mode and hide navigation
+      checkParticipantMode();
+      
       // Initialize account groups page
       loadAccountGroups();
       
@@ -1484,6 +1487,44 @@
     function switchToSubAccount(subAccountId) {
       if (window.OrgDataManager.switchToSubAccount(subAccountId)) {
         // No page reload needed - account switcher handles the transition
+      }
+    }
+
+    function checkParticipantMode() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isParticipant = urlParams.get('participant') === 'true';
+      
+      if (isParticipant) {
+        console.log('🔒 Participant mode detected - hiding navigation elements');
+        
+        // Hide the navigation panel
+        const navPanel = document.getElementById('navPanel');
+        if (navPanel) {
+          navPanel.style.display = 'none';
+        }
+        
+        // Adjust the main content to full width
+        const layoutContainer = document.querySelector('.layout-container');
+        if (layoutContainer) {
+          layoutContainer.style.gridTemplateColumns = '1fr';
+        }
+        
+        // Hide prototype control panel
+        const prototypePanel = document.querySelector('.prototype-panel');
+        if (prototypePanel) {
+          prototypePanel.style.display = 'none';
+        }
+        
+        // Hide breadcrumb if it links back to settings
+        const breadcrumb = document.querySelector('a[href="./settings.html"]');
+        if (breadcrumb && breadcrumb.parentElement) {
+          breadcrumb.parentElement.style.display = 'none';
+        }
+        
+        // Clean URL to remove participant parameter
+        const cleanUrl = new URL(window.location);
+        cleanUrl.searchParams.delete('participant');
+        window.history.replaceState({}, document.title, cleanUrl);
       }
     }
 
