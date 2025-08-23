@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe Template - Multi-Fidelity Demo</title>
+  
+  <!-- Import shared styles -->
+  <link rel="stylesheet" href="../../shared/styles/variables.css">
+  <link rel="stylesheet" href="../../shared/styles/base.css">
+  <link rel="stylesheet" href="../../shared/styles/components.css">
+  <!-- Wireframe styles are imported via base.css -->
+  
+  <style>
+    /* Demo-specific styles */
+    .demo-section {
+      margin: 2rem 0;
+      padding: 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+    }
+    
+    .demo-section h2 {
+      margin-bottom: 1rem;
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-18);
+    }
+    
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .demo-info {
+      background: var(--color-bg-info);
+      border: 1px solid var(--color-border-info);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .demo-info h1 {
+      color: var(--color-text-info);
+      margin-bottom: 0.5rem;
+    }
+    
+    .demo-info p {
+      color: var(--color-text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .keyboard-shortcuts {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-12);
+      color: var(--color-text-subdued);
+    }
+  </style>
+</head>
+<body class="wireframe-low">
+  <!-- Info Section -->
+  <div class="demo-info">
+    <h1>🎨 Multi-Fidelity Wireframe System</h1>
+    <p>This template demonstrates wireframing at different fidelity levels. Use the controls in the top-right to switch between low, mid, and high fidelity modes.</p>
+    <p class="keyboard-shortcuts">⌨️ Keyboard shortcuts: Alt+1 (Low), Alt+2 (Mid), Alt+3 (High)</p>
+  </div>
+
+  <!-- Layout Demo -->
+  <div class="demo-section">
+    <h2>🏗️ Complete Layout Example</h2>
+    <div id="layout-demo"></div>
+  </div>
+
+  <!-- Individual Components Demo -->
+  <div class="demo-section">
+    <h2>🧩 Individual Components</h2>
+    
+    <div class="demo-grid">
+      <!-- Buttons -->
+      <div>
+        <h3>Buttons</h3>
+        <div id="buttons-demo"></div>
+      </div>
+      
+      <!-- Form Elements -->
+      <div>
+        <h3>Form Elements</h3>
+        <div id="form-demo"></div>
+      </div>
+      
+      <!-- Content Blocks -->
+      <div>
+        <h3>Content Blocks</h3>
+        <div id="content-demo"></div>
+      </div>
+      
+      <!-- Cards -->
+      <div>
+        <h3>Cards</h3>
+        <div id="cards-demo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Display Demo -->
+  <div class="demo-section">
+    <h2>📊 Data Display</h2>
+    <div id="table-demo"></div>
+  </div>
+
+  <!-- Your Existing Components Integration -->
+  <div class="demo-section">
+    <h2>🔗 Integration with Existing Components</h2>
+    <p>In high-fidelity mode, wireframe elements can integrate with your existing component system:</p>
+    <div id="integration-demo"></div>
+  </div>
+
+  <!-- Import wireframe components -->
+  <script type="module">
+    import { WireframeElements, FidelityController } from '../../shared/components/wireframe-elements.js';
+    
+    // Initialize fidelity controller
+    FidelityController.init({ defaultFidelity: 'low' });
+    
+    // Create layout demo
+    document.getElementById('layout-demo').innerHTML = WireframeElements.layout({
+      header: WireframeElements.header('Dashboard App', { showNav: true, showActions: true }),
+      sidebar: WireframeElements.sidebar(['Home', 'Analytics', 'Reports', 'Settings', 'Profile']),
+      main: `
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; height: 100%;">
+          <div>
+            ${WireframeElements.card(`
+              <h3>Recent Activity</h3>
+              ${WireframeElements.text(4)}
+            `, { title: '' })}
+            ${WireframeElements.table(['Date', 'Activity', 'Status'], 4)}
+          </div>
+          <div>
+            ${WireframeElements.card(`
+              <h3>Quick Stats</h3>
+              ${WireframeElements.box('Chart', { width: '100%', height: '120px' })}
+              ${WireframeElements.text(2)}
+            `, { title: '' })}
+          </div>
+        </div>
+      `
+    });
+    
+    // Create buttons demo
+    document.getElementById('buttons-demo').innerHTML = `
+      ${WireframeElements.button('Primary Action')}
+      ${WireframeElements.button('Secondary', { className: 'wireframe-btn-secondary' })}
+      ${WireframeElements.button('Danger', { className: 'wireframe-btn-danger' })}
+    `;
+    
+    // Create form demo
+    document.getElementById('form-demo').innerHTML = WireframeElements.form([
+      { label: 'Email', type: 'email', placeholder: 'you@example.com' },
+      { label: 'Password', type: 'password', placeholder: '••••••••' }
+    ]);
+    
+    // Create content demo
+    document.getElementById('content-demo').innerHTML = `
+      <h4>Article Title</h4>
+      ${WireframeElements.text(3)}
+      ${WireframeElements.box('Image', { width: '100%', height: '120px' })}
+      ${WireframeElements.text(2)}
+    `;
+    
+    // Create cards demo
+    document.getElementById('cards-demo').innerHTML = `
+      ${WireframeElements.card(`
+        ${WireframeElements.text(2)}
+        ${WireframeElements.button('Learn More')}
+      `, { title: 'Feature Card' })}
+    `;
+    
+    // Create table demo
+    document.getElementById('table-demo').innerHTML = WireframeElements.table(
+      ['Name', 'Email', 'Role', 'Last Active'], 
+      6
+    );
+    
+    // Create integration demo
+    document.getElementById('integration-demo').innerHTML = `
+      <div class="wireframe-low" style="display: none;">
+        <p>In low-fi mode: Shows basic wireframe elements</p>
+      </div>
+      <div class="wireframe-mid" style="display: none;">
+        <p>In mid-fi mode: Shows styled components with limited design system</p>
+      </div>
+      <div class="wireframe-high" style="display: none;">
+        <p>In high-fi mode: Would integrate with your existing Modal, Account Switcher, and other components</p>
+        <div style="margin-top: 16px;">
+          <!-- Example: Using your existing button classes -->
+          <button class="btn btn-primary">Your Existing Button</button>
+          <button class="btn btn-secondary">Secondary Button</button>
+        </div>
+      </div>
+    `;
+    
+    // Handle fidelity changes to show/hide integration examples
+    document.addEventListener('fidelityChanged', (e) => {
+      const level = e.detail.level;
+      const integrationDemo = document.getElementById('integration-demo');
+      
+      // Hide all demo sections
+      integrationDemo.querySelectorAll('.wireframe-low, .wireframe-mid, .wireframe-high').forEach(el => {
+        el.style.display = 'none';
+      });
+      
+      // Show current fidelity demo
+      const currentDemo = integrationDemo.querySelector(`.wireframe-${level}`);
+      if (currentDemo) {
+        currentDemo.style.display = 'block';
+      }
+    });
+    
+    // Trigger initial fidelity change
+    document.dispatchEvent(new CustomEvent('fidelityChanged', { 
+      detail: { level: FidelityController.getFidelity() } 
+    }));
+    
+    // Add some demo interactivity
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('wireframe-btn')) {
+        console.log('Wireframe button clicked:', e.target.textContent);
+      }
+    });
+  </script>
+  
+  <!-- Optional: Add analytics or other tracking for user testing -->
+  <script>
+    // Example: Track fidelity changes for research
+    document.addEventListener('fidelityChanged', (e) => {
+      console.log('Fidelity changed to:', e.detail.level);
+      // In a real app, you might send this to analytics
+      // analytics.track('fidelity_changed', { level: e.detail.level });
+    });
+  </script>
+</body>
+</html>

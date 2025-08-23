@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typography Showcase</title>
+  
+  <!-- Import shared styles -->
+  <link rel="stylesheet" href="../../shared/styles/variables.css">
+  <link rel="stylesheet" href="../../shared/styles/base.css">
+  <link rel="stylesheet" href="../../shared/styles/typography.css">
+  <link rel="stylesheet" href="../../shared/styles/components.css">
+  <link rel="stylesheet" href="../../shared/styles/color-utilities.css">
+  
+  <style>
+    .showcase-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--space-xl);
+    }
+    
+    .showcase-section {
+      margin-bottom: var(--space-2xl);
+      padding: var(--space-xl);
+      background-color: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+    }
+    
+    .showcase-grid {
+      display: grid;
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+    
+    .typography-example {
+      padding: var(--space-md);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-background);
+    }
+    
+    .example-meta {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-12);
+      color: var(--color-text-muted);
+      margin-top: var(--space-sm);
+      padding: var(--space-xs) var(--space-sm);
+      background-color: var(--color-surface);
+      border-radius: var(--radius-sm);
+    }
+    
+    .font-stack-demo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+    
+    .utilities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+    
+    @media (max-width: 768px) {
+      .font-stack-demo {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div data-header data-config='{"title": "Typography Showcase", "navigation": [{"label": "Dashboard", "href": "../../dashboard"}, {"label": "Back to Prototypes", "href": "../"}]}'></div>
+
+  <div class="showcase-container">
+    <div class="text-center" style="margin-bottom: var(--space-2xl);">
+      <h1 class="text-display-large">Typography System Showcase</h1>
+      <p class="text-body-large text-muted">Comprehensive demonstration of all typography classes and utilities</p>
+    </div>
+
+    <!-- Display Styles -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Display Styles</h2>
+      <p class="text-body-medium text-subdued">Large headlines and hero text for maximum impact</p>
+      
+      <div class="showcase-grid">
+        <div class="typography-example">
+          <div class="text-display-xlarge">Display XLarge</div>
+          <div class="example-meta">.text-display-xlarge • 56px / 64px • Bold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-display-large">Display Large</div>
+          <div class="example-meta">.text-display-large • 48px / 56px • Bold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-display-medium">Display Medium</div>
+          <div class="example-meta">.text-display-medium • 40px / 48px • Regular</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-display-small">Display Small</div>
+          <div class="example-meta">.text-display-small • 32px / 40px • Regular</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Heading Styles -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Heading Styles</h2>
+      <p class="text-body-medium text-subdued">Section titles and content hierarchy</p>
+      
+      <div class="showcase-grid">
+        <div class="typography-example">
+          <div class="text-heading-xlarge">Heading XLarge</div>
+          <div class="example-meta">.text-heading-xlarge • 28px / 36px • Bold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-heading-large">Heading Large</div>
+          <div class="example-meta">.text-heading-large • 24px / 32px • Bold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-heading-medium">Heading Medium</div>
+          <div class="example-meta">.text-heading-medium • 20px / 28px • Bold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-heading-small">Heading Small</div>
+          <div class="example-meta">.text-heading-small • 16px / 24px • Bold</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Body Styles -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Body Text Styles</h2>
+      <p class="text-body-medium text-subdued">Paragraph text and content with regular and emphasized variants</p>
+      
+      <div class="showcase-grid">
+        <div class="typography-example">
+          <div class="text-body-large">This is body large text for important content that needs more presence.</div>
+          <div class="example-meta">.text-body-large • 18px / 28px • Regular</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-large-emphasized">This is emphasized body large text for highlighted content.</div>
+          <div class="example-meta">.text-body-large-emphasized • 18px / 28px • Semibold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium">This is the standard body text size used for most content and paragraphs.</div>
+          <div class="example-meta">.text-body-medium • 16px / 24px • Regular</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium-emphasized">This is emphasized body text for when you need to highlight important information.</div>
+          <div class="example-meta">.text-body-medium-emphasized • 16px / 24px • Semibold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-small">This is small body text for secondary information and less important content.</div>
+          <div class="example-meta">.text-body-small • 14px / 20px • Regular</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-small-emphasized">This is small emphasized text for secondary but important information.</div>
+          <div class="example-meta">.text-body-small-emphasized • 14px / 20px • Semibold</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Label Styles -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Label Styles</h2>
+      <p class="text-body-medium text-subdued">UI component labels, buttons, and form elements</p>
+      
+      <div class="showcase-grid">
+        <div class="typography-example">
+          <div class="text-label-large">Label Large</div>
+          <div class="example-meta">.text-label-large • 16px / 24px • Regular</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-label-large-emphasized">Label Large Emphasized</div>
+          <div class="example-meta">.text-label-large-emphasized • 16px / 24px • Semibold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-label-medium">Label Medium</div>
+          <div class="example-meta">.text-label-medium • 14px / 20px • Regular</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-label-medium-emphasized">Label Medium Emphasized</div>
+          <div class="example-meta">.text-label-medium-emphasized • 14px / 20px • Semibold</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-label-small">Label Small</div>
+          <div class="example-meta">.text-label-small • 12px / 16px • Regular</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-label-small-emphasized">Label Small Emphasized</div>
+          <div class="example-meta">.text-label-small-emphasized • 12px / 16px • Semibold</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Styles -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Code Styles</h2>
+      <p class="text-body-medium text-subdued">Monospace text for code and technical content</p>
+      
+      <div class="showcase-grid">
+        <div class="typography-example">
+          <div class="text-code-large">const message = "Hello, World!";</div>
+          <div class="example-meta">.text-code-large • 16px / 24px • Regular • Monospace</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-code-large-emphasized">function calculateTotal() {</div>
+          <div class="example-meta">.text-code-large-emphasized • 16px / 24px • Semibold • Monospace</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-code-medium">npm install package-name</div>
+          <div class="example-meta">.text-code-medium • 14px / 20px • Regular • Monospace</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-code-medium-emphasized">git commit -m "Update"</div>
+          <div class="example-meta">.text-code-medium-emphasized • 14px / 20px • Semibold • Monospace</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-code-small">api.get('/users')</div>
+          <div class="example-meta">.text-code-small • 12px / 16px • Regular • Monospace</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-code-small-emphasized">var result = true;</div>
+          <div class="example-meta">.text-code-small-emphasized • 12px / 16px • Semibold • Monospace</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Font Stacks -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Font Stacks</h2>
+      <p class="text-body-medium text-subdued">System-optimized font families for UI and code content</p>
+      
+      <div class="font-stack-demo">
+        <div class="typography-example">
+          <h3 class="text-heading-medium">UI Font Stack</h3>
+          <div class="text-body-medium" style="font-family: var(--font-family-ui);">
+            The quick brown fox jumps over the lazy dog. 1234567890
+          </div>
+          <div class="example-meta">-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif</div>
+        </div>
+        
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Monospace Font Stack</h3>
+          <div class="text-body-medium" style="font-family: var(--font-family-mono);">
+            The quick brown fox jumps over the lazy dog. 1234567890
+          </div>
+          <div class="example-meta">"Menlo", "Consolas", "Monaco", "Liberation Mono", "Lucida Console", monospace</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Text Utilities -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Text Utilities</h2>
+      <p class="text-body-medium text-subdued">Helpful classes for text modifications and styling</p>
+      
+      <div class="utilities-grid">
+        <div class="typography-example">
+          <div class="text-body-medium text-subdued">Subdued Text</div>
+          <div class="example-meta">.text-subdued • opacity: 0.7</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium text-muted">Muted Text</div>
+          <div class="example-meta">.text-muted • opacity: 0.6</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium text-disabled">Disabled Text</div>
+          <div class="example-meta">.text-disabled • opacity: 0.4</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium text-underline">Underlined Text</div>
+          <div class="example-meta">.text-underline</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium text-uppercase">uppercase text</div>
+          <div class="example-meta">.text-uppercase</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium text-capitalize">capitalize text</div>
+          <div class="example-meta">.text-capitalize</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium text-center">Centered Text</div>
+          <div class="example-meta">.text-center</div>
+        </div>
+        
+        <div class="typography-example">
+          <div class="text-body-medium text-truncate" style="max-width: 150px;">This text will be truncated when it gets too long</div>
+          <div class="example-meta">.text-truncate</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Component Integration -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Component Integration</h2>
+      <p class="text-body-medium text-subdued">How typography works with UI components</p>
+      
+      <div class="showcase-grid">
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Buttons</h3>
+          <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-md);">
+            <button class="btn btn-primary">Primary Button</button>
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-sm btn-ghost">Small Button</button>
+            <button class="btn btn-lg btn-primary">Large Button</button>
+          </div>
+        </div>
+        
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Form Elements</h3>
+          <div style="margin-top: var(--space-md);">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" placeholder="Enter your email">
+            </div>
+          </div>
+        </div>
+        
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Badges</h3>
+          <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: var(--space-md);">
+            <span class="badge badge-primary">Primary</span>
+            <span class="badge badge-success">Success</span>
+            <span class="badge badge-warning">Warning</span>
+            <span class="badge badge-error">Error</span>
+          </div>
+        </div>
+        
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Card Example</h3>
+          <div class="card" style="margin-top: var(--space-md);">
+            <div class="card-header">
+              <h4 class="card-title">Card Title</h4>
+              <p class="card-description">This is a card description that shows how typography works in components.</p>
+            </div>
+            <p class="text-body-medium">Card content uses the body medium style for optimal readability.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Guidelines -->
+    <section class="showcase-section">
+      <h2 class="text-heading-xlarge">Usage Guidelines</h2>
+      
+      <div class="showcase-grid">
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Display Styles</h3>
+          <ul class="text-body-small">
+            <li>Use for hero sections and major page titles</li>
+            <li>Display XLarge for main landing page heroes</li>
+            <li>Display Large for section heroes</li>
+            <li>Consider responsive scaling on mobile</li>
+          </ul>
+        </div>
+        
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Heading Hierarchy</h3>
+          <ul class="text-body-small">
+            <li>Heading XLarge: Main page titles (H1)</li>
+            <li>Heading Large: Major section titles (H2)</li>
+            <li>Heading Medium: Subsection titles (H3)</li>
+            <li>Heading Small: Minor headings (H4-H6)</li>
+          </ul>
+        </div>
+        
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Body Text</h3>
+          <ul class="text-body-small">
+            <li>Body Large: Lead paragraphs and important content</li>
+            <li>Body Medium: Standard paragraph text</li>
+            <li>Body Small: Captions and secondary content</li>
+            <li>Use emphasized variants for important information</li>
+          </ul>
+        </div>
+        
+        <div class="typography-example">
+          <h3 class="text-heading-medium">Labels & Code</h3>
+          <ul class="text-body-small">
+            <li>Labels: Form labels, UI component text</li>
+            <li>Code: Technical content, inline code</li>
+            <li>Match label size to corresponding input size</li>
+            <li>Use monospace for all technical content</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Import shared components -->
+  <script type="module" src="../../shared/components/header.js"></script>
+  <script type="module" src="../../shared/utils/helpers.js"></script>
+  
+  <script>
+    // Add some interactive features
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Typography showcase loaded with comprehensive font system');
+      
+      // Add click handlers to copy class names
+      document.querySelectorAll('.example-meta').forEach(meta => {
+        meta.addEventListener('click', () => {
+          const className = meta.textContent.split(' • ')[0];
+          navigator.clipboard.writeText(className).then(() => {
+            const original = meta.textContent;
+            meta.textContent = 'Copied to clipboard!';
+            setTimeout(() => {
+              meta.textContent = original;
+            }, 1000);
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation System Test - Quick Wins Implementation</title>
+  
+  <!-- Import shared styles -->
+  <link rel="stylesheet" href="../../shared/styles/variables.css">
+  <link rel="stylesheet" href="../../shared/styles/base.css">
+  <link rel="stylesheet" href="../../shared/styles/typography.css">
+  <link rel="stylesheet" href="../../shared/styles/components.css">
+  <link rel="stylesheet" href="../../shared/styles/color-utilities.css">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--neutral-50);
+      font-family: var(--font-family-ui);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .test-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .test-sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid var(--color-border);
+      flex-shrink: 0;
+      padding: 20px;
+      overflow-y: auto;
+      overflow-x: visible;
+    }
+
+    .test-main {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .test-section {
+      margin-bottom: 40px;
+    }
+
+    .test-section h2 {
+      font-size: var(--font-size-18);
+      font-weight: var(--font-weight-semibold);
+      color: var(--neutral-900);
+      margin-bottom: 16px;
+    }
+
+    .test-section p {
+      color: var(--neutral-600);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .test-nav-container {
+      margin-bottom: 24px;
+    }
+
+    .test-nav-container h3 {
+      font-size: var(--font-size-14);
+      font-weight: var(--font-weight-semibold);
+      color: var(--neutral-900);
+      margin-bottom: 12px;
+    }
+
+    .nav-items-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .code-example {
+      background: var(--neutral-900);
+      color: var(--neutral-100);
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+    }
+
+    .feature-card h4 {
+      margin: 0 0 8px 0;
+      color: var(--brand-600);
+      font-size: var(--font-size-14);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: var(--font-size-12);
+      color: var(--neutral-600);
+    }
+
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--success-50);
+      color: var(--success-700);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: var(--font-size-12);
+      font-weight: var(--font-weight-medium);
+      margin-bottom: 20px;
+    }
+
+    /* Ensure tooltips can extend beyond containers */
+    .test-layout,
+    .test-sidebar,
+    .test-nav-container,
+    .nav-items-demo {
+      overflow: visible !important;
+    }
+
+    /* Prevent any container from clipping tooltips */
+    * {
+      overflow-x: visible !important;
+    }
+
+    /* Restore specific overflow behaviors where needed */
+    .test-main {
+      overflow-x: visible !important;
+      overflow-y: auto !important;
+    }
+
+    /* Debug Mode - Toggle to show padding/margins/boundaries */
+    .debug-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      padding: 8px 16px;
+      background: var(--neutral-900);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-12);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .debug-toggle:hover {
+      background: var(--neutral-700);
+    }
+
+    .debug-toggle.active {
+      background: var(--brand-600);
+    }
+
+    /* Debug Mode Styles - Show layout boundaries */
+    body.debug-mode * {
+      outline: 1px solid rgba(255, 0, 0, 0.3) !important;
+    }
+
+    body.debug-mode .nav-item,
+    body.debug-mode .nav-item--account,
+    body.debug-mode .nav-item--workload {
+      background: rgba(0, 255, 0, 0.1) !important;
+      outline: 2px solid rgba(0, 255, 0, 0.5) !important;
+    }
+
+    body.debug-mode .nav-item::before,
+    body.debug-mode .nav-item--account::before,
+    body.debug-mode .nav-item--workload::before {
+      background: rgba(255, 255, 0, 0.2) !important;
+      outline: 2px dashed rgba(255, 255, 0, 0.8) !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    body.debug-mode .nav-item-icon,
+    body.debug-mode .account-avatar,
+    body.debug-mode .nav-item-label,
+    body.debug-mode .account-details {
+      outline: 1px solid rgba(0, 0, 255, 0.5) !important;
+      background: rgba(0, 0, 255, 0.1) !important;
+    }
+
+    body.debug-mode .account-avatar::after {
+      outline: 2px solid rgba(255, 0, 255, 0.8) !important;
+      background: rgba(255, 0, 255, 0.1) !important;
+    }
+
+    /* Debug info overlay */
+    body.debug-mode::after {
+      content: 'DEBUG MODE ACTIVE\ARED: General elements\AGREEN: Nav items (content area)\AYELLOW: Hover areas (::before pseudo-elements)\ABLUE: Nav item parts (icon, label, details)\AMAGENTA: Avatar strokes (::after pseudo-elements)';
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-12);
+      line-height: 1.4;
+      white-space: pre-line;
+      z-index: 9999;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <button class="debug-toggle" id="debugToggle">Debug Layout</button>
+  
+  <div class="test-layout">
+    <!-- Sidebar with navigation demos -->
+    <div class="test-sidebar">
+      <!-- Default Navigation -->
+      <div class="test-nav-container">
+        <h3>Default Navigation</h3>
+        <div id="default-nav"></div>
+      </div>
+
+      <!-- Individual Nav Items -->
+      <div class="test-nav-container">
+        <h3>Individual Nav Items</h3>
+        <div class="nav-items-demo">
+          <div id="home-item"></div>
+          <div id="settings-item"></div>
+          <div id="workload-item"></div>
+          <div id="disabled-item"></div>
+        </div>
+      </div>
+
+      <!-- Account Items -->
+      <div class="test-nav-container">
+        <h3>Account Items</h3>
+        <p style="color: var(--neutral-600); font-size: var(--font-size-14); margin-bottom: 16px;">Account variant with 1-line and 2-line layouts, caret support, active avatar strokes, and sub-account counts for organizations.</p>
+        <div class="nav-items-demo">
+          <div id="account-1-line"></div>
+          <div id="account-2-line-active"></div>
+          <div id="account-2-line-subaccount"></div>
+          <div id="account-with-caret"></div>
+          <div id="account-org-with-count"></div>
+          <div id="account-org-large-count"></div>
+          <div id="all-accounts-2-line"></div>
+          <div id="all-accounts-1-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="test-main">
+      <div class="success-badge">
+        ✅ Quick Wins Implemented Successfully
+      </div>
+
+      <div class="test-section">
+        <h2>Navigation System Improvements</h2>
+        <p>This page demonstrates the quick wins we've implemented to make nav items more consistent and manageable.</p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <h4>✅ Consolidated CSS Classes</h4>
+            <p>Merged .workload-item into .nav-item with modifier classes like .nav-item--workload</p>
+          </div>
+          <div class="feature-card">
+            <h4>✅ Unified Tooltip System</h4>
+            <p>Extracted tooltip CSS to components.css for reuse across all nav items</p>
+          </div>
+          <div class="feature-card">
+            <h4>✅ Nav Item Factory</h4>
+            <p>Created createNavItem() function and fluent API for consistent nav item creation</p>
+          </div>
+          <div class="feature-card">
+            <h4>✅ Enhanced Navigation Component</h4>
+            <p>Updated navigation.js to use the new factory system with variant support</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h2>Usage Examples</h2>
+        
+        <div class="code-example">
+// Simple nav item creation
+const homeItem = createNavItem({
+  label: 'Home',
+  icon: '&lt;svg&gt;...&lt;/svg&gt;',
+  tooltip: 'Home',
+  active: true
+});
+
+// Fluent API
+const workloadItem = navItem()
+  .label('Connect')
+  .variant('workload')
+  .icon('&lt;svg&gt;...&lt;/svg&gt;')
+  .tooltip('Connect')
+  .badge('New', 'brand')
+  .build();
+
+// Navigation component with variants
+const nav = createNavigation({
+  title: 'My App',
+  variant: 'default',
+  items: [
+    { label: 'Home', icon: '&lt;svg&gt;...&lt;/svg&gt;', tooltip: 'Home', active: true },
+    { type: 'section', label: 'Workloads' },
+    { label: 'Connect', variant: 'workload', tooltip: 'Connect' }
+  ]
+});
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h2>Benefits Achieved</h2>
+        <ul style="color: var(--neutral-600); line-height: 1.6;">
+          <li><strong>Consistency:</strong> All nav items now use the same base structure and styling</li>
+          <li><strong>Maintainability:</strong> Single place to update nav item styles and behavior</li>
+          <li><strong>Flexibility:</strong> Easy to create new variants without duplicating code</li>
+          <li><strong>Reusability:</strong> Tooltips, icons, and variants work across all components</li>
+          <li><strong>Backward Compatibility:</strong> Legacy .workload-item classes still work</li>
+        </ul>
+      </div>
+
+      <div class="test-section">
+        <h2>What's Next</h2>
+        <p>Now that the foundation is solid, we can:</p>
+        <ul style="color: var(--neutral-600); line-height: 1.6;">
+          <li>Update existing prototypes to use the new system</li>
+          <li>Remove tooltip CSS from individual prototype files</li>
+          <li>Simplify the account switcher using composition</li>
+          <li>Add more nav item variants as needed</li>
+          <li>Create a comprehensive component documentation site</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import the new navigation system -->
+  <script type="module">
+    import { createNavigation, injectNavigationStyles, defaultNavConfig } from '../../shared/components/navigation.js';
+    import { createNavItem, navItem, NavItemPresets } from '../../shared/components/nav-item.js';
+
+    // Inject navigation styles
+    injectNavigationStyles();
+
+    // Create default navigation in sidebar
+    const defaultNav = createNavigation({
+      title: 'Demo Navigation',
+      showTitle: true,
+      variant: 'default',
+      items: [
+        {
+          label: 'Overview',
+          href: '#overview',
+          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>',
+          tooltip: 'Overview',
+          active: true
+        },
+        {
+          label: 'Analytics',
+          href: '#analytics',
+          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>',
+          tooltip: 'Analytics',
+          badge: { text: '12', variant: 'brand' }
+        },
+        { type: 'divider' },
+        { type: 'section', label: 'Workloads' },
+        {
+          label: 'Connect',
+          href: '#connect',
+          variant: 'workload',
+          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+          tooltip: 'Connect'
+        },
+        {
+          label: 'Payments',
+          href: '#payments',
+          variant: 'workload',
+          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><path d="M16 8l2-2 2 2"/><circle cx="11" cy="11" r="2"/></svg>',
+          tooltip: 'Payments',
+          badge: { text: 'New', variant: 'success' }
+        }
+      ]
+    });
+
+    document.getElementById('default-nav').appendChild(defaultNav);
+
+    // Create individual nav items using different methods
+    
+    // Home item using preset
+    const homeItem = NavItemPresets.home(true);
+    document.getElementById('home-item').appendChild(homeItem.build());
+
+    // Settings item using fluent API
+    const settingsItem = navItem()
+      .label('Settings')
+      .icon('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>')
+      .tooltip('Settings')
+      .onClick(() => alert('Settings clicked!'))
+      .build();
+    document.getElementById('settings-item').appendChild(settingsItem);
+
+    // Workload item using createNavItem
+    const workloadItem = createNavItem({
+      label: 'Database',
+      variant: 'workload',
+      icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>',
+      tooltip: 'Database',
+      badge: { text: 'Beta', variant: 'attention' },
+      onClick: () => alert('Database workload clicked!')
+    });
+    document.getElementById('workload-item').appendChild(workloadItem);
+
+    // Disabled item
+    const disabledItem = createNavItem({
+      label: 'Coming Soon',
+      icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+      tooltip: 'Coming Soon',
+      disabled: true
+    });
+    document.getElementById('disabled-item').appendChild(disabledItem);
+
+    // Account items using the new account variant with lines support
+    
+    // 1-line account item (just organization name)
+    const account1Line = NavItemPresets.accountSingle('Acme, Inc.', true);
+    document.getElementById('account-1-line').appendChild(account1Line.build());
+
+    // 2-line account item (subaccount + parent) - active with stroke
+    const account2LineActive = NavItemPresets.account('Engineering Team', 'Acme, Inc.', true);
+    document.getElementById('account-2-line-active').appendChild(account2LineActive.build());
+
+    // 2-line account item using createNavItem directly
+    const account2LineSubaccount = createNavItem({
+      variant: 'account',
+      lines: 2,
+      accountName: 'Marketing Dept',
+      parentAccount: 'Beta Corp',
+      avatarColor: '#8B5CF6',
+      onClick: () => alert('Marketing Dept clicked!')
+    });
+    document.getElementById('account-2-line-subaccount').appendChild(account2LineSubaccount);
+
+    // Account item with caret (for opening popover with sub-accounts)
+    const accountWithCaret = createNavItem({
+      variant: 'account',
+      lines: 2,
+      accountName: 'Acme Holdings',
+      parentAccount: 'Organization',
+      showCaret: true,
+      avatarColor: '#6366F1',
+      onClick: () => alert('Opening sub-accounts popover...')
+    });
+    document.getElementById('account-with-caret').appendChild(accountWithCaret);
+
+    // Alternative: Using preset
+    // const accountWithCaretPreset = NavItemPresets.accountWithCaret('Acme Holdings', 'Organization');
+    // document.getElementById('account-with-caret').appendChild(accountWithCaretPreset.build());
+
+    // Organization with sub-account count (active to show count)
+    const accountOrgWithCount = createNavItem({
+      variant: 'account',
+      lines: 1,
+      accountName: 'TechCorp',
+      active: true,
+      subAccountCount: 5,
+      avatarColor: '#10B981',
+      onClick: () => alert('Organization with 5 sub-accounts')
+    });
+    document.getElementById('account-org-with-count').appendChild(accountOrgWithCount);
+
+    // Organization with larger sub-account count (2-line active)
+    // Example using fluent API with new subAccountCount() method
+    const accountOrgLargeCount = navItem()
+      .variant('account')
+      .lines(2)
+      .accountName('Global Enterprises')
+      .parentAccount('Holding Company')
+      .active(true)
+      .subAccountCount(24)
+      .avatarColor('#F59E0B')
+      .onClick(() => alert('Organization with 24 sub-accounts'))
+      .build();
+    document.getElementById('account-org-large-count').appendChild(accountOrgLargeCount);
+
+    // 2-line "All accounts" item
+    const allAccounts2Line = NavItemPresets.allAccounts('Acme Holdings', false);
+    document.getElementById('all-accounts-2-line').appendChild(allAccounts2Line.build());
+
+    // 1-line "All accounts" item
+    const allAccounts1Line = NavItemPresets.allAccountsSingle(false);
+    document.getElementById('all-accounts-1-line').appendChild(allAccounts1Line.build());
+
+    // Log success
+    console.log('✅ Navigation system quick wins successfully implemented!');
+    console.log('✅ Account variant with sub-account counts added to test page!');
+    console.log('📊 Components available:', {
+      createNavItem,
+      navItem,
+      NavItemPresets,
+      createNavigation
+    });
+
+    // Debug Mode Toggle
+    const debugToggle = document.getElementById('debugToggle');
+    let debugMode = false;
+
+    debugToggle.addEventListener('click', () => {
+      debugMode = !debugMode;
+      document.body.classList.toggle('debug-mode', debugMode);
+      debugToggle.classList.toggle('active', debugMode);
+      debugToggle.textContent = debugMode ? 'Exit Debug' : 'Debug Layout';
+      
+      console.log(`🔍 Debug mode ${debugMode ? 'ON' : 'OFF'}`);
+    });
+
+    // Keyboard shortcut: Press 'D' to toggle debug mode
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'd' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        // Only trigger if not in an input field
+        if (!e.target.matches('input, textarea, select')) {
+          debugToggle.click();
+        }
+      }
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Wireframe - Progressive Fidelity</title>
+  
+  <!-- Import shared styles -->
+  <link rel="stylesheet" href="../../shared/styles/variables.css">
+  <link rel="stylesheet" href="../../shared/styles/base.css">
+  <link rel="stylesheet" href="../../shared/styles/components.css">
+  
+  <style>
+    /* Dashboard-specific wireframe styles */
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    
+    .stat-card {
+      background: var(--wireframe-low-element);
+      border: 2px dashed var(--wireframe-low-border);
+      padding: var(--space-md);
+      border-radius: 2px;
+      text-align: center;
+    }
+    
+    .content-area {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    
+    /* Mid-fidelity enhancements */
+    .wireframe-mid .stat-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    /* High-fidelity uses real components */
+    .wireframe-high .stat-card {
+      /* Would use your actual card component styles */
+    }
+  </style>
+</head>
+<body class="wireframe-low">
+  
+  <div class="dashboard-container">
+    
+    <!-- Dashboard Header -->
+    <div id="dashboard-header"></div>
+    
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div id="stat-1"></div>
+      </div>
+      <div class="stat-card">
+        <div id="stat-2"></div>
+      </div>
+      <div class="stat-card">
+        <div id="stat-3"></div>
+      </div>
+      <div class="stat-card">
+        <div id="stat-4"></div>
+      </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <!-- Primary Content -->
+      <div>
+        <div id="main-chart-section"></div>
+        <div id="recent-activity"></div>
+      </div>
+      
+      <!-- Sidebar Content -->
+      <div>
+        <div id="quick-actions"></div>
+        <div id="account-overview"></div>
+      </div>
+    </div>
+    
+    <!-- Bottom Section -->
+    <div id="data-table-section"></div>
+    
+  </div>
+
+  <script type="module">
+    import { WireframeElements, FidelityController } from '../../shared/components/wireframe-elements.js';
+    
+    // Initialize fidelity controller
+    FidelityController.init({ defaultFidelity: 'low' });
+    
+    // Populate dashboard sections
+    function populateDashboard() {
+      // Header
+      document.getElementById('dashboard-header').innerHTML = WireframeElements.header(
+        'Analytics Dashboard', 
+        { showNav: true, showActions: true }
+      );
+      
+      // Stats cards
+      document.getElementById('stat-1').innerHTML = `
+        <h3>Total Revenue</h3>
+        ${WireframeElements.text(1)}
+        <div style="margin-top: 8px; font-size: 24px; font-weight: bold;">$45,230</div>
+      `;
+      
+      document.getElementById('stat-2').innerHTML = `
+        <h3>Active Users</h3>
+        ${WireframeElements.text(1)}
+        <div style="margin-top: 8px; font-size: 24px; font-weight: bold;">2,847</div>
+      `;
+      
+      document.getElementById('stat-3').innerHTML = `
+        <h3>Conversion Rate</h3>
+        ${WireframeElements.text(1)}
+        <div style="margin-top: 8px; font-size: 24px; font-weight: bold;">3.2%</div>
+      `;
+      
+      document.getElementById('stat-4').innerHTML = `
+        <h3>Growth</h3>
+        ${WireframeElements.text(1)}
+        <div style="margin-top: 8px; font-size: 24px; font-weight: bold;">+12.5%</div>
+      `;
+      
+      // Main chart section
+      document.getElementById('main-chart-section').innerHTML = WireframeElements.card(`
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2>Revenue Trends</h2>
+          <div>
+            ${WireframeElements.button('Last 7 days')}
+            ${WireframeElements.button('Last 30 days')}
+          </div>
+        </div>
+        ${WireframeElements.box('Line Chart', { width: '100%', height: '300px' })}
+      `);
+      
+      // Recent activity
+      document.getElementById('recent-activity').innerHTML = WireframeElements.card(`
+        <h3>Recent Activity</h3>
+        ${WireframeElements.table(['Time', 'Event', 'User', 'Value'], 5)}
+      `);
+      
+      // Quick actions
+      document.getElementById('quick-actions').innerHTML = WireframeElements.card(`
+        <h3>Quick Actions</h3>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${WireframeElements.button('Create Report', { className: 'wireframe-btn-primary' })}
+          ${WireframeElements.button('Export Data')}
+          ${WireframeElements.button('Manage Users')}
+          ${WireframeElements.button('Settings')}
+        </div>
+      `);
+      
+      // Account overview
+      document.getElementById('account-overview').innerHTML = WireframeElements.card(`
+        <h3>Account Overview</h3>
+        ${WireframeElements.box('Account Info', { width: '100%', height: '60px' })}
+        ${WireframeElements.text(2)}
+        <div style="margin-top: 16px;">
+          ${WireframeElements.button('View Details')}
+        </div>
+      `);
+      
+      // Data table
+      document.getElementById('data-table-section').innerHTML = WireframeElements.card(`
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2>Customer Data</h2>
+          <div style="display: flex; gap: 8px;">
+            ${WireframeElements.input({ placeholder: 'Search customers...', type: 'search' })}
+            ${WireframeElements.button('Filter')}
+            ${WireframeElements.button('Export')}
+          </div>
+        </div>
+        ${WireframeElements.table(['Customer', 'Email', 'Status', 'Revenue', 'Last Active'], 8)}
+        <div style="margin-top: 16px; display: flex; justify-content: between;">
+          ${WireframeElements.button('Previous')}
+          <span style="margin: 0 16px;">Page 1 of 23</span>
+          ${WireframeElements.button('Next')}
+        </div>
+      `);
+    }
+    
+    // Handle fidelity changes
+    document.addEventListener('fidelityChanged', (e) => {
+      const level = e.detail.level;
+      console.log(`Dashboard fidelity changed to: ${level}`);
+      
+      // You could add level-specific content changes here
+      if (level === 'high') {
+        // In a real implementation, you might replace wireframe elements
+        // with your actual components from the existing system
+        console.log('High fidelity: Would integrate with actual components');
+      }
+    });
+    
+    // Initialize dashboard
+    populateDashboard();
+    
+    // Add some demo interactivity
+    let clickCount = 0;
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('wireframe-btn')) {
+        clickCount++;
+        console.log(`Button "${e.target.textContent}" clicked (${clickCount} total clicks)`);
+        
+        // Demo: Change some content on interaction
+        if (e.target.textContent === 'Last 7 days') {
+          console.log('Would update chart to show last 7 days data');
+        }
+      }
+    });
+    
+    // Demo: Auto-cycle through fidelity levels (for presentation)
+    let autoCycleEnabled = false;
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key === 'c') {
+        autoCycleEnabled = !autoCycleEnabled;
+        console.log('Auto-cycle:', autoCycleEnabled ? 'enabled' : 'disabled');
+        
+        if (autoCycleEnabled) {
+          cycleFidelity();
+        }
+      }
+    });
+    
+    function cycleFidelity() {
+      if (!autoCycleEnabled) return;
+      
+      const levels = ['low', 'mid', 'high'];
+      const currentIndex = levels.indexOf(FidelityController.getFidelity());
+      const nextIndex = (currentIndex + 1) % levels.length;
+      
+      FidelityController.setFidelity(levels[nextIndex]);
+      
+      setTimeout(cycleFidelity, 3000); // Change every 3 seconds
+    }
+  </script>
+  
+  <!-- Demo instructions -->
+  <div style="position: fixed; bottom: 20px; left: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-sm); font-size: var(--font-size-12); max-width: 300px; box-shadow: var(--shadow-md);">
+    <strong>🎮 Demo Controls:</strong><br>
+    • Alt+1/2/3: Change fidelity<br>
+    • Alt+C: Auto-cycle fidelity<br>
+    • Click buttons to see interactions
+  </div>
+</body>
+</html>

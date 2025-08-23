@@ -1,0 +1,25 @@
+# Netlify redirects for UXR prototype access control
+# Redirect root and other prototypes away from participants
+
+# Block access to project root - redirect to Stripe prototype
+/index.html                     /prototypes/stripe-dashboard-uxr/
+/                              /prototypes/stripe-dashboard-uxr/
+
+# Block access to other prototypes
+/prototypes/                   /prototypes/stripe-dashboard-uxr/
+/prototypes/color-showcase/*   /prototypes/stripe-dashboard-uxr/  403
+/prototypes/dash-chrome/*      /prototypes/stripe-dashboard-uxr/  403
+/prototypes/nav-system-test/*  /prototypes/stripe-dashboard-uxr/  403
+/prototypes/typography-showcase/* /prototypes/stripe-dashboard-uxr/ 403
+
+# Block access to shared resources directly
+/shared/*                      /prototypes/stripe-dashboard-uxr/  403
+
+# Block access to docs
+/docs/*                        /prototypes/stripe-dashboard-uxr/  403
+
+# Allow API access for sharing
+/api/*                         /api/:splat  200
+
+# Allow Stripe prototype pages
+/prototypes/stripe-dashboard-uxr/*  /prototypes/stripe-dashboard-uxr/:splat  200

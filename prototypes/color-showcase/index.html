@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color System Showcase</title>
+  
+  <!-- Import shared styles -->
+  <link rel="stylesheet" href="../../shared/styles/variables.css">
+  <link rel="stylesheet" href="../../shared/styles/base.css">
+  <link rel="stylesheet" href="../../shared/styles/typography.css">
+  <link rel="stylesheet" href="../../shared/styles/components.css">
+  
+  <!-- Import the extracted color system -->
+  <link rel="stylesheet" href="../../shared/styles/colors-preview.css">
+  
+  <style>
+    .showcase-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-xl);
+    }
+    
+    .color-section {
+      margin-bottom: var(--space-2xl);
+      padding: var(--space-xl);
+      background-color: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+    }
+    
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+    
+    .color-scale-grid {
+      display: grid;
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+    
+    .color-scale {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 2px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .color-swatch {
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+    }
+    
+    .color-swatch:hover {
+      transform: scale(1.05);
+      z-index: 10;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .color-info {
+      background-color: var(--color-background);
+      padding: var(--space-sm);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      margin-top: var(--space-sm);
+    }
+    
+    .color-name {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-12);
+      font-weight: var(--font-weight-semibold);
+    }
+    
+    .color-value {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-12);
+      color: var(--color-text-subdued);
+      margin-top: var(--space-xs);
+    }
+    
+    .scale-swatch {
+      height: 60px;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      padding: var(--space-xs);
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    
+    .scale-label {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-12);
+      font-weight: var(--font-weight-semibold);
+    }
+    
+    .semantic-examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+    
+    .example-card {
+      padding: var(--space-lg);
+      border-radius: var(--radius-lg);
+      border: 2px solid;
+    }
+    
+    .usage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+    
+    .usage-example {
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+    }
+    
+    .copy-feedback {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--color-text);
+      color: var(--color-background);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-14);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all var(--transition-fast);
+      z-index: 1000;
+    }
+    
+    .copy-feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div data-header data-config='{"title": "Color System Showcase", "navigation": [{"label": "Dashboard", "href": "../../dashboard"}, {"label": "Back to Prototypes", "href": "../"}]}'></div>
+
+  <div class="showcase-container">
+    <div class="text-center" style="margin-bottom: var(--space-2xl);">
+      <h1 class="text-display-large">Design System Colors</h1>
+      <p class="text-body-large text-subdued">Comprehensive color palette extracted from design documentation</p>
+    </div>
+
+    <!-- Neutral Colors -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Neutral Colors</h2>
+      <p class="text-body-medium text-subdued">Grayscale palette for backgrounds, borders, and text</p>
+      
+      <div class="color-scale-grid">
+        <div>
+          <h3 class="text-heading-small">Neutral Scale (25-900)</h3>
+          <div class="color-scale" style="grid-template-columns: repeat(11, 1fr);">
+            <div class="scale-swatch" style="background-color: var(--neutral-25); color: var(--neutral-900);">
+              <span class="scale-label">25</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-50); color: var(--neutral-900);">
+              <span class="scale-label">50</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-100); color: var(--neutral-900);">
+              <span class="scale-label">100</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-200); color: var(--neutral-900);">
+              <span class="scale-label">200</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-300); color: var(--neutral-900);">
+              <span class="scale-label">300</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-400);">
+              <span class="scale-label">400</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-500);">
+              <span class="scale-label">500</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-600);">
+              <span class="scale-label">600</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-700);">
+              <span class="scale-label">700</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-800);">
+              <span class="scale-label">800</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--neutral-900);">
+              <span class="scale-label">900</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand Colors -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Brand Colors</h2>
+      <p class="text-body-medium text-subdued">Primary brand colors for interactive elements</p>
+      
+      <div class="color-scale-grid">
+        <div>
+          <h3 class="text-heading-small">Brand Scale (25-900)</h3>
+          <div class="color-scale" style="grid-template-columns: repeat(11, 1fr);">
+            <div class="scale-swatch" style="background-color: var(--brand-25); color: var(--brand-900);">
+              <span class="scale-label">25</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-50); color: var(--brand-900);">
+              <span class="scale-label">50</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-100); color: var(--brand-900);">
+              <span class="scale-label">100</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-200); color: var(--brand-900);">
+              <span class="scale-label">200</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-300); color: var(--brand-900);">
+              <span class="scale-label">300</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-400);">
+              <span class="scale-label">400</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-500);">
+              <span class="scale-label">500</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-600);">
+              <span class="scale-label">600</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-700);">
+              <span class="scale-label">700</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-800);">
+              <span class="scale-label">800</span>
+            </div>
+            <div class="scale-swatch" style="background-color: var(--brand-900);">
+              <span class="scale-label">900</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Icon Colors -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Icon Colors</h2>
+      <p class="text-body-medium text-subdued">Standardized icon color for consistent interface elements</p>
+      
+      <div class="color-grid">
+        <div class="color-swatch" style="background-color: var(--icon-default); aspect-ratio: 2;">
+          <div class="color-info">
+            <div class="color-name">--icon-default</div>
+            <div class="color-value">#6C7688</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-top: var(--space-lg); padding: var(--space-lg); background: var(--color-surface); border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+        <h3 class="text-heading-small">Icon Usage Example</h3>
+        <div style="display: flex; align-items: center; gap: var(--space-md); margin-top: var(--space-md);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--icon-default)" stroke-width="1.5">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--icon-default)" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="9" x2="15" y2="9"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--icon-default)" stroke-width="1.5">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--icon-default)" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
+        <p class="text-body-small text-subdued" style="margin-top: var(--space-sm);">
+          All icons use the standardized <code>--icon-default</code> color for consistency across the interface.
+        </p>
+      </div>
+    </section>
+
+    <!-- Semantic Colors -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Semantic Colors</h2>
+      <p class="text-body-medium text-subdued">Status and feedback colors with full scales</p>
+      
+      <div class="color-scale-grid">
+        <div>
+          <h3 class="text-heading-small">Success (Green)</h3>
+          <div class="color-scale">
+            <div class="scale-swatch" style="background-color: var(--success-50); color: var(--success-900);"><span class="scale-label">50</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-100); color: var(--success-900);"><span class="scale-label">100</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-200); color: var(--success-900);"><span class="scale-label">200</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-300); color: var(--success-900);"><span class="scale-label">300</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-400);"><span class="scale-label">400</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-500);"><span class="scale-label">500</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-600);"><span class="scale-label">600</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-700);"><span class="scale-label">700</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-800);"><span class="scale-label">800</span></div>
+            <div class="scale-swatch" style="background-color: var(--success-900);"><span class="scale-label">900</span></div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-heading-small">Attention (Orange)</h3>
+          <div class="color-scale">
+            <div class="scale-swatch" style="background-color: var(--attention-50); color: var(--attention-900);"><span class="scale-label">50</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-100); color: var(--attention-900);"><span class="scale-label">100</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-200); color: var(--attention-900);"><span class="scale-label">200</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-300); color: var(--attention-900);"><span class="scale-label">300</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-400);"><span class="scale-label">400</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-500);"><span class="scale-label">500</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-600);"><span class="scale-label">600</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-700);"><span class="scale-label">700</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-800);"><span class="scale-label">800</span></div>
+            <div class="scale-swatch" style="background-color: var(--attention-900);"><span class="scale-label">900</span></div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-heading-small">Critical (Red)</h3>
+          <div class="color-scale">
+            <div class="scale-swatch" style="background-color: var(--critical-50); color: var(--critical-900);"><span class="scale-label">50</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-100); color: var(--critical-900);"><span class="scale-label">100</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-200); color: var(--critical-900);"><span class="scale-label">200</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-300); color: var(--critical-900);"><span class="scale-label">300</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-400);"><span class="scale-label">400</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-500);"><span class="scale-label">500</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-600);"><span class="scale-label">600</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-700);"><span class="scale-label">700</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-800);"><span class="scale-label">800</span></div>
+            <div class="scale-swatch" style="background-color: var(--critical-900);"><span class="scale-label">900</span></div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-heading-small">Info (Blue)</h3>
+          <div class="color-scale">
+            <div class="scale-swatch" style="background-color: var(--info-50); color: var(--info-900);"><span class="scale-label">50</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-100); color: var(--info-900);"><span class="scale-label">100</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-200); color: var(--info-900);"><span class="scale-label">200</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-300); color: var(--info-900);"><span class="scale-label">300</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-400);"><span class="scale-label">400</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-500);"><span class="scale-label">500</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-600);"><span class="scale-label">600</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-700);"><span class="scale-label">700</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-800);"><span class="scale-label">800</span></div>
+            <div class="scale-swatch" style="background-color: var(--info-900);"><span class="scale-label">900</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Semantic Usage Examples -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Semantic Usage Examples</h2>
+      <p class="text-body-medium text-subdued">How colors are applied in real UI components</p>
+      
+      <div class="semantic-examples">
+        <div class="example-card bg-success" style="border-color: var(--color-border-success); color: var(--color-text-success);">
+          <h3 class="text-heading-medium">Success State</h3>
+          <p class="text-body-medium">Your changes have been saved successfully!</p>
+          <button class="btn" style="background: var(--success-600); color: white; border: none; margin-top: var(--space-sm);">Continue</button>
+        </div>
+        
+        <div class="example-card bg-attention" style="border-color: var(--color-border-attention); color: var(--color-text-attention);">
+          <h3 class="text-heading-medium">Warning State</h3>
+          <p class="text-body-medium">Please review your settings before proceeding.</p>
+          <button class="btn" style="background: var(--attention-600); color: white; border: none; margin-top: var(--space-sm);">Review</button>
+        </div>
+        
+        <div class="example-card bg-critical" style="border-color: var(--color-border-critical); color: var(--color-text-critical);">
+          <h3 class="text-heading-medium">Error State</h3>
+          <p class="text-body-medium">There was an error processing your request.</p>
+          <button class="btn" style="background: var(--critical-600); color: white; border: none; margin-top: var(--space-sm);">Retry</button>
+        </div>
+        
+        <div class="example-card bg-info" style="border-color: var(--color-border-info); color: var(--color-text-info);">
+          <h3 class="text-heading-medium">Info State</h3>
+          <p class="text-body-medium">New features are available in this update.</p>
+          <button class="btn" style="background: var(--info-600); color: white; border: none; margin-top: var(--space-sm);">Learn More</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Component Integration -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">Component Integration</h2>
+      <p class="text-body-medium text-subdued">Updated components using the new color system</p>
+      
+      <div class="usage-grid">
+        <div class="usage-example">
+          <h3 class="text-heading-small">Buttons</h3>
+          <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: var(--space-md);">
+            <button class="btn" style="background: var(--brand-600); color: white; border: none;">Primary</button>
+            <button class="btn" style="background: var(--success-600); color: white; border: none;">Success</button>
+            <button class="btn" style="background: var(--attention-600); color: white; border: none;">Warning</button>
+            <button class="btn" style="background: var(--critical-600); color: white; border: none;">Danger</button>
+          </div>
+        </div>
+        
+        <div class="usage-example">
+          <h3 class="text-heading-small">Badges</h3>
+          <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: var(--space-md);">
+            <span class="badge" style="background: var(--brand-100); color: var(--brand-700); border-color: var(--brand-200);">Brand</span>
+            <span class="badge" style="background: var(--success-100); color: var(--success-700); border-color: var(--success-200);">Success</span>
+            <span class="badge" style="background: var(--attention-100); color: var(--attention-700); border-color: var(--attention-200);">Warning</span>
+            <span class="badge" style="background: var(--critical-100); color: var(--critical-700); border-color: var(--critical-200);">Error</span>
+          </div>
+        </div>
+        
+        <div class="usage-example">
+          <h3 class="text-heading-small">Text Colors</h3>
+          <div style="margin-top: var(--space-md);">
+            <p class="text-brand">Brand colored text</p>
+            <p class="text-success">Success colored text</p>
+            <p class="text-attention">Attention colored text</p>
+            <p class="text-critical">Critical colored text</p>
+            <p class="text-subdued">Subdued text</p>
+          </div>
+        </div>
+        
+        <div class="usage-example">
+          <h3 class="text-heading-small">Form States</h3>
+          <div style="margin-top: var(--space-md);">
+            <div class="form-group">
+              <input class="form-input" placeholder="Normal input" style="border-color: var(--color-border);">
+            </div>
+            <div class="form-group">
+              <input class="form-input" placeholder="Success input" style="border-color: var(--success-300); background: var(--success-50);">
+            </div>
+            <div class="form-group">
+              <input class="form-input" placeholder="Error input" style="border-color: var(--critical-300); background: var(--critical-50);">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CSS Variables Reference -->
+    <section class="color-section">
+      <h2 class="text-heading-xlarge">CSS Variables Reference</h2>
+      <p class="text-body-medium text-subdued">Complete list of available color variables (click to copy)</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-lg); margin-top: var(--space-lg);">
+        <div>
+          <h3 class="text-heading-small">Semantic Colors</h3>
+          <div style="margin-top: var(--space-md); font-family: var(--font-family-mono); font-size: var(--font-size-12);">
+            <div class="css-var" data-var="--color-primary">--color-primary</div>
+            <div class="css-var" data-var="--color-background">--color-background</div>
+            <div class="css-var" data-var="--color-surface">--color-surface</div>
+            <div class="css-var" data-var="--color-border">--color-border</div>
+            <div class="css-var" data-var="--color-text">--color-text</div>
+            <div class="css-var" data-var="--color-text-secondary">--color-text-secondary</div>
+            <div class="css-var" data-var="--color-text-subdued">--color-text-subdued</div>
+            <div class="css-var" data-var="--icon-default">--icon-default</div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-heading-small">Brand Colors</h3>
+          <div style="margin-top: var(--space-md); font-family: var(--font-family-mono); font-size: var(--font-size-12);">
+            <div class="css-var" data-var="--brand-25">--brand-25 to --brand-900</div>
+            <div class="css-var" data-var="--color-text-brand">--color-text-brand</div>
+            <div class="css-var" data-var="--color-bg-brand">--color-bg-brand</div>
+            <div class="css-var" data-var="--color-border-brand">--color-border-brand</div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-heading-small">Neutral Colors</h3>
+          <div style="margin-top: var(--space-md); font-family: var(--font-family-mono); font-size: var(--font-size-12);">
+            <div class="css-var" data-var="--neutral-25">--neutral-25 to --neutral-900</div>
+            <div class="css-var" data-var="--color-border-subtle">--color-border-subtle</div>
+            <div class="css-var" data-var="--color-border-strong">--color-border-strong</div>
+            <div class="css-var" data-var="--color-text-muted">--color-text-muted</div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-heading-small">Status Colors</h3>
+          <div style="margin-top: var(--space-md); font-family: var(--font-family-mono); font-size: var(--font-size-12);">
+            <div class="css-var" data-var="--success-600">--success-50 to --success-900</div>
+            <div class="css-var" data-var="--attention-600">--attention-50 to --attention-900</div>
+            <div class="css-var" data-var="--critical-600">--critical-50 to --critical-900</div>
+            <div class="css-var" data-var="--info-600">--info-50 to --info-900</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="copy-feedback" id="copyFeedback">Copied to clipboard!</div>
+
+  <!-- Import shared components -->
+  <script type="module" src="../../shared/components/header.js"></script>
+  <script type="module" src="../../shared/utils/helpers.js"></script>
+  
+  <script>
+    // Add click handlers for copying color values
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyFeedback = document.getElementById('copyFeedback');
+      
+      // Copy color swatches
+      document.querySelectorAll('.scale-swatch, .color-swatch').forEach(swatch => {
+        swatch.addEventListener('click', () => {
+          const bgColor = getComputedStyle(swatch).backgroundColor;
+          navigator.clipboard.writeText(bgColor).then(() => {
+            showCopyFeedback(`Copied: ${bgColor}`);
+          });
+        });
+      });
+      
+      // Copy CSS variables
+      document.querySelectorAll('.css-var').forEach(varElement => {
+        varElement.style.cursor = 'pointer';
+        varElement.style.padding = '4px 8px';
+        varElement.style.borderRadius = '4px';
+        varElement.style.transition = 'background-color 150ms';
+        
+        varElement.addEventListener('mouseenter', () => {
+          varElement.style.backgroundColor = 'var(--color-border)';
+        });
+        
+        varElement.addEventListener('mouseleave', () => {
+          varElement.style.backgroundColor = 'transparent';
+        });
+        
+        varElement.addEventListener('click', () => {
+          const varName = varElement.dataset.var || varElement.textContent;
+          navigator.clipboard.writeText(varName).then(() => {
+            showCopyFeedback(`Copied: ${varName}`);
+          });
+        });
+      });
+      
+      function showCopyFeedback(message) {
+        copyFeedback.textContent = message;
+        copyFeedback.classList.add('show');
+        setTimeout(() => {
+          copyFeedback.classList.remove('show');
+        }, 2000);
+      }
+      
+      console.log('Color showcase loaded with comprehensive color system');
+    });
+  </script>
+</body>
+</html> 
