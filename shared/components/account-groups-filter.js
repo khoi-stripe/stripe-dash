@@ -33,6 +33,7 @@ class AccountGroupsFilter {
     this.maxLoadingRetries = 10; // Max retries waiting for data
     this.isLoading = false; // Loading state for trigger label
     this.lastGroupKey = null; // Persisted last selected group key
+    this.isClosingAfterApply = false; // Flag to prevent restoring selection when closing after apply
     
     this.init();
   }
@@ -349,6 +350,14 @@ class AccountGroupsFilter {
     const isOpen = popover.style.display === 'flex';
     
     if (isOpen) {
+      // Restore committed selection when closing without applying
+      if (!this.isClosingAfterApply) {
+        this.restoreCommittedSelection();
+      }
+      
+      // Reset the flag for next time
+      this.isClosingAfterApply = false;
+      
       popover.style.display = 'none';
       trigger.classList.remove('open');
       // Clear stored position data when closing
@@ -790,6 +799,9 @@ class AccountGroupsFilter {
     if (!this.isCustomMode) {
       this.setLastGroupKey(this.currentGroup || 'all');
     }
+    
+    // Set flag to indicate we're closing after applying (don't restore selection)
+    this.isClosingAfterApply = true;
     this.togglePopover();
     // Override this method in implementations for custom behavior
   }
@@ -827,12 +839,39 @@ class AccountGroupsFilter {
         checked: checkbox.checked
       });
     });
+    
+    // Also capture the committed group and custom mode state
+    this.committedGroup = this.currentGroup;
+    this.committedCustomMode = this.isCustomMode;
   }
   
   // Restore the committed selection state (when canceling)
   restoreCommittedSelection() {
     if (!this.committedSelection) return;
     
+    // Restore group selection and custom mode state
+    if (this.committedGroup !== undefined) {
+      this.currentGroup = this.committedGroup;
+      this.isCustomMode = this.committedCustomMode || false;
+      
+      // Update group button active states
+      const popover = document.getElementById(this.options.popoverId);
+      if (popover) {
+        // Remove active class from all group buttons
+        popover.querySelectorAll('.group-item').forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to the committed group button
+        const activeButton = popover.querySelector(`.group-item[data-group="${this.committedGroup}"]`);
+        if (activeButton) {
+          activeButton.classList.add('active');
+        }
+      }
+      
+      // Re-render accounts for the committed group
+      this.renderAccounts(this.committedGroup);
+    }
+    
+    // Restore individual checkbox states
     const checkboxes = document.querySelectorAll(`#${this.options.accountsListId} .account-item input[type="checkbox"]`);
     
     this.committedSelection.forEach((item) => {
